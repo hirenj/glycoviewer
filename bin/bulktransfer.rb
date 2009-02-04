@@ -210,7 +210,7 @@ def write_db_to_file(filename=nil)
 	free_enzymeinfos = Enzymeinfo.find(:all).delete_if { |e| e.has_reaction? }
 	free_enzymeinfos.each { |enzyme|
 	  free_enzymes.add_element( Document.new(enzyme.to_xml(:skip_instruct => true)).root )	  
-	  ActiveRecord::Base.logger.info("\e[1F\e[KWriting #{counter}/#{fre_enzymeinfos.size} step 4/5")
+	  ActiveRecord::Base.logger.info("\e[1F\e[KWriting #{counter}/#{free_enzymeinfos.size} step 4/5")
 	  counter += 1
   }
 	

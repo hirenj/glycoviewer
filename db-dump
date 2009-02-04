@@ -53686,4 +53686,556 @@ LIN
   <uprot-name nil='true'/>
   <uprot-organism nil='true'/>
   <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>69</geneinfo-id>
+  <id type='integer'>1344</id>
+  <mesh-tissue>Brain</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>69</geneinfo-id>
+  <id type='integer'>1345</id>
+  <mesh-tissue>Cerebral cortex</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>69</geneinfo-id>
+  <id type='integer'>1346</id>
+  <mesh-tissue>Bone marrow</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>69</geneinfo-id>
+  <id type='integer'>1347</id>
+  <mesh-tissue>Thyroid gland</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>69</geneinfo-id>
+  <id type='integer'>1348</id>
+  <mesh-tissue>Thymus</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>69</geneinfo-id>
+  <id type='integer'>1349</id>
+  <mesh-tissue>Spleen</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>69</geneinfo-id>
+  <id type='integer'>1350</id>
+  <mesh-tissue>Peripheral blood leukocyte</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>69</geneinfo-id>
+  <id type='integer'>1351</id>
+  <mesh-tissue>Heart</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>69</geneinfo-id>
+  <id type='integer'>1352</id>
+  <mesh-tissue>Skeletal muscle</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>69</geneinfo-id>
+  <id type='integer'>1353</id>
+  <mesh-tissue>Lung</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>69</geneinfo-id>
+  <id type='integer'>1354</id>
+  <mesh-tissue>Mammary gland</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>69</geneinfo-id>
+  <id type='integer'>1355</id>
+  <mesh-tissue>Liver</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>69</geneinfo-id>
+  <id type='integer'>1356</id>
+  <mesh-tissue>Stomach</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>69</geneinfo-id>
+  <id type='integer'>1357</id>
+  <mesh-tissue>Small intestine</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>69</geneinfo-id>
+  <id type='integer'>1358</id>
+  <mesh-tissue>Colon</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>69</geneinfo-id>
+  <id type='integer'>1359</id>
+  <mesh-tissue>Pancreas</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>69</geneinfo-id>
+  <id type='integer'>1360</id>
+  <mesh-tissue>Kidney</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>69</geneinfo-id>
+  <id type='integer'>1361</id>
+  <mesh-tissue>Uterus</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>69</geneinfo-id>
+  <id type='integer'>1362</id>
+  <mesh-tissue>Placenta</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>69</geneinfo-id>
+  <id type='integer'>1363</id>
+  <mesh-tissue>Ovary</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>69</geneinfo-id>
+  <id type='integer'>1364</id>
+  <mesh-tissue>Testis</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>69</geneinfo-id>
+  <id type='integer'>1365</id>
+  <mesh-tissue>Fetal thymus</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>69</geneinfo-id>
+  <id type='integer'>1366</id>
+  <mesh-tissue>Fetal spleen</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>69</geneinfo-id>
+  <id type='integer'>1367</id>
+  <mesh-tissue>Fetal skeletal muscle</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>69</geneinfo-id>
+  <id type='integer'>1368</id>
+  <mesh-tissue>Fetal lung</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>69</geneinfo-id>
+  <id type='integer'>1369</id>
+  <mesh-tissue>Fetal small intestine</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>69</geneinfo-id>
+  <id type='integer'>1370</id>
+  <mesh-tissue>Fetal liver</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>69</geneinfo-id>
+  <id type='integer'>1371</id>
+  <mesh-tissue>Fetal kidney</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>69</geneinfo-id>
+  <id type='integer'>1372</id>
+  <mesh-tissue>Fetus</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>70</geneinfo-id>
+  <id type='integer'>1373</id>
+  <mesh-tissue>Cerebral cortex</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>70</geneinfo-id>
+  <id type='integer'>1374</id>
+  <mesh-tissue>Cerebellum</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>70</geneinfo-id>
+  <id type='integer'>1375</id>
+  <mesh-tissue>Bone marrow</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>70</geneinfo-id>
+  <id type='integer'>1376</id>
+  <mesh-tissue>Spleen</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>70</geneinfo-id>
+  <id type='integer'>1377</id>
+  <mesh-tissue>Heart</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>70</geneinfo-id>
+  <id type='integer'>1378</id>
+  <mesh-tissue>Liver</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>70</geneinfo-id>
+  <id type='integer'>1379</id>
+  <mesh-tissue>Stomach</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>70</geneinfo-id>
+  <id type='integer'>1380</id>
+  <mesh-tissue>Small intestine</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>70</geneinfo-id>
+  <id type='integer'>1381</id>
+  <mesh-tissue>Colon</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>70</geneinfo-id>
+  <id type='integer'>1382</id>
+  <mesh-tissue>Kidney</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>70</geneinfo-id>
+  <id type='integer'>1383</id>
+  <mesh-tissue>Placenta</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>70</geneinfo-id>
+  <id type='integer'>1384</id>
+  <mesh-tissue>Testis</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>70</geneinfo-id>
+  <id type='integer'>1385</id>
+  <mesh-tissue>Fetal brain</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>70</geneinfo-id>
+  <id type='integer'>1386</id>
+  <mesh-tissue>Fetal spleen</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>70</geneinfo-id>
+  <id type='integer'>1387</id>
+  <mesh-tissue>Fetal lung</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>70</geneinfo-id>
+  <id type='integer'>1388</id>
+  <mesh-tissue>Fetal small intestine</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
+</enzymeinfo><enzymeinfo>
+  <cazyid nil='true'/>
+  <ecid nil='true'/>
+  <geneinfo-id type='integer'>70</geneinfo-id>
+  <id type='integer'>1389</id>
+  <mesh-tissue>Fetal kidney</mesh-tissue>
+  <ncbi-taxonomy>9606</ncbi-taxonomy>
+  <record-class>context</record-class>
+  <uprot-description nil='true'/>
+  <uprot-name nil='true'/>
+  <uprot-organism nil='true'/>
+  <uprotid nil='true'/>
 </enzymeinfo></free-enzymes></reactions>
