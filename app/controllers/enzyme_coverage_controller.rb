@@ -104,12 +104,39 @@ class EnzymeCoverageController < ApplicationController
           cross_inv.add_attributes({'class' => 'bad_link', 'x1' => x3, 'x2' => x4, 'y1' => y3, 'y2' => y4, 'stroke'=>'#ff0000','stroke-width'=>'5.0'})
           bad_links.add_element(cross)
           bad_links.add_element(cross_inv)
-        })        
+        })
       }
+      markup_linkages(gene_results)
     end
     
     render :action => 'pathway_coverage', :content_type => Mime::XHTML
     sugar.finish()
+  end
+
+  def markup_linkages(linkages)
+    sug = self.sugar
+    gene_overlay = Element.new('svg:g')
+    sugar.overlays << gene_overlay
+    linkages.each { |link|
+      genes = link.genes
+      link.callbacks.push( lambda { |link_element|
+        x1 = -1*(link.centre[:x] + 20)
+        y1 = -1*(link.centre[:y] + 20)
+        fobj = Element.new('svg:foreignobject')
+        fobj.add_attributes({ 'x' => x1, 'y' => y1, 'width' => 100, 'height' => 100 })
+        body = Element.new('body')
+        body.add_attributes({'xmlns' => 'http://www.w3.org/1999/xhtml'})
+        fobj.add_element(body)
+        ul = Element.new('ul')
+        genes.each { |gene|
+          li = Element.new('li')
+          li.text = gene.genename
+          ul.add_element(li)
+        }
+        body.add_element(ul)
+        gene_overlay.add_element(fobj)
+      })
+    }
   end
 
   def markup_chains(results,markup_sugar=true)
@@ -483,8 +510,15 @@ class EnzymeCoverageController < ApplicationController
       linkage_genes = Reaction.find_all_by_residuedelta(disac_seq).collect { |reac|
         reac.genes
       }.flatten.uniq
-      logger.info(linkage_genes.collect {|g| g.genename })
-      logger.info(@genes.collect {|g| g.genename })
+      links.each { |linkage|
+        def linkage.genes=(new_genes)
+          @linkage_genes = new_genes
+        end
+        def linkage.genes
+          @linkage_genes
+        end
+        linkage.genes=linkage_genes
+      }
       if (linkage_genes - @genes).size == linkage_genes.size
         bad_linkages += links
       end

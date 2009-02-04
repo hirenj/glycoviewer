@@ -162,6 +162,7 @@ connect(window, 'onload', onloader);
 </script>
 <form style="float: left;" action="<%= url_for :controller => 'enzyme_coverage', :action => 'pathways', :format => 'xhtml'%>" method="POST">
 <input type="hidden" name="seq" id="seq"/>
+<input type="text" name="mesh_tissue" id="mesh_tissue"/>
 <input type="submit" value="Validate"/>
 </form>
 <form style="float: left;" action="<%= url_for :controller => 'sviewer', :format => 'png'%>" method="POST" target="structwin">
