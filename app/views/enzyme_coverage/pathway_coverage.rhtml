@@ -54,7 +54,7 @@
 	
 	connect(window,'onload',onloader);
 </script>
-<h1>Enzyme coverage</h1>
+<h1>Pathway coverage <% if params[:tissue] != nil %> for <%= link_to params[:tissue], :controller => 'enzymeinfos', :action => "show_tissue", :mesh_tissue => params[:tissue] %><% end %></h1>
 <%= form_tag :controller => 'sugarbuilder', :action => "index" %>
 <input type="hidden" id="seq" name="seq" value="<%= params['seq'] %>"/>
 <% if params['ns'] != nil %>
