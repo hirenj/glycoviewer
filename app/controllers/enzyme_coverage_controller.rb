@@ -120,20 +120,28 @@ class EnzymeCoverageController < ApplicationController
     linkages.each { |link|
       genes = link.genes
       link.callbacks.push( lambda { |link_element|
-        x1 = -1*(link.centre[:x] + 20)
-        y1 = -1*(link.centre[:y] + 20)
-        fobj = Element.new('svg:foreignobject')
-        fobj.add_attributes({ 'x' => x1, 'y' => y1, 'width' => 100, 'height' => 100 })
-        body = Element.new('body')
-        body.add_attributes({'xmlns' => 'http://www.w3.org/1999/xhtml'})
+        x1 = -1*(link.centre[:x] + 100)
+        y1 = -1*(link.centre[:y] - 10)
+        
+        back_el = Element.new('svg:rect')
+        back_el.add_attributes({'x' => x1, 'y' => y1, 'rx' => 10, 'ry' => 10, 'width' => 220, 'height' => 75, 'stroke' => '#ff0000', 'stroke-width' => '5px', 'fill' => '#ffffff', 'fill-opacity' => 0.8, 'stroke-opacity' => 0.5 })
+        fobj = Element.new('svg:foreignObject')
+        fobj.add_attributes({ 'x' => x1, 'y' => y1, 'width' => 210, 'height' => 75 })
+        body = Element.new('xhtml:body')
+        body.add_attributes({'xmlns:xhtml' => 'http://www.w3.org/1999/xhtml'})
         fobj.add_element(body)
-        ul = Element.new('ul')
+        div = Element.new('xhtml:div')
+        div.add_attributes({'style' => 'font-size: 50px; padding: 10px; height: 75px;'})
+        ul = Element.new('xhtml:ul')
         genes.each { |gene|
-          li = Element.new('li')
+          li = Element.new('xhtml:li')
+          li.add_attributes({'style' => 'font-size: 25px; margin-top: 5px;'})
           li.text = gene.genename
           ul.add_element(li)
         }
-        body.add_element(ul)
+        div.add_element(ul)
+        body.add_element(div)
+        gene_overlay.add_element(back_el)
         gene_overlay.add_element(fobj)
       })
     }
