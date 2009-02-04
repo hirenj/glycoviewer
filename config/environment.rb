@@ -46,7 +46,7 @@ Rails::Initializer.run do |config|
 
   config.gem 'mislav-will_paginate', :version => '~> 2.2.3', :lib => 'will_paginate', 
     :source => 'http://gems.github.com'
-
+  config.gem 'rmagick', :lib => 'rmagick', :version => '2.2.2'
 end
 
 # Add new inflection rules using the following format 
