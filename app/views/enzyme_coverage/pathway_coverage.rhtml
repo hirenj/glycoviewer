@@ -1,0 +1,69 @@
+<%= javascript_include_tag 'MochiKit/packed/MochiKit/MochiKit.js' %>
+<%= javascript_include_tag 'lib/XHtmlDOM.js' %>
+<%= javascript_include_tag 'lib/sugarbuilder.js' %>
+<%= javascript_include_tag 'lib/sugarbuilder_pallette.js' %>
+<%= javascript_include_tag 'http://yui.yahooapis.com/2.3.1/build/yahoo-dom-event/yahoo-dom-event.js' %>
+<%= javascript_include_tag 'http://yui.yahooapis.com/2.3.1/build/dragdrop/dragdrop-min.js' %>
+<%= javascript_include_tag 'http://yui.yahooapis.com/2.3.1/build/container/container-min.js' %>
+<%= javascript_include_tag 'http://yui.yahooapis.com/2.3.1/build/slider/slider-min.js' %>
+<style type="text/css">
+	.enzyme {
+		stroke: #00ff00;
+		stroke-width: 5;
+
+	}
+	.evidenced {
+		stroke: #0000ff;
+		stroke-width: 5;
+
+	}
+	.supported {
+		stroke: #dddddd;
+		stroke-width: 5;
+	}
+	.noenzyme {
+		stroke: #ff0000;
+		stroke-width: 5;
+
+	}
+</style>
+<script type="text/javascript">
+	mysvg = null;
+	original_width = null;
+	original_height = null;
+	slider = null;
+	
+	function onloader() {
+
+		mysvg = document.getElementsByTagNameNS('http://www.w3.org/2000/svg','svg')[0];
+		original_width = mysvg.getAttribute('width');
+		original_height = mysvg.getAttribute('height');
+
+		slider = new SugarBuilder.Slider();
+		slider.canvas().style.zIndex = 2;
+		appendChildNodes($('result_structure'),slider.canvas());
+		connect(slider,'onchange',changescale);
+		
+	}
+	
+	function changescale(e) {
+		scale = e.target().value;
+		mysvg.setAttribute('width', original_width*scale);
+		mysvg.setAttribute('height', original_height*scale);
+	}
+	
+	connect(window,'onload',onloader);
+</script>
+<h1>Enzyme coverage</h1>
+<%= form_tag :controller => 'sugarbuilder', :action => "index" %>
+<input type="hidden" id="seq" name="seq" value="<%= params['seq'] %>"/>
+<% if params['ns'] != nil %>
+<input type="hidden" id="ns" name="ns" value="<%= params['ns'] %>"/>
+<% end %>
+<input type="submit" value="Edit"/>
+</form>
+<div style="width: 95%; height: 450px; overflow: auto; position: relative;" id="result_structure">
+<div style="position: relative; overflow: auto; height: 98%; width: 100%;">
+<%= render :partial => "sviewer/render", :locals => { :sugar => @sugar, :scale => 0.5, :padding => 50 } %>
+</div>
+</div>

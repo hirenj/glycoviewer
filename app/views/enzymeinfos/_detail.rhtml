@@ -1,0 +1,8 @@
+<% if enzymeinfo.is_enzyme? %>
+<h3><%= enzymeinfo.uprotid %> - <%= enzymeinfo.organism %></h3>
+<h4>Name</h4>
+<p><%= enzymeinfo.description.first(150) %></p>
+<% end %>
+<% if enzymeinfo.is_context? %>
+<h3>Found in NCBI taxonomy <%= enzymeinfo.ncbi_taxonomy %> with tissue <%= enzymeinfo.mesh_tissue %></h3>
+<% end %>

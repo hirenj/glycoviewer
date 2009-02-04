@@ -1,0 +1,4 @@
+<%= @reactions.size %>
+<% for reaction in @reactions %>
+<%= render :partial => "path_element", :locals => { :reaction => reaction } %>
+<% end %>

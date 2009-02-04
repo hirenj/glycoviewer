@@ -1,0 +1,9 @@
+<%= form_tag ({:action => "index"}, :method => 'GET') %>
+	<textarea name="seq" cols="80" rows="50"></textarea>
+	<select name="ns">
+		<option value="ecdb">Internal</option>
+		<option value="glycoct">GlycoCT</option>
+	</select>
+	<input type="submit" value="Go"/>
+	<input type="text" name="format"/>
+</form>

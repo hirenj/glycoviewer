@@ -1,0 +1,23 @@
+<% 
+	reactions_for_gene = {}
+	for geneinfo in @geneinfos
+		reactions = geneinfo.enzymeinfo.delete_if { |ei| ! ei.is_gene? }.collect { |ei| ei.enzyme_reactions.collect { |er| er.reaction } }.flatten.uniq
+		seen = Hash.new { |h,k| h[k] = true; false }
+		reactions = reactions.reject { |v| seen[v.residuedelta] }
+		if reactions.size > 0
+			reactions_for_gene[geneinfo] = reactions
+		end
+	end
+	@geneinfos = @geneinfos.delete_if { |g| reactions_for_gene[g] == nil }.sort_by { |gi| reactions_for_gene[gi][0].donor.name }
+%>
+\begin{tabular}{<% 1..2.times do %>c<% end %>}
+\caption{Curated gene reactions}
+\hline
+<% for geneinfo in @geneinfos %>
+	\multirow{<%= reactions_for_gene[geneinfo].size %>}{*}{<%= geneinfo.genename %>} <% 
+	 	 for i in 0..(reactions_for_gene[geneinfo].size-1) do
+				%>& \includegraphics[scale=1]{reaction<%= reactions_for_gene[geneinfo][i].id %>} \\
+		 <% end %>
+	\hline
+<% end %>
+\end{tabular}

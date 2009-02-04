@@ -1,0 +1,5 @@
+<ul>
+<% for tissue_name in @tissues %>
+<li> <%= link_to tissue_name, :action => "show_tissue", :mesh_tissue => tissue_name %></li>
+<% end %>
+</ul>

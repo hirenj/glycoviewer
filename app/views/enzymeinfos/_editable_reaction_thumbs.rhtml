@@ -1,0 +1,21 @@
+<!-- Parameter: width (max-width to render at) -->
+<!-- Parameter: height (max-height to render at) -->
+<div id="reaction_list_enzyme-<%= enzymeinfo.id %>" class=" reaction_list_enzyme enzymeinfo.id-<%= enzymeinfo.id %> ">
+	<% for enz_reaction in enzymeinfo.enzyme_reactions %>
+		<div id="enzyme-reaction-<%= enz_reaction.id %>" class=" enzyme_reaction_thumb enzyme_reaction_thumb_editable ">
+		<div class=" del-enz-reac del-id-<%= enz_reaction.id %> ">X</div>
+		<div class=" reaction_thumb "><%= render :partial => 'reactions/disp', :locals => { :reaction => enz_reaction.reaction, :compact => true, :mime_types => [Mime::PNG], :width => width, :height => height } %></div>
+		<div class=" add_ref ">
+			<label for="refs.enzyme-reaction-id-<%= enz_reaction.id %>" ><span>Add PMID:</span></label>
+			<input type="text" class=" refs.pmid refs.enzyme-reaction-id-<%= enz_reaction.id %> " id="refs.enzyme-reaction-id-<%= enz_reaction.id %>"/>
+		</div>
+			<div class="refs">
+				<ul>
+					<% for ref in enz_reaction.refs %>
+					<li><%= ref.pmid %></li>
+					<% end %>
+				</ul>
+			</div>
+		</div>
+	<% end %>
+</div>

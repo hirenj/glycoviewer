@@ -1,0 +1,124 @@
+class EnzymeinfosController < ApplicationController
+  layout 'standard'
+  
+  def index
+    list
+    render :action => 'list'
+  end
+
+  # GETs should be safe (see http://www.w3.org/2001/tag/doc/whenToUseGet.html)
+  verify :method => :post, :only => [ :destroy, :create, :update ],
+         :redirect_to => { :action => :list }
+
+  def list
+    @enzymeinfo_pages, @enzymeinfos = paginate :enzymeinfos, :per_page => 10
+  end
+
+  def reaction_thumbs
+    @enzymeinfo = Enzymeinfo.find(params[:id])
+    render :layout => false
+  end
+
+  def show
+    @enzymeinfo = Enzymeinfo.find(params[:id])
+    respond_to do |wants|
+      wants.html
+      wants.xml { render :xml => @enzymeinfo.to_xml }
+    end
+  end
+
+  def list_tissues
+    @tissues = Enzymeinfo.find(:all, :conditions => ["mesh_tissue is not null AND record_class = 'context'"]).collect { |e| e.mesh_tissue}.uniq.sort
+    render
+  end
+
+  def show_tissue
+    @enzymeinfos = Enzymeinfo.find(:all, :conditions => ['mesh_tissue = :mesh_tissue', { :mesh_tissue => params[:mesh_tissue]}])
+    @expressed_tissues = get_expressed_tissues
+    render
+  end
+
+  def get_expressed_tissues
+    worker_key = 'expression_worker'
+    job_key = params[:mesh_tissue]
+    session[:running_jobs] ||= []
+    my_worker = MiddleMan.worker(:expressedstructures_worker, worker_key)
+    if my_worker && my_worker.worker_info
+      if my_worker.worker_info[:status] != :running
+        MiddleMan.new_worker(:worker => :expressedstructures_worker, :worker_key => worker_key)
+      else
+        results = my_worker.ask_result(job_key)
+        logger.info("Current results for job are #{results == nil ? 'nil' : results} for key #{job_key}")
+        if results != nil
+          session[:running_jobs] -= [job_key]
+          return results
+        end
+      end
+    else
+      MiddleMan.new_worker(:worker => :expressedstructures_worker, :worker_key => worker_key)
+    end
+    
+    if session[:running_jobs].include?(job_key)
+      logger.info("Job is currently running for key #{job_key}")
+      return true
+    end
+    
+    genes = @enzymeinfos.collect { |e| e.geneinfo }.uniq
+    sum = 0
+    genes.each  { |g| sum += 2**(g.id - 1) }
+
+    hex_rep = sprintf('%048x',sum)
+    hex_strings = []
+    while hex_rep.size > 0
+      hex_strings << "#{hex_rep.slice!(0,16)}"
+    end
+    logger.info("Dispatching job with job key #{job_key}")
+    
+    session[:running_jobs] << job_key
+    
+    MiddleMan.worker(:expressedstructures_worker,worker_key).async_n_linked_expression(:arg => hex_strings,:job_key => job_key)
+
+    return false
+  end
+
+  def new
+    @enzymeinfo = Enzymeinfo.new
+  end
+
+  def create
+    logger.info(params)
+    logger.info("I got params of #{params}")
+    @enzymeinfo = Enzymeinfo.new(params[:enzymeinfo])
+    if @enzymeinfo.save
+      flash[:notice] = 'Enzymeinfo was successfully created.'
+      respond_to do |wants|
+        wants.html { redirect_to :action => 'list' }
+        wants.xml  { render :xml => @enzymeinfo.to_xml }
+      end
+    else
+      respond_to do |wants|
+        wants.html { redirect_to :action => 'new' }
+        wants.xml  { render :xml => @enzymeinfo.to_xml }
+      end
+    end
+  end
+
+  def edit
+    @enzymeinfo = Enzymeinfo.find(params[:id])
+  end
+
+  def update
+    @enzymeinfo = Enzymeinfo.find(params[:id])
+    if @enzymeinfo.update_attributes(params[:enzymeinfo])
+      flash[:notice] = 'Enzymeinfo was successfully updated.'
+      redirect_to :action => 'show', :id => @enzymeinfo
+    else
+      render :action => 'edit'
+    end
+  end
+
+  def destroy
+    Enzymeinfo.find(params[:id]).destroy
+    redirect_to :action => 'list'
+  end
+end

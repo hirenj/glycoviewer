@@ -1,0 +1,80 @@
+	<style type="text/css">
+		.highlighted {
+			stroke:  #ff0000 !important;
+			stroke-width:  10 !important;
+		}
+		.highlighted * {
+			stroke:  #ff0000 !important;
+			stroke-width: 10 !important;
+			fill:  #eeeeee !important;
+		}
+		div.enzymeThumb {
+			width:  100px;
+			height:  50px;
+			float:  left;
+			border-bottom: solid transparent 2px;
+		}
+		div.enzymeThumb:hover * {
+			fill: #0000ff !important;
+			stroke: #0000ff !important;		
+			opacity:  0.9 !important;	
+		}
+		div.sugarThumb {
+			width:  80px;
+			height:  30px;
+			float:  left;
+		}
+
+		.clearfix:after {
+		    content: "."; 
+		    display: block; 
+		    height: 0px; 
+		    clear: both; 
+		    visibility: hidden;
+		}
+
+	</style>
+	<script type="text/javascript" src="/javascripts/MochiKit/packed/MochiKit/MochiKit.js"></script>
+	<script type="text/javascript" src="/javascripts/lib/XHtmlDOM.js"></script>
+	<script language="JavaScript">
+<![CDATA[
+		curr_highlights = null;
+		function show_enzyme(an_id) {
+			for ( i in curr_highlights ) {
+				XHtmlDOM.removeClass(curr_highlights[i],'highlighted');
+			}
+			
+			curr_highlights = XHtmlDOM.getElementsByClassName("enzyme-"+an_id);
+			
+			for ( i in curr_highlights ) {
+				XHtmlDOM.addClass(curr_highlights[i],'highlighted');
+			}
+		}
+		
+		
+//		]]>
+	</script>
+<h1>Theoretical structures</h1>
+<h2>Enzymes:</h2>
+<div class=" clearfix ">
+<% for enz in @enzymes %>
+	<div class="enzymeThumb" onmouseover="show_enzyme(<%= enz.id %>)" onmouseout="show_enzyme('idontexist')"><%= write_enzyme(enz) %></div>
+<% end %>
+</div>
+<h2>Generated structures:</h2>
+<p>
+	<% count = 0 %>
+<div class=" clearfix ">
+<% for sug in @result %>
+<div class="sugarThumb">
+	<% 
+		count = count + 1
+		sug.name = "sug#{count}"
+		@sugar = sug
+	%>
+	<%= render :partial => "sviewer/render", :locals => { :sugar => @sugar } %>
+</div>
+
+<% end %>
+</div>
+</p>

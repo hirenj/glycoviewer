@@ -1,0 +1,18 @@
+xml.instruct! :xml, :version=>"1.0" 
+xml.reaction(:id => @reaction.id) do
+    xml.substrate(@reaction.substrate)
+    xml.endstructure(@reaction.endstructure)
+    xml.residuedelta(@reaction.residuedelta)
+    xml.pathway(@reaction.pathway)
+    xml.kegg_id(@reaction.kegg_id)
+    xml.enzymes do
+      @reaction.enzyme_reactions.each { |enzreac|
+        xml.enzyme do
+          xml.uniprot(enzreac.enzymeinfo.uprotid)
+          xml.cazy(enzreac.enzymeinfo.cazyid)
+          xml.ec(enzreac.enzymeinfo.ecid)
+          xml.genename(enzreac.enzymeinfo.geneinfo.genename)
+        end
+      }
+   end
+end

@@ -1,0 +1,20 @@
+<style type="text/css">
+	.matrix_all_link {
+		background: #ddddff;
+	}
+	.matrix_all_link a {
+		text-decoration: none !important;
+		color: #000000;
+	}
+</style>
+<h1>Taxonomy <%= params[:taxonomy_id] || session[:taxonomy_id] || '9606' %> disaccharides <%= params[:tissue] || session[:tissue] ? "from #{params[:tissue] || session[:tissue]}" : ''%></h1>
+<% if params[:threshold] != nil && params[:threshold].to_i > 0 %>
+<h2>Minimum of <%= params[:threshold] %> structures exhibiting disaccharide</h2>
+<% end %>
+<p>Use the threshold parameter to set the minimum number of structures that should exhibit the disaccharide</p>
+<%= render :partial => 'matrix_body', :locals => { :donor_hash => @donor_hash, :donor_string_hash => @donor_string_hash } %>
+<pre>
+<%= @all_genes.size %>
+<% @all_genes.each do |reac| %>
+<%= reac %><% end %>
+</pre>

@@ -1,0 +1,38 @@
+<%
+residues_to_remove = (@params[:remove_residue] || '').split(',')
+donor_keys = @donor_string_hash.keys.delete_if { |key| residues_to_remove.include? @donor_string_hash[key].name(:ic) }.sort
+%>
+\begin{tabular}{<% 1..@donor_string_hash.keys.length.times do %>cl<% end %>}
+\hline
+& <%= donor_keys.collect {|donor| "#{@donor_string_hash[donor].name(:ic)} & " }.join(' & ') %> \\
+\hline
+<% for donor in donor_keys %>
+	<%
+		max_col = donor_keys.collect { |key| @donor_hash[donor][key].uniq.size }.max		
+	%>
+	\multirow{<%= max_col %>}{*}{<%= @donor_string_hash[donor].name(:ic) %>} <% 
+	 for i in 0..(max_col-1) do
+		for substrate in donor_keys
+				linkage = @donor_hash[donor][substrate].uniq[i]
+				if linkage != nil
+					linkage.gsub!(/a/,'$\alpha$')
+					linkage.gsub!(/b/,'$\beta$')
+					linkage.gsub!(/-/,'$\rightarrow$')
+				end
+				cites = ''
+				if linkage == nil || linkage.original_reaction.is_a?(Reaction)
+						reaction_style = ''
+					else
+						if  linkage.original_reaction.is_evidenced?
+							reaction_style = linkage.original_reaction.has_enzyme? ? '\color{green}' : '\color{blue}'
+							cites = linkage.original_reaction.cites.collect { |cite| cite.gsub!(/cite/,'ENZ'); " \\cite{#{cite}} "}
+						else
+							reaction_style = linkage.original_reaction.has_been_checked? ? '\color{grey}' : '\color{red}'
+						end
+					end
+				%>& {<%= reaction_style %><%= linkage %>} & <%= cites %><%
+		 end %> \\
+		<% end %>
+	\hline
+<% end %>
+\end{tabular}

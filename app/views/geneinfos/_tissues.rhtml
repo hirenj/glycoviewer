@@ -1,0 +1,8 @@
+<div class=" tissue_expression ">
+<% for enzymeinfo in geneinfo.enzymeinfo.select { |enz| enz.is_context? }.reverse %>
+	<div class=" enzyme clearfix " id="enzyme-<%= enzymeinfo.id %>">
+		<%= render :partial => 'enzymeinfos/detail', :locals => { :enzymeinfo => enzymeinfo } %>
+		<%= render :partial => 'enzymeinfos/editable_reaction_thumbs', :locals => { :enzymeinfo => enzymeinfo, :width => 100, :height => 50 } %>
+	</div>
+<% end %>
+</div>

@@ -1,0 +1,116 @@
+<style type="text/css">
+.sugarbuilder_anomers {
+	position: absolute;
+}
+.sugarbuilder_anomer_a {
+	position: absolute;
+	width: 50px;
+	height: 75px;
+	left: 0px;
+	background: #aaaaaa;
+}
+.sugarbuilder_anomer_b {
+	position: absolute;
+	width: 50px;
+	height: 75px;
+	left: 50px;
+	background: #999999;
+}
+.sugarbuilder_anomer_u {
+	position: absolute;
+	width: 100px;
+	height: 25px;
+	left: 0px;
+	top: 75px;
+	background: #dddddd;
+}
+.sugarbuilder_linkages div {
+	width: 100px;
+	height: 10px;
+	background: #dddddd;
+	border: solid #000000 1px;
+	font-size: 8px;
+	padding: 0px;
+}
+.sugarbuilder_slider_container {
+	z-index: 2;
+}
+</style>
+
+<h1>Draw structure</h1>
+
+<%= javascript_include_tag 'MochiKit/packed/MochiKit/MochiKit.js' %>
+<%= javascript_include_tag 'MochiKit/MochiKit/DragAndDrop.js' %>
+<%= javascript_include_tag 'lib/XHtmlDOM.js' %>
+<%= javascript_include_tag 'lib/sugarbuilder.js' %>
+<%= javascript_include_tag 'lib/sugarbuilder_pallette.js' %>
+<%= javascript_include_tag 'http://yui.yahooapis.com/2.3.1/build/yahoo-dom-event/yahoo-dom-event.js' %>
+<%= javascript_include_tag 'http://yui.yahooapis.com/2.3.1/build/container/container_core-min.js' %>
+<%= javascript_include_tag 'http://yui.yahooapis.com/2.3.1/build/dragdrop/dragdrop-min.js' %>
+<%= javascript_include_tag 'http://yui.yahooapis.com/2.3.1/build/slider/slider-min.js' %>
+
+<script type="text/javascript">
+
+var build_overlay;
+var sb;
+
+function builder_panel() {
+	build = DIV({'id' : 'builder_panel'});
+	build_overlay = new YAHOO.widget.Overlay(build);
+	build_overlay.cfg.setProperty("visible",false);
+	build_overlay.cfg.setProperty("width", '90%');
+	build_overlay.cfg.setProperty("height",'75%');
+	appendChildNodes(document.body,build);
+	return build;
+}
+function setup_builder() {
+	pal = new SugarBuilder.Pallette("<%= url_for :controller => 'sugarbuilder', :action => 'pallette', :format => 'xhtml' %>");
+	appendChildNodes($('builder_panel'),pal.canvas());
+	
+	sb = new SugarBuilder("<%= url_for :controller => 'sugarbuilder', :action => 'build_sugar', :format => 'xhtml' %>",$('seq').value);
+	appendChildNodes($('builder_panel'),sb.canvas());
+	sb.canvas().style.overflow = 'auto';
+	connect($('toggle_edit'),'onclick',toggle_edit);
+	connect(sb,'sequencechange',update_sequence);
+	slider = new SugarBuilder.Slider();
+	appendChildNodes($('builder_panel'),slider.canvas());
+
+	connect(slider,'onchange',sb,update_scale);
+}
+
+function update_scale(e) {
+	this.set_scale(e.target().value);
+}
+
+function update_sequence() {
+	$('seq').value = sb.get_sequence();
+	$('ns').value = 'ecdb';
+}
+
+function toggle_edit() {
+	if (build_overlay.cfg.getProperty('visible')) {
+		build_overlay.cfg.setProperty('visible',false);
+	} else {
+		build_overlay.cfg.setProperty('visible',true);
+		build_overlay.center();
+	}
+	
+}
+
+function onloader() {
+	builder_panel();
+	setup_builder();
+}
+
+connect(window, 'onload', onloader);
+
+
+</script>
+
+<%= form_tag :action => "pathways", :format => 'xhtml' %>
+<input type="text" name="sequence" id="sequence"/>
+<!--<input type="hidden" id="ns" name="ns" value="ic"/>-->
+<input type="hidden" id="seq" name="seq" value="<%= @seq %>"/>
+<input type="button" id="toggle_edit" value="Edit"/>
+<input type="submit" value="Calculate coverage"/>
+</form>

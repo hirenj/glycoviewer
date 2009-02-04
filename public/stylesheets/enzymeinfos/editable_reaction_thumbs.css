@@ -1,0 +1,58 @@
+
+div.enzyme_reaction_thumb_editable .del-enz-reac {
+	display:  none;
+	position:  	relative;
+	top: 				0px;
+	left: 			0px;
+	z-index: 		100;
+	background:  #0000ff;
+	color: 			#ffffff;
+	width:  		1em;
+	height:			1.5em;
+	margin-bottom:  -1.5em;
+	padding-left: 0.2em;
+	cursor:  hand;
+	cursor:  pointer;
+}
+
+div.enzyme_reaction_thumb_editable:hover .del-enz-reac {
+	display:  block;
+}
+
+div.enzyme_reaction_thumb_editable {
+	height:  100px;
+}
+
+div.enzyme_reaction_thumb_editable .reaction_thumb {
+	width:  100px;
+	height:  50px;
+}
+div.enzyme_reaction_thumb_editable .add_ref {
+	position:  relative;
+	top: -50px;
+	height:  50px;
+	left: 250px;
+	width:  200px;
+	z-index:  101;
+}
+div.enzyme_reaction_thumb_editable .add_ref  input {
+	width:  50px;
+}
+
+div.enzyme_reaction_thumb_editable .refs {
+	position:  relative;
+	left:  150px;
+	top:  -100px;
+	width:  100px;
+	height:  100px;
+	overflow:  auto;
+}
+div.enzyme_reaction_thumb_editable ul {
+	padding:  0px;
+	margin:  0px;
+}
+
+div.enzyme_reaction_thumb_editable ul li {
+	padding:  0px;
+	margin:  0px;
+}

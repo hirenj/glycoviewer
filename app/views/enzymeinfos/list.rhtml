@@ -1,0 +1,29 @@
+<h1>Listing enzymeinfos</h1>
+
+<table>
+  <tr>
+	<th>Gene name</th>
+  <% for column in Enzymeinfo.content_columns %>
+    <th><%= column.human_name %></th>
+  <% end %>
+  </tr>
+  
+<% for enzymeinfo in @enzymeinfos %>
+  <tr>
+	<td>"<%= enzymeinfo.geneinfo.genename %>"</td>
+  <% for column in Enzymeinfo.content_columns %>
+    <td><%=h enzymeinfo.send(column.name) %></td>
+  <% end %>
+    <td><%= link_to 'Show', :action => 'show', :id => enzymeinfo %></td>
+    <td><%= link_to 'Edit', :action => 'edit', :id => enzymeinfo %></td>
+    <td><%= link_to 'Destroy', { :action => 'destroy', :id => enzymeinfo }, :confirm => 'Are you sure?', :post => true %></td>
+  </tr>
+<% end %>
+</table>
+
+<%= link_to 'Previous page', { :page => @enzymeinfo_pages.current.previous } if @enzymeinfo_pages.current.previous %>
+<%= link_to 'Next page', { :page => @enzymeinfo_pages.current.next } if @enzymeinfo_pages.current.next %> 
+
+<br />
+
+<%= link_to 'New enzymeinfo', :action => 'new' %>

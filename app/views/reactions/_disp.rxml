@@ -1,0 +1,31 @@
+#<!-- Parameter: reaction (reaction to render) -->
+#<!-- Parameter: compact (flag to use compact rendering) -->
+#<!-- Parameter: width (max-width to render at) -->
+#<!-- Parameter: height (max-height to render at) -->
+#<!-- Parameter: mimetypes (ordering of mimetypes) -->
+
+if (mime_types == nil)
+  mime_types = [Mime::SVG, Mime::PNG]
+end
+
+if (width == nil)
+  width = 300
+end
+if (height == nil)
+  height = 200
+end
+
+object_block = lambda {
+  if mime_types.length > 0
+    mime_type = mime_types.shift
+#    if (mime_type == Mime::PNG)
+#      xml.img( 'src' => (url_for :controller => 'reactions', :format => mime_type.to_sym.to_s , :action => 'show', :id => reaction.id, :params => {:compact => compact, :width => width, :height => height }))
+#    else
+      xml.object( 'data'=> (url_for :controller => 'reactions', :format => mime_type.to_sym.to_s , :action => 'show', :id => reaction.id, :params => {:compact => compact, :width => width, :height => height }), 'type' => mime_type.to_s ) {
+        object_block.call()
+      }
+#    end
+  end
+}
+
+object_block.call()

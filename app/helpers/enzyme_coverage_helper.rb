@@ -1,0 +1,2 @@
+module EnzymeCoverageHelper
+end

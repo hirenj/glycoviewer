@@ -1,0 +1,22 @@
+<%= render :partial => "layouts/doctype" %>
+<head>
+  <title>Geneinfos: <%= controller.action_name %></title>
+  <%= stylesheet_link_tag 'scaffold' %>
+  <style type="text/css">
+	.clearfix:after {
+	    content: "."; 
+	    display: block; 
+	    height: 0px; 
+	    clear: both; 
+	    visibility: hidden;
+	}
+  </style>
+</head>
+<body>
+
+<p style="color: green"><%= flash[:notice] %></p>
+
+<%= @content_for_layout %>
+
+</body>
+</html>

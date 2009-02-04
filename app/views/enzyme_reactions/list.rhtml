@@ -1,0 +1,35 @@
+<h1>Listing enzyme_reactions</h1>
+
+<table>
+  <tr>
+  <% for column in EnzymeReaction.content_columns %>
+    <th><%= column.human_name %></th>
+  <% end %>
+  	<td>UPROTID</td>
+  	<td>Gene Name</td>
+  </tr>
+  
+<% for enzyme_reaction in @enzyme_reactions %>
+  <tr>
+  <% for column in EnzymeReaction.content_columns %>
+    <td><%=h enzyme_reaction.send(column.name) %></td>
+  <% end %>
+  	<td><%= enzyme_reaction.enzymeinfo.uprotid %></td>
+  	<td><%= enzyme_reaction.enzymeinfo.geneinfo.genename %></td>
+  	<td><% if enzyme_reaction.reaction != nil %>
+	<object data="/reactions.svg/show/<%= enzyme_reaction.reaction.id %>" type="image/svg+xml" width="200" height="50"><%= print_sugar(enzyme_reaction.reaction.residuedelta) %></object>
+	<% end %></td>
+	<td></td><td></td>
+    <td><%= link_to 'Show', :action => 'show', :id => enzyme_reaction %></td>
+    <td><%= link_to 'Edit', :action => 'edit', :id => enzyme_reaction %></td>
+    <td><%= link_to 'Destroy', { :action => 'destroy', :id => enzyme_reaction }, :confirm => 'Are you sure?', :post => true %></td>
+  </tr>
+<% end %>
+</table>
+
+<%= link_to 'Previous page', { :page => @enzyme_reaction_pages.current.previous } if @enzyme_reaction_pages.current.previous %>
+<%= link_to 'Next page', { :page => @enzyme_reaction_pages.current.next } if @enzyme_reaction_pages.current.next %> 
+
+<br />
+
+<%= link_to 'New enzyme_reaction', :action => 'new' %>

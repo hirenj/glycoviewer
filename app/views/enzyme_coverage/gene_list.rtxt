@@ -1,0 +1,1 @@
+<%= @genes.collect { |gene_array| gene_array.collect { |g| g.genename } }.flatten.uniq.join(',') %>

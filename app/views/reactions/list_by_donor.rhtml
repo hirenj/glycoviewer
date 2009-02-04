@@ -1,0 +1,39 @@
+<% 
+	donor_string =  params[:donor] ? print_residue(params[:donor]) : "Any"
+	acceptor_string = params[:acceptor] ? print_residue(params[:acceptor]) : "Any"
+	linkage_string = params[:linkage] ? params[:linkage] : 'any'
+%>
+<h1>Reaction detail page for <%= donor_string %>(<%= linkage_string %>)<%= acceptor_string %></h1>
+<% if @reactions.length > 0 %>
+<%
+	geneinfos = 
+		@reactions.collect {|reac|
+			reac.enzyme_reactions.collect {|enz_reac| 
+				enz_reac.enzymeinfo.geneinfo
+			}
+		}.flatten!.uniq
+%>
+<ul>
+<% for reac in @reactions %>
+	<li><%= link_to "Reaction #{reac.id}", :action => "show", :id => reac, :format => 'html' %> <%= reac.pathway != nil && reac.pathway.size > 0 ? '(In pathway)' : '' %></li>
+<% end %>
+</ul>
+<h2>Encoded in</h2>
+<ul>
+<% for geneinfo in geneinfos %>
+	<li><%= geneinfo.genename %> (<%= geneinfo.geneid %>) <%= link_to "More..", :controller => "geneinfos", :action => "associate", :id => geneinfo %></li>
+<% end %>
+</ul>
+<h2>Participating in</h2>
+<ul>
+	<% for pathway in @pathways %>
+		<li><%= link_to pathway, :action => "pathway", :id => pathway %></li>
+	<% end %>
+</ul>
+<h2>Found in structures</h2>
+<ul>
+	<% for disaccharide in @disaccharides.sort_by { |d| d.structure_id_glycomedb } %>
+		<li><%= disaccharide.structure_id_glycomedb %> (<a href="http://www.glycosciences.de/sweetdb/start.php?action=explore_linucsid&amp;linucsid=<%= disaccharide.glycosciences %>"><%= disaccharide.glycosciences %></a>)</li>
+	<% end %>
+</ul>
+<% end %>

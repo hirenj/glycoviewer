@@ -1,0 +1,43 @@
+<% 
+	genes_for_reaction = Hash.new() { |h,k| h[k] = Array.new() }
+	delta_object_map = {}
+	for geneinfo in @geneinfos
+		reactions = geneinfo.enzymeinfo.delete_if { |ei| ! ei.is_gene? }.collect { |ei| ei.enzyme_reactions.collect { |er| er.reaction } }.flatten.uniq
+		seen = Hash.new { |h,k| h[k] = true; false }
+		reactions = reactions.reject { |v| seen[v.residuedelta] }
+		reactions.each { |r|
+			genes_for_reaction[r.residuedelta] << geneinfo
+			delta_object_map[r.residuedelta] = r
+		}
+	end
+%>
+\begin{longtable}{<% 1..2.times do %>l<% end %>}
+	\caption[Taxonomy <%= params[:taxonomy_id] || session[:taxonomy_id] || '9606' %> glycosyltransferases]{Taxonomy <%= params[:taxonomy_id] || session[:taxonomy_id] || '9606' %> glycosyltransferases} \label{tab:enzymes} \\
+
+	\multicolumn{1}{l}{Reaction} & \multicolumn{1}{c}{Genes} \\
+	\endfirsthead
+
+	\multicolumn{3}{c}%
+	{\tablename\ \thetable{} -- continued from previous page} \\
+	\multicolumn{1}{l}{Reaction} & \multicolumn{1}{l}{Genes} \\
+	\endhead
+
+	\multicolumn{2}{r}{Continued on next page} \\
+	\endfoot
+
+	\endlastfoot
+<% for residuedelta in genes_for_reaction.keys.sort_by { |r| delta_object_map[r].donor.name(:id)} %><% 
+		donor = delta_object_map[residuedelta].donor
+		substrate = delta_object_map[residuedelta].substrate_residue
+		donor_name = donor.name(:ic)
+		substrate_name = substrate.name(:ic)
+		donor_linkage = delta_object_map[residuedelta].linkage
+		donor_linkage.gsub!(/^a/,'$\alpha$')
+		donor_linkage.gsub!(/^b/,'$\beta$')
+		donor_linkage.gsub!(/-/,'$\rightarrow$')
+		# \includegraphics[scale=0.5]{figures/reactions/reaction		
+		#delta_object_map[residuedelta].id }		
+%>
+	<%= donor_name %>(<%= donor_linkage %>) $\Rightarrow$ <%= substrate_name %> & <%= genes_for_reaction[residuedelta].uniq.collect { |g| g.genename } .join(', ') %> \\
+<% end %>
+\end{longtable}

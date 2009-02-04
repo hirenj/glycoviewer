@@ -1,0 +1,57 @@
+<%= javascript_include_tag 'MochiKit/packed/MochiKit/MochiKit.js' %>
+<!--<%= javascript_include_tag 'MochiKit/MochiKit/New.js' %>-->
+<%= javascript_include_tag 'MochiKit/MochiKit/DragAndDrop.js' %>
+<script src="<%= url_for :controller => 'config', :action => 'constants' %>" type="text/javascript"></script>
+<%= javascript_include_tag 'lib/geneinfos_associate.js' %>
+<%= javascript_include_tag 'lib/enzyme_db_api.js' %>
+<%= stylesheet_link_tag 'enzymeinfos/editable_reaction_thumbs.css' %>
+<style type="text/css">
+	.moving-reaction {
+		border: solid red 10px;
+		float:  left;
+		position:  fixed;
+	}
+</style>
+<input type="hidden" name="gene_id" id="gene_id" value="<%= @geneinfo.id %>"/>
+<h2><%= @geneinfo.genename %></h2>
+<div style="width: 30%; height: 90%; overflow: auto; float: left;" id="enzymelist">
+<% for enzymeinfo in @geneinfo.enzymeinfo.select { |enz| enz.is_gene? } %>
+	<h3>General reactions</h3>
+	<p><%= link_to "Add reaction to this gene", {:controller => 'enzyme_reactions', :action => 'new_with_reaction', 'enzymeinfo[id]' => enzymeinfo.id } %></p>
+		<% for enz_reaction in enzymeinfo.enzyme_reactions %>
+
+			<div class=" reaction " id="reaction-<%= enz_reaction.reaction.id %>"><%= render :partial => "reactions/disp", :locals => { :reaction => enz_reaction.reaction, :compact => true, :mime_types => [Mime::PNG], :width => 300, :height => 200 } %></div><a href="<%= url_for :controller => 'reactions', :action => 'show', :id => enz_reaction.reaction, :compact => true, :format => 'png' %>">Bigger</a>
+
+		<% end %>
+<% end %>
+</div>
+
+<!--
+<div style="width: 30%; float: left;" >
+<h3>Known proteins from Swiss-prot associated with this Gene</h3>
+<ul>
+<% for uprotid in []  %>
+	<li><%= uprotid %></li>
+<% end %>
+</ul>
+</div>
+-->
+
+<div id="proteins" style="width: 60%; height: 90%; overflow: auto;" >
+<h3>Substrate specificities for a specific enzyme</h3>
+<div class=" add-context ">
+<p>Add a tissue-specific location</p> 
+<label>Mesh Tissue</label><input type="text" name="mesh_tissue" class=" input_mesh_tissue " tabindex="1"/>
+<label>NCBI Taxonomy</label><input type="text" name="ncbi_taxonomy" class=" input_ncbi_taxonomy " value="9606" tabindex="-1"/>
+<input type="button" class=" input_button_add_context " value="Update" tabindex="3"/>
+</div>
+<% for enzymeinfo in @geneinfo.enzymeinfo.select { |enz| false || enz.is_enzyme? } %>
+	<div class=" enzyme clearfix " id="enzyme-<%= enzymeinfo.id %>">
+		<%= render :partial => 'enzymeinfos/detail', :locals => { :enzymeinfo => enzymeinfo } %>
+		<%= render :partial => 'enzymeinfos/editable_reaction_thumbs', :locals => { :enzymeinfo => enzymeinfo, :width => 100, :height => 50 } %>
+	</div>
+<% end %>
+<div id="expression_gene-<%= @geneinfo.id %>">
+<%= render :partial => 'tissues', :locals => { :geneinfo => @geneinfo } %>
+</div>
+</div>

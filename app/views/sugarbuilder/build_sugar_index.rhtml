@@ -1,0 +1,8 @@
+<h1>Start residue</h1>
+<div id="pallette">
+<% @prototypes.each do |proto| %>
+	<a href="<%= url_for :action => 'index', :seq => proto.sequence %>">
+	<img class="pallette_element" src="<%= url_for :controller => 'sviewer', :format => 'png', :seq => proto.root.name(:ic), :ns => 'ic', :width => 50, :height => 50 %>" alt="<%= proto.root.name %>" type="image/png"/>
+	</a>
+<% end %>
+</div>

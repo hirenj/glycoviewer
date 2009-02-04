@@ -1,0 +1,8 @@
+<% for column in EnzymeReaction.content_columns %>
+<p>
+  <b><%= column.human_name %>:</b> <%=h @enzyme_reaction.send(column.name) %>
+</p>
+<% end %>
+
+<%= link_to 'Edit', :action => 'edit', :id => @enzyme_reaction %> |
+<%= link_to 'Back', :action => 'list' %>

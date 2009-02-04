@@ -1,0 +1,19 @@
+<p><%= SugarHelper.ConvertToIupac @reaction.substrate %></p>
+<p><%= SugarHelper.ConvertToIupac @reaction.residuedelta %></p>
+<p><%= SugarHelper.ConvertToIupac @reaction.endstructure %></p>
+<p><%= @reaction.evidence %></p>
+<p><%= @reaction.checked_evidence %></p>
+<h2>Encoded in</h2>
+<ul>
+<% for gene in @reaction.genes %>
+	<li><%= link_to gene.genename, :controller => 'geneinfos', :action => "associate", :id => gene %></li>
+<% end %>
+</ul>
+<h2>Participating in</h2>
+<ul>
+<% for pathway in (@reaction.pathway || '').split(',') %>
+<li><%= link_to pathway, :controller => "reactions", :action => 'pathway', :id => pathway %></li>
+<% end %>
+</ul>
+<%= link_to 'Edit', :action => 'edit', :id => @reaction %> |
+<%= link_to 'Back', :action => 'list' %>

@@ -1,0 +1,41 @@
+<h1>Listing disaccharides</h1>
+
+<table>
+  <tr>
+  <% for column in Disaccharide.content_columns %>
+    <th><%= column.human_name %></th>
+  <% end %>
+	<th>Found?</th>
+  </tr>
+  
+<% for disaccharides in @disaccharides %>
+  <tr>
+  <% for column in Disaccharide.content_columns %>
+    <td><%=h disaccharides.send(column.name) %></td>
+  <% end %>
+	<% sug = disaccharides.sugar %>
+	<% if sug != nil && (reactions = Reaction.find_all_by_residuedelta(sug.sequence)).length > 0 %>
+	<% SugarHelper.SetWriterType(sug, :ic) %>
+	<td>
+		<% donor = sug.leaves[0] %>
+		<% acceptor = donor.parent %>
+		<% link_string = "#{donor.anomer}#{donor.linkage_at_position.get_position_for(donor)}-#{donor.paired_residue_position}"%>
+		<%= link_to "Found reactions.. (#{reactions.length} substrates)", :controller => "reactions", :action => "list_by_donor", :donor => donor.name(:ecdb), :acceptor => acceptor.name(:ecdb), :linkage => link_string  %>
+		<%= sug.sequence %>
+		</td>
+	<% else %>
+	<td>Not found</td>
+	<% end %>
+    <td><%= link_to 'Show', :action => 'show', :id => disaccharides %></td>
+    <td><%= link_to 'Edit', :action => 'edit', :id => disaccharides %></td>
+    <td><%= link_to 'Destroy', { :action => 'destroy', :id => disaccharides }, :confirm => 'Are you sure?', :post => true %></td>
+  </tr>
+<% end %>
+</table>
+
+<%= link_to 'Previous page', { :page => @disaccharides_pages.current.previous } if @disaccharides_pages.current.previous %>
+<%= link_to 'Next page', { :page => @disaccharides_pages.current.next } if @disaccharides_pages.current.next %> 
+
+<br />
+
+<%= link_to 'New disaccharides', :action => 'new' %>

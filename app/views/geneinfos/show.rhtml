@@ -1,0 +1,9 @@
+<% for column in Geneinfo.content_columns %>
+<p>
+  <b><%= column.human_name %>:</b> <%=h @geneinfo.send(column.name) %>
+</p>
+<% end %>
+
+<%= link_to 'Edit', :action => 'edit', :id => @geneinfo %> |
+<%= link_to 'Back', :action => 'list' %> |
+<%= link_to 'Next', :action => 'show', :id => @geneinfo.id + 1 %>

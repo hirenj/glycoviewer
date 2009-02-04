@@ -1,0 +1,80 @@
+	<style type="text/css">
+		#enzymeThumbs {
+			height:  100%;
+			width:  30%;
+			float:  right;
+		}
+		form {
+			width:  65%;
+		}
+		#sequenceThumb {
+			width:  100px;
+			display:  block;
+		}
+		#enzymeThumbs object {
+			float:  left;
+		}
+	</style>
+	<script type="text/javascript" src="<%= javascript_path 'MochiKit/packed/MochiKit/MochiKit.js'%>"></script>
+	<script type="text/javascript">
+//<![CDATA[
+
+		function updateThumb() {
+			var seq = $('start_seq').value;
+			var foo;
+			if (document.createElementNS) {
+				foo = document.createElementNS('http://www.w3.org/1999/xhtml','img');
+			} else {
+				foo = document.createElement("img");
+			}
+			updateNodeAttributes(foo, {'src': '<%= url_for :controller => 'sviewer', :action => 'index', :ns => 'ic', :format => 'png' %>&seq='+seq, 'width': '100px', 'height': '100px', 'type':'image/png', 'id': 'sequenceThumb'});
+			swapDOM($('sequenceThumb'),foo);
+		}
+		
+		function updateEnzymeThumbs() {
+			var thumbsContainer = $('enzymeThumbs');
+			var seqVals = $('ids');
+			opt_selected = function(opt) {
+				return (opt.selected == true);
+			}
+			filtered = ifilter(opt_selected, seqVals.options);
+			newNodes = [];
+			try {
+				while ( sel = filtered.next() ) {
+					seq = sel.text;
+					var foo;
+					if (document.createElementNS) {
+						foo = document.createElementNS('http://www.w3.org/1999/xhtml','img');
+					} else {
+						foo = document.createElement('img');
+					}
+					updateNodeAttributes(foo, {'src': '<%= url_for :controller => 'sviewer', :action => 'index', :ns => 'ic', :format => 'png', :width => '200', :height => '50' %>&seq='+seq, 'width': 200, 'height': 50, 'type':'image/png'});
+					newNodes.push(foo);				
+				}
+			} catch (e) {
+			    if (e != StopIteration) {
+			        throw e;
+			    }
+			    // pass
+			}
+			replaceChildNodes(thumbsContainer,newNodes);
+		}
+		
+// ]]>
+	</script>
+<div id="enzymeThumbs">
+</div>
+<div>
+<%= start_form_tag :action => 'show', :id => @enzymeinfo, :format => 'xhtml' %>
+<div style="float: left;">
+<img src="<%= url_for :controller => 'sviewer', :action => 'index', :ns => 'ic', :format => 'png', :width => '100', :height => '100' %>&amp;seq=GalNAc" type="image/png" id="sequenceThumb" width="100px" height="100px"/>
+<input type="text" name="start_seq" id="start_seq" value="GalNAc" onchange="updateThumb()"/>
+</div>
+<select name="ids[]" id="ids" multiple="true" onchange="updateEnzymeThumbs()">
+<% for reac in @reactions %>
+	<option value="<%= reac.id %>"><%= print_sugar(reac.residuedelta) %></option>
+<% end %>
+</select>
+<%= submit_tag 'Generate' %>
+<%= end_form_tag %>
+</div>

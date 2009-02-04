@@ -1,0 +1,41 @@
+<table>
+	<colgroup>
+		<col/>
+	<% 1..@donor_string_hash.keys.length.times do %>
+		<col width="75em" style="background:<%= cycle("#dddddd", "#ffffff") %>;"/>
+	<% end %>
+	</colgroup>
+	<tr><th></th>
+<% for donor in @donor_string_hash.keys.sort %>
+	<th><%= link_to @donor_string_hash[donor].name(:ic), :action => 'list_by_donor', :acceptor => @donor_string_hash[donor].name %></th>
+<% end %>
+	</tr>
+<% for donor in @donor_string_hash.keys.sort %>
+	<tr>
+	<td><%= link_to @donor_string_hash[donor].name(:ic), :action => 'list_by_donor', :donor => @donor_string_hash[donor].name %></td>
+	<% for substrate in @donor_string_hash.keys.sort %>
+	<td style="vertical-align: top;">
+		<% if @donor_hash[donor][substrate].length > 0 %>
+		<div style="width: 100%;" class="matrix_all_link"><%= link_to "All..", { :action => 'list_by_donor', :donor => @donor_string_hash[donor].name, :acceptor => @donor_string_hash[substrate].name } %>
+		</div>
+		<% end %>
+			<ul style="list-style-type: none; padding-left: 0px; margin-left: 40%;">
+				<% for linkage in @donor_hash[donor][substrate].uniq %>
+				<% 	if linkage.original_reaction.is_a?(Reaction)
+						reaction_style = "color: #000000;"
+					else
+						if  linkage.original_reaction.is_evidenced?
+							reaction_style = linkage.original_reaction.has_enzyme? ? "color: #00ff00" : "color: #0000ff;" 
+						else
+							reaction_style = linkage.original_reaction.has_been_checked? ? "color: #999999;" : "color: #ff0000"
+						end
+					end
+				%>
+				<li><%= link_to linkage, {:controller => :reactions, :action => 'list_by_donor', :donor => @donor_string_hash[donor].name, :acceptor => @donor_string_hash[substrate].name, :linkage => linkage }, :style => reaction_style %></li>
+				<% end %>
+			</ul>
+	</td>
+	<% end %>
+	</tr>
+<% end %>
+</table>

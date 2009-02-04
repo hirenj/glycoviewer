@@ -1,0 +1,12 @@
+<h1>Editing geneinfo</h1>
+
+<%= start_form_tag :action => 'update', :id => @geneinfo %>
+  <%= render :partial => 'form' %>
+  <%= submit_tag 'Edit' %>
+<%= end_form_tag %>
+<% if @geneinfo.enzymeinfo.length == 0 %>
+<%= link_to 'Add Dummy enzyme', :action => 'add_dummy_enzyme', :id => @geneinfo %> |
+<% end %>
+<%= link_to 'Populate', :action => 'populate', :id => @geneinfo %> |
+<%= link_to 'Show', :action => 'show', :id => @geneinfo %> |
+<%= link_to 'Back', :action => 'list' %>

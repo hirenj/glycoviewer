@@ -1,0 +1,7 @@
+<!-- Parameter: width (max-width to render at) -->
+<!-- Parameter: height (max-height to render at) -->
+<div class="reaction_list_enzyme-<%= enzymeinfo.id %>">
+	<% for enz_reaction in enzymeinfo.enzyme_reactions %>
+		<div><%= render_partial 'reactions/disp', nil, 'reaction' => enz_reaction.reaction, 'compact' => true, 'mime_types' => [Mime::PNG], 'width' => width, 'height' => height %></div>
+	<% end %>
+</div>

@@ -1,0 +1,182 @@
+<style type="text/css">
+	#sequence {
+		display: none;
+	}
+	.builder_parameters {
+		background: #dddddd;
+	}
+	#sugarbox {
+		position: relative;
+	}
+	.sugarbuilder_anomers {
+		position: absolute;
+	}
+	.sugarbuilder_anomer_a {
+		position: absolute;
+		width: 50px;
+		height: 75px;
+		left: 0px;
+		background: #aaaaaa;
+	}
+	.sugarbuilder_anomer_b {
+		position: absolute;
+		width: 50px;
+		height: 75px;
+		left: 50px;
+		background: #999999;
+	}
+	.sugarbuilder_anomer_u {
+		position: absolute;
+		width: 100px;
+		height: 25px;
+		left: 0px;
+		top: 75px;
+		background: #dddddd;
+	}
+	.sugarbuilder_linkages div {
+		width: 100px;
+		height: 10px;
+		background: #dddddd;
+		border: solid #000000 1px;
+		font-size: 8px;
+		padding: 0px;
+	}
+	.sugarbuilder_canvas {
+		top: 0px;
+		left: 0px;
+		height: 100%;
+	}
+	
+	.yui-panel-container {
+		width: 410px;
+	}
+	#mono-palette {
+		border: solid #000000 1px;
+	}
+	#mono-palette .hd {
+		background: rgb(0,0,128);
+		font-family: Helvetica, Arial, Sans-serif;
+		font-size: 11pt;
+		padding-left: 10px;
+		color: #ffffff;
+	}
+	#mono-palette .bd * {
+		padding: 0px;
+		margin: 0px;
+	}
+	#mono-palette .bd {
+		padding-top: 5px;
+		background: #ffffff;
+	}
+
+	.pallette_element:hover {
+		cursor: pointer;
+	}
+
+	.pie_slice_anomer {
+		fill: rgb(204,204,255) !important;
+	}
+
+	div.sequence_display {
+		font-family: Courier,monospace;
+		white-space: pre;
+	}
+
+</style>
+<%= javascript_include_tag 'MochiKit/packed/MochiKit/MochiKit.js' %>
+<%= javascript_include_tag 'MochiKit/MochiKit/DragAndDrop.js' %>
+<%= javascript_include_tag 'lib/XHtmlDOM.js' %>
+<%= javascript_include_tag 'lib/sugarbuilder.js' %>
+<%= javascript_include_tag 'lib/sugarbuilder_pallette.js' %>
+<%= javascript_include_tag 'http://yui.yahooapis.com/2.3.1/build/yahoo-dom-event/yahoo-dom-event.js' %>
+<%= javascript_include_tag 'http://yui.yahooapis.com/2.3.1/build/dragdrop/dragdrop-min.js' %>
+<%= javascript_include_tag 'http://yui.yahooapis.com/2.3.1/build/container/container-min.js' %>
+<%= javascript_include_tag 'http://yui.yahooapis.com/2.3.1/build/slider/slider-min.js' %>
+<script type="text/javascript">
+//<![CDATA[
+sb = null;
+
+function onloader() {
+	pal = new SugarBuilder.Pallette("<%= url_for :controller => 'sugarbuilder', :action => 'pallette', :format => 'xhtml' %>");
+
+	myPanel = new YAHOO.widget.Panel("mono-palette", {
+		width:"400px",
+		close:false, 
+		visible:true,
+		zindex: 2,
+		draggable:true} );
+	myPanel.setHeader("Donors");
+	myPanel.setBody(pal.canvas());
+	//myPanel.render($('sugarbox'));
+	connect(Draggables,'start',partial(demotePanel,myPanel));
+	connect(Draggables,'end',partial(promotePanel,myPanel));
+	
+	//appendChildNodes($('sugarbox'),pal.canvas());
+	
+	sb = new SugarBuilder("<%= url_for :controller => 'sugarbuilder', :action => 'build_sugar', :format => 'xhtml' %>",$('sequence').textContent);
+	connect(sb,'sequencechange',updateSeqs);
+	
+	sb.refresh_structure('null');
+	appendChildNodes($('sugarbox'),sb.canvas());
+	
+	slider = new SugarBuilder.Slider();
+	slider.canvas().style.zIndex = 2;
+	appendChildNodes($('sugarbox'),slider.canvas());
+
+
+	connect(sb,'sequencechange',sb,partial(updateScale,slider));
+
+	myPanel.render($('sugarbox'));
+	myPanel.center();
+	
+	connect(slider,'onchange',sb,partial(updateScale,slider));
+}
+
+function demotePanel(apanel) {
+	apanel.cfg.setProperty('zindex',-1);
+}
+
+function promotePanel(apanel) {
+	apanel.cfg.setProperty('zindex',2);
+}
+
+
+
+function updateScale(slider) {
+	state = this._state;
+	state['svgdocument'].setAttribute('width', state['originalwidth']*slider.value);
+	state['svgdocument'].setAttribute('height', state['originalheight']*slider.value);	
+}
+
+function updateSeqs() {
+	$('sequence_disp').textContent = sb.get_sequence();
+	$('sequence_disp_ic').textContent = sb.get_ic_sequence();
+	$('seq').value = sb.get_sequence();
+	$('seqpng').value = sb.get_sequence();
+	$('seqsvg').value = sb.get_sequence();
+}
+
+connect(window, 'onload', onloader);
+
+//]]>
+</script>
+<form style="float: left;" action="<%= url_for :controller => 'enzyme_coverage', :action => 'pathways', :format => 'xhtml'%>" method="POST">
+<input type="hidden" name="seq" id="seq"/>
+<input type="submit" value="Validate"/>
+</form>
+<form style="float: left;" action="<%= url_for :controller => 'sviewer', :format => 'png'%>" method="POST" target="structwin">
+<input type="hidden" name="seq" id="seqpng"/>
+<input type="submit" value="Get image"/>
+</form>
+<form style="float: left;" action="<%= url_for :controller => 'sviewer', :format => 'svg'%>" method="POST" target="structwin">
+<input type="hidden" name="seq" id="seqsvg"/>
+<input type="submit" value="Get SVG"/>
+</form>
+<div class="spacer" style="clear:both;"></div>
+<div id="sequence"><%= @sugar.sequence %></div>
+<div style="width: 95%; min-height: 500px; max-height: 500px; height: 500px; overflow: hidden; position: relative;" id="sugarbox">
+</div>
+<h3>IUPAC condensed</h3>
+<div id="sequence_disp_ic" class="sequence_display"></div>
+<h3>GlycoCT</h3>
+<div id="sequence_disp" class="sequence_display"></div>

@@ -1,0 +1,8 @@
+<% for column in Disaccharide.content_columns %>
+<p>
+  <b><%= column.human_name %>:</b> <%=h @disaccharides.send(column.name) %>
+</p>
+<% end %>
+
+<%= link_to 'Edit', :action => 'edit', :id => @disaccharides %> |
+<%= link_to 'Back', :action => 'list' %>

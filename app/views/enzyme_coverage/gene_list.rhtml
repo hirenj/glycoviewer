@@ -1,0 +1,8 @@
+<%
+	all_genes = @genes.flatten.uniq
+%>
+<ul>
+<% for gene in all_genes %>
+	<li><%= link_to "#{gene.genename}", :controller => "geneinfos", :action => "show", :id => gene.id %></li>
+<% end %>
+</ul>

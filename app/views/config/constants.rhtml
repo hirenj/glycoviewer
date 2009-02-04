@@ -1,0 +1,16 @@
+EnzymeDbConstants = {
+	VERSION: <%= 12 %>,
+	REST: {
+		<% for rest_controller in [EnzymeReactionsController, GeneinfosController, RefsController, EnzymeinfosController ]%>
+		<%= render :partial => 'rest_controller', :locals => { :rest_controller => rest_controller }  %>,
+		<% end %>
+	},
+	SOAP: {
+		WSDL: '<%= url_for :controller => "enzyme_db_api", :action => "wsdl" %>',
+		ENDPOINT: '<%= url_for :controller => "enzyme_db_api", :action => "api" %>'
+	},
+	RESOURCES: {
+		REACTION_THUMBS: '<%= url_for :controller => "enzymeinfos", :action => "reaction_thumbs" %>/',
+		TISSUE_EXPRESSION: '<%= url_for :controller => "geneinfos", :action => "show_tissue" %>/'
+	}
+};

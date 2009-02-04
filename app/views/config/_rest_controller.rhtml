@@ -1,0 +1,5 @@
+'<%= rest_controller.controller_name %>': {
+	<% for action in ['create','destroy'] %>
+		<%= action %>:	'<%= url_for :controller => rest_controller.controller_name, :action => action, :format => 'xml' %>',
+	<% end %>
+}

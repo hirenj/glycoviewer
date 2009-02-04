@@ -1,0 +1,19 @@
+xml.instruct! :xml, :version=>"1.0" 
+xml.svg :svg, 'xmlns:xlink' => 'http://www.w3.org/1999/xlink', 'xmlns:svg'=> 'http://www.w3.org/2000/svg', 'viewBox' => '0 0 450 100' , 'width' => '100%' , 'height' => '100%' ,'preserveAspectRatio'=>'xMinYMin' do
+  xml.svg(:g, 'transform'=>'translate(0,0)') { |el|
+    el << @delta.to_s
+  }
+  xml.svg(:g, 'transform'=> "translate(75,0)") do
+    xml.svg(:polygon, 'points' => '45,35 55,35 55,45 65,45 65,55 55,55 55,65 45,65 45,55 35,55 35,45 45,45', 'fill'=>'#39aef7')
+  end
+  xml.svg(:g, 'transform'=> "translate(150,0)") { |el|
+    el << @substrate.to_s
+  }
+  xml.svg(:g, 'transform'=> "translate(225,0)") do
+    xml.svg(:rect, 'x'=>'30','y'=>'35', 'width'=>'40','height'=>'10','fill'=>'#39aef7')
+    xml.svg(:rect, 'x'=>'30','y'=>'55', 'width'=>'40','height'=>'10','fill'=>'#39aef7')
+  end
+  xml.svg(:g, 'transform'=> "translate(300,0)") { |el|
+    el << @endstructure.to_s
+  }
+end

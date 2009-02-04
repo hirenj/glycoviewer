@@ -1,0 +1,23 @@
+<%= javascript_include_tag 'MochiKit/packed/MochiKit/MochiKit.js' %>
+<%= javascript_include_tag 'lib/XHtmlDOM.js' %>
+
+<script type="text/javascript">
+function onloader() {
+	connect($('seq'),'onchange',get_new_structs);
+}
+
+function get_new_structs() {
+	seqs = $('seq').value.split('\n');
+	images = [];
+	for (var i in seqs) {
+		images.push(IMG({'src': '<%= url_for :controller => "sviewer", :ns => "ic", :format => "png", :width=> "200", :height=> "200" %>&amp;seq='+seqs[i] }));
+		images.push(BR({}));
+	}
+	replaceChildNodes($('structure_area'),images.reverse());
+}
+
+connect(window, 'onload', onloader);	
+</script>
+<div id="structure_area" style="float: right;">
+</div>
+<textarea id="seq" cols="80" rows="50"></textarea>

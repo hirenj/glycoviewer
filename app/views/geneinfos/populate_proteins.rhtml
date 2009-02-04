@@ -1,0 +1,3 @@
+<% for enzymeinfo in @enzymeinfos.select { |enz| enz.is_enzyme? } %>
+	<%= render_partial 'enzymeinfos/detail', 'enzymeinfo' => enzymeinfo %>
+<% end %>

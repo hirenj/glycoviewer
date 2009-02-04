@@ -1,0 +1,2 @@
+module GeneinfosHelper
+end

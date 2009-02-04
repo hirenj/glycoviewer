@@ -1,0 +1,9 @@
+<div style="border-left: solid black 10px">
+<div>
+<%= reaction.parent == nil ? print_sugar(reaction.substrate)+'<br/>' : '' %> 
+<%= link_to print_sugar(reaction.endstructure), :action => "show",:controller => "reactions", :id => reaction %>
+</div>
+<% for next_reac in reaction.next %>
+<%= render :partial => 'path_element', :locals => {:reaction => next_reac } %>	
+<% end %>
+</div>

@@ -1,0 +1,163 @@
+<% @reactions_url_xml = url_for :action => 'show', :controller => 'reactions',  :format => 'xml' %>
+<% @geneinfos_url_xml = url_for :action => 'show', :controller => 'geneinfos', :format => 'xml' %>
+<% @reactions_url_png = url_for :action => 'show', :controller => 'reactions', :format => 'png' %>
+<head>
+	<script type="text/javascript" src="<%= javascript_path 'MochiKit/packed/MochiKit/MochiKit.js' %>"></script>
+	<script type="text/javascript" src="<%= javascript_path 'lib/XHtmlDOM.js' %>"></script>
+	<script type="text/javascript">
+//<![CDATA[
+		gene_reactions = <%= @genereaction_mapping.to_json %>;
+
+		function list_and_group_enzymes(e) {
+			genetext = e.target().getAttribute('genes');
+			if ( ! genetext ) {
+				return;
+			}
+			geneids = genetext.match(/(\d+)(?=g)/g);
+			genes = new Array();
+
+			enzymetext = e.target().getAttribute('enzymes');
+			if ( ! enzymetext ) {
+				return;
+			}
+			enzymenames = enzymetext.match(/(\d+)(?=rn)/g);
+
+			for (var i = 0; i < geneids.length; i++) {
+				geneid = geneids[i];
+				genes.push(_create_gene_info_box(geneid));
+				info_container = DIV({});
+				info_container.setAttribute('class',' reaction_list ');
+				
+				for (var j = 0; j < gene_reactions[geneid].length; j++) {
+					if (findValue(enzymenames,gene_reactions[geneid][j]) >= 0) {
+				info_container.appendChild(_create_enzyme_thumb(gene_reactions[geneid][j]));
+					}
+				}
+				genes.push(info_container);
+			}
+			replaceChildNodes($('geneInfos'),genes);
+		}
+		
+		function _create_gene_info_box(id) {
+			var info_container;
+			info_container = DIV({'ed' : id });
+			var url = '<%= @geneinfos_url_xml %>/'+id;
+			var deferred = doSimpleXMLHttpRequest(url);
+			deferred.addCallback(partial(_draw_geneinfo_box,info_container));
+			return info_container;
+		}
+						
+		function _draw_geneinfo_box(info_container, data) {
+			genes = XHtmlDOM.evaluateXPath(data.responseXML,'.//geneinfo', data.responseXML);
+			for ( var i = 0; i < genes.length; i++ ) {
+				info_container.appendChild(_fill_info_box($('geneInfoTemplate'),data.responseXML, genes[i]));
+			}			
+		}
+		
+		function _fill_info_box(template,doc, element) {
+			ib = template.cloneNode(true);
+			ib.setAttribute('id',null);
+			XHtmlDOM.removeClass(ib,'template');
+			var replaceables = XHtmlDOM.getElementsByClassName('replace',ib);
+			for (var j in replaceables) {
+				XHtmlDOM.removeClass(replaceables[j],'replace');
+				var xpath = replaceables[j].firstChild.nodeValue;
+				var xpath_result = XHtmlDOM.evaluateXPath(element,xpath,doc);
+				value = xpath_result[0];
+				if (value && value.firstChild != null && value.firstChild.nodeValue != null) {
+					 value = value.firstChild.nodeValue;
+				} else {
+					value = 'No data';
+				}
+				replaceables[j].firstChild.nodeValue = value
+			}
+			return ib;	
+		}
+		
+		function _create_enzyme_thumb(id) {
+			var foo = IMG({});
+			foo = IMG({'src': "<%= @reactions_url_png %>/"+id+"/?compact=true&width=250&height=150", 'max-width': '250px', 'max-height': '150px', 'type':'image/png'});
+			return foo;
+		}
+		
+		connect(window, 'onload',
+		function() {
+			links = XHtmlDOM.getElementsByClassName('link');
+			for ( var i in links ) {
+				connect(links[i], 'onclick', list_and_group_enzymes);
+			}
+			pathways = XHtmlDOM.getElementsByClassName('pathway');
+			for ( var i in pathways ) {
+//				connect(pathways[i],'onclick', highlight_pathway);
+			}
+		});
+//]]>
+	</script>
+	<style type="text/css">
+		.pathway {
+			color: #00ff00 !important;
+			fill: #00ff00 !important;
+			stroke: #00ff00 !important;
+		}
+		.pathway * {
+			color: #00ff00 !important;
+			fill: #00ff00 !important;
+			stroke: #00ff00 !important;
+		}
+		.alt-pathway {
+			color: #0000ff !important;
+			stroke: #0000ff !important;
+		}
+		.link {
+			stroke-width: 5 !important;
+			font-weight: bold;
+		}
+		span.link:before {
+			content: '(';
+		}
+		span.link:after {
+			content: ')';
+		}
+		.link:hover {
+			stroke-width: 10 !important;
+			color: #0000ff;
+			stroke:  #0000ff;
+		}
+		.noenzyme {
+			color: #ff0000 !important;
+			stroke: #ff0000 !important;
+			stroke-width: 5 !important;
+		}
+		div.reaction_list {
+			border: solid black 1px;
+		}
+		#enzymeInfoBox {
+			float:  right;
+			width:  30%;
+		}
+		#geneInfoBox {
+			float: right;
+			width: 30%;
+		}
+		.template {
+			display:  none;
+		}
+		object {
+			background:  #eeeeee;
+		}
+	</style>
+</head>
+<body>
+<span id="geneInfoTemplate" class=" template ">
+	<span class=" gene "><span class=" replace ">genename</span></span>
+</span>
+<div id="geneInfoBox">
+	<h2>Genes</h2>
+	<div id="geneInfos">
+	</div>
+</div>
+<h1>Enzyme coverage</h1>
+<div style="width: 60%; overflow: auto;">
+<%= render :partial => "sviewer/render", :locals => { :sugar => @sugar, :scale => 0.5 } %>
+</div>
+</body>

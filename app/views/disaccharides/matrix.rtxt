@@ -1,0 +1,2 @@
+<% @params = params %>
+<%= render :partial => 'matrix_body', :locals => { :donor_hash => @donor_hash, :donor_string_hash => @donor_string_hash, :params => @params } %>

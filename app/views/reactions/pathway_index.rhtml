@@ -1,0 +1,8 @@
+<form action="<%= url_for :controller => "reactions", :action => "pathway"%>">Show structures downstream from gene <input type="text" name="filter[downstreamgene]" /> in pathway <input type="text" name="id" value="all"/>
+	<input type="submit" value="Show structures"/></form>
+<h2>Existing pathways</h2>
+<ul>
+<% for path_name in @pathway_names %>
+	<li><%= link_to path_name, :action => "pathway", :id => path_name %></li>
+<% end %>
+</ul>
