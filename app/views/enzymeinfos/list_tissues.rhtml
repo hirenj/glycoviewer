@@ -1,5 +1,21 @@
-<ul>
+<%= javascript_include_tag 'http://yui.yahooapis.com/2.3.0/build/yahoo-dom-event/yahoo-dom-event.js' %>
+<%= javascript_include_tag 'http://yui.yahooapis.com/2.3.0/build/element/element-beta-min.js' %>
+<%= javascript_include_tag 'http://yui.yahooapis.com/2.3.0/build/tabview/tabview-min.js' %>
+<%= javascript_include_tag 'MochiKit/packed/MochiKit/MochiKit.js' %>
+<%= javascript_include_tag 'lib/AlphabetisedTabbedList.js' %>
+<ul id="tissue_list">
 <% for tissue_name in @tissues %>
-<li> <%= link_to tissue_name, :action => "show_tissue", :mesh_tissue => tissue_name %></li>
+<li><%= link_to tissue_name, :action => "show_tissue", :mesh_tissue => tissue_name %></li>
 <% end %>
 </ul>
+<script type="text/javascript">
+	function onloader() {
+		tabber = new AlphabetisedTabbedList('tissue_list');
+	 	tabber.maxListLength = 10;
+		tabber.buildTabbedList();
+		log("Fooooobars!!");
+		log(tabber);
+	}
+	MochiKit.DOM.addLoadEvent(onloader);
+
+</script>

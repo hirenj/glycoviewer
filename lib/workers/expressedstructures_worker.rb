@@ -4,7 +4,15 @@ class ExpressedstructuresWorker < BackgrounDRb::MetaWorker
     # this method is called, when worker is loaded for the first time
   end
   
+  def o_linked_expression(bitfields)
+    return expression('o-linked-geneassoc',bitfields)
+  end
+  
   def n_linked_expression(bitfields)
+    return expression('n-linked-geneassoc',bitfields)
+  end
+  
+  def expression(type,bitfields)
     logger.info(job_key,"Dispatching job key #{job_key}")
     
     if cache[job_key]
@@ -14,7 +22,7 @@ class ExpressedstructuresWorker < BackgrounDRb::MetaWorker
     
     cache[job_key] = true
     
-    f = IO.popen("./a.out o-linked-geneassoc #{bitfields[0]} #{bitfields[1]} #{bitfields[2]}")
+    f = IO.popen("./a.out #{type} #{bitfields[0]} #{bitfields[1]} #{bitfields[2]}")
     result_text = f.readlines || " "
     f.close
     logger.info(job_key,"Complete job key #{job_key}")

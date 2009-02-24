@@ -83,7 +83,7 @@ class EnzymeCoverageController < ApplicationController
     
     markup_chains(best_results)
 
-    if params[:mesh_tissue] != nil
+    if params[:mesh_tissue] != nil && params[:mesh_tissue] != ''
       gene_results = execute_genecoverage
       logger.info("Total number of bad linkages #{gene_results.size}")
       bad_links = Element.new('svg:g')
@@ -116,33 +116,33 @@ class EnzymeCoverageController < ApplicationController
   def markup_linkages(linkages)
     sug = self.sugar
     gene_overlay = Element.new('svg:g')
-    sugar.overlays << gene_overlay
+    sugar.overlays.insert(0,gene_overlay)
     linkages.each { |link|
       genes = link.genes
       link.callbacks.push( lambda { |link_element|
         x1 = -1*(link.centre[:x] + 100)
         y1 = -1*(link.centre[:y] - 10)
+
+        max_height = genes.size * 30 + 25
         
         back_el = Element.new('svg:rect')
-        back_el.add_attributes({'x' => x1, 'y' => y1, 'rx' => 10, 'ry' => 10, 'width' => 220, 'height' => 75, 'stroke' => '#ff0000', 'stroke-width' => '5px', 'fill' => '#ffffff', 'fill-opacity' => 0.8, 'stroke-opacity' => 0.5 })
-        fobj = Element.new('svg:foreignObject')
-        fobj.add_attributes({ 'x' => x1, 'y' => y1, 'width' => 210, 'height' => 75 })
-        body = Element.new('xhtml:body')
-        body.add_attributes({'xmlns:xhtml' => 'http://www.w3.org/1999/xhtml'})
-        fobj.add_element(body)
-        div = Element.new('xhtml:div')
-        div.add_attributes({'style' => 'font-size: 50px; padding: 10px; height: 75px;'})
-        ul = Element.new('xhtml:ul')
+        back_el.add_attributes({'x' => x1, 'y' => y1, 'rx' => 10, 'ry' => 10, 'width' => 220, 'height' => max_height, 'stroke' => '#ff0000', 'stroke-width' => '5px', 'fill' => '#ffffff', 'fill-opacity' => 0.8, 'stroke-opacity' => 0.5 })
+        back_circle = Element.new('svg:svg')
+        back_circle.add_attributes('viewBox' => '0 0 90 58', 'height' => 58, 'width' => '90', 'x' => -1*(link.centre[:x]+45), 'y' => -1*(link.centre[:y]+45))
+        back_circle_shape = Element.new('svg:circle')
+        back_circle_shape.add_attributes({'cx' => 45, 'cy' => 45, 'r' => 40, 'stroke' => '#ff0000', 'stroke-width' => '5px', 'fill' => '#ffffff', 'fill-opacity' => 0.8, 'stroke-opacity' => 0.5 })
+        back_circle.add_element(back_circle_shape)
+        text = Element.new('svg:text')
+        text.add_attributes({ 'x' => x1, 'y' => y1+10, 'width' => 210, 'font-size' => 30, 'height' => max_height })
         genes.each { |gene|
-          li = Element.new('xhtml:li')
-          li.add_attributes({'style' => 'font-size: 25px; margin-top: 5px;'})
+          li = Element.new('svg:tspan')
+          li.add_attributes({'x' => x1+20, 'dy' => 30 })
           li.text = gene.genename
-          ul.add_element(li)
+          text.add_element(li)
         }
-        div.add_element(ul)
-        body.add_element(div)
         gene_overlay.add_element(back_el)
-        gene_overlay.add_element(fobj)
+        gene_overlay.add_element(back_circle)        
+        gene_overlay.add_element(text)
       })
     }
   end
@@ -510,6 +510,7 @@ class EnzymeCoverageController < ApplicationController
 
   def execute_genecoverage
     @genes = Enzymeinfo.find(:all, :conditions => ['mesh_tissue = :mesh_tissue', { :mesh_tissue => params[:mesh_tissue]}]).collect { |e| e.geneinfo }.uniq
+    @genes = @genes + ['ALG1','ALG2','ALG3','ALG12','ALG13','ALG14'].collect { |name| Geneinfo.find(:first, :conditions => { :genename => name } ) }
     bad_linkages = []
     @disacs_cache ||= {}
     SugarUtil.FindDisaccharides(sugar).each { |disac, links|

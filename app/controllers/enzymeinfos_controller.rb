@@ -47,23 +47,30 @@ class EnzymeinfosController < ApplicationController
       if my_worker.worker_info[:status] != :running
         MiddleMan.new_worker(:worker => :expressedstructures_worker, :worker_key => worker_key)
       else
-        results = my_worker.ask_result(job_key)
-        logger.info("Current results for job are #{results == nil ? 'nil' : results} for key #{job_key}")
-        if results != nil
-          session[:running_jobs] -= [job_key]
-          return results
+        all_results = ["#{job_key}-n","#{job_key}-o"].collect { |job|
+          results = my_worker.ask_result(job)
+          logger.info("Current results for job are #{results == nil ? 'nil' : results} for key #{job}")
+          if results != nil
+            session[:running_jobs] -= [job]
+          end
+          results
+        }
+        all_results.compact!
+        logger.info(all_results.size)
+        if all_results.size == 2
+          return all_results.flatten
         end
       end
     else
       MiddleMan.new_worker(:worker => :expressedstructures_worker, :worker_key => worker_key)
     end
     
-    if session[:running_jobs].include?(job_key)
+    if session[:running_jobs].include?(job_key+'-o')
       logger.info("Job is currently running for key #{job_key}")
       return true
     end
     
-    genes = @enzymeinfos.collect { |e| e.geneinfo }.uniq
+    genes = ((@enzymeinfos.collect { |e| e.geneinfo })+(['ALG1','ALG2','ALG3','ALG12','ALG13','ALG14'].collect { |name| Geneinfo.find(:first, :conditions => { :genename => name } ) })).uniq
     sum = 0
     genes.each  { |g| sum += 2**(g.id - 1) }
 
@@ -72,12 +79,17 @@ class EnzymeinfosController < ApplicationController
     while hex_rep.size > 0
       hex_strings << "#{hex_rep.slice!(0,16)}"
     end
-    logger.info("Dispatching job with job key #{job_key}")
+    logger.info("Dispatching job with job key #{job_key}-n")
     
-    session[:running_jobs] << job_key
+    session[:running_jobs] << job_key+'-n'
     
-    MiddleMan.worker(:expressedstructures_worker,worker_key).async_n_linked_expression(:arg => hex_strings,:job_key => job_key)
+    MiddleMan.worker(:expressedstructures_worker,worker_key).async_n_linked_expression(:arg => hex_strings,:job_key => job_key+'-n')
 
+    logger.info("Dispatching job with job key #{job_key}-o")
+
+    session[:running_jobs] << job_key+'-o'
+
+    MiddleMan.worker(:expressedstructures_worker,worker_key).async_o_linked_expression(:arg => hex_strings,:job_key => job_key+'-o')
     return false
   end
 
