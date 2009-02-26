@@ -56,6 +56,33 @@ class GlycodbsController < ApplicationController
     end
   end
 
+  def tag
+    @glycodb = Glycodb.find(params[:id])
+    new_tag = params[:tag]    
+    my_tags = (@glycodb.tags || '').split(',').reject { |tag| tag == new_tag }
+    my_tags << new_tag
+    @glycodb.tags = my_tags.join(',')
+    respond_to do |format|
+      if @glycodb.save
+        format.txt { render :text => @glycodb.tags }
+        format.html { render :action => 'show' }
+      end
+    end
+  end
+
+  def untag
+    @glycodb = Glycodb.find(params[:id])
+    new_tag = params[:tag]    
+    my_tags = (@glycodb.tags || '').split(',').reject { |tag| tag == new_tag }
+    @glycodb.tags = my_tags.join(',')
+    respond_to do |format|
+      if @glycodb.save
+        format.txt { render :text => @glycodb.tags }
+        format.html { render :action => 'show' }
+      end
+    end
+  end
+
   # PUT /glycodbs/1
   # PUT /glycodbs/1.xml
   def update

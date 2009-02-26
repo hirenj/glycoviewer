@@ -3,6 +3,13 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'glycodbs', :controller => 'glycodbs', :action => 'index', :format => 'html'
   map.connect 'glycodbs/:id', :controller => 'glycodbs', :action => 'show', :format => 'html'
 
+  map.connect 'glycodbs/tag/:id/:tag', :controller => 'glycodbs', :action => 'tag', :format => 'html'
+
+  map.connect 'glycodbs.:format/tag/:id/:tag', :controller => 'glycodbs', :action => 'tag'
+
+  map.connect 'glycodbs/untag/:id/:tag', :controller => 'glycodbs', :action => 'untag', :format => 'html'
+
+  map.connect 'glycodbs.:format/untag/:id/:tag', :controller => 'glycodbs', :action => 'untag'
 
   map.resources :glycodbs
 

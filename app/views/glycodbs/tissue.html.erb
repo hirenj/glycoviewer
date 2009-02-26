@@ -1,5 +1,7 @@
 <%= javascript_include_tag 'MochiKit/packed/MochiKit/MochiKit.js' %>
 <%= javascript_include_tag 'lib/XHtmlDOM.js' %>
+<script src="<%= url_for :controller => 'config', :action => 'constants' %>" type="text/javascript"></script>
+<%= javascript_include_tag 'lib/enzyme_db_api.js' %>
 <%= javascript_include_tag 'http://yui.yahooapis.com/2.7.0/build/yahoo-dom-event/yahoo-dom-event.js' %>
 <%= javascript_include_tag 'http://yui.yahooapis.com/2.7.0/build/element/element-min.js' %>
 <%= javascript_include_tag 'http://yui.yahooapis.com/2.7.0/build/datasource/datasource-min.js' %>
@@ -13,22 +15,18 @@
 <table id="glycodbs">
 <thead>
 	<tr>
-		<th>ID</th><th>System</th><th>Division 1</th><th>Division 2</th><th>Division 3</th><th>Division 4</th><th>Disease</th>
+		<th>ID</th><th>System</th><th>Division 1</th><th>Division 2</th><th>Division 3</th><th>Division 4</th><th>Disease</th><th>Tags</th>
 	</tr>
 </thead>
 <tbody>
 <% for glycodb in @glycodbs %>
-<tr><td><%= glycodb.id %></td><td><%= glycodb.SYSTEM %></td><td><%= glycodb.DIVISION1 %></td><td><%= glycodb.DIVISION2 %></td><td><%= glycodb.DIVISION3 %></td><td><%= glycodb.DIVISION4 %></td><td><%= glycodb.DISEASE != '' ? glycodb.DISEASE : 'healthy' %></td></tr>
+<tr><td><%= glycodb.id %></td><td><%= glycodb.SYSTEM %></td><td><%= glycodb.DIVISION1 %></td><td><%= glycodb.DIVISION2 %></td><td><%= glycodb.DIVISION3 %></td><td><%= glycodb.DIVISION4 %></td><td><%= glycodb.DISEASE != '' ? glycodb.DISEASE : 'healthy' %></td><td><%= glycodb.tags %></td></tr>
 <% end %>
 </tbody>
 </table>
 </div>
 </div>
 <script type="text/javascript">
-
-	function blerg() {
-		alert("bb");
-	}
 
     function markupTable() {
         var myColumnDefs = [
@@ -37,7 +35,9 @@
             {key:"division_1",label:"Division 1",sortable:true},
             {key:"division_2",label:"Division 2",sortable:true},
             {key:"division_3",label:"Division 3",sortable:true},
-            {key:"division_4",label:"Division 4",sortable:true}
+            {key:"division_4",label:"Division 4",sortable:true},
+            {key:"disease",label:"Disease",sortable:true},
+			{key:"tags",label:"Tags",sortable:true}
         ];
 
         myDataSource = new YAHOO.util.DataSource($('glycodbs'));
@@ -48,7 +48,9 @@
                     {key:"division_1"},
                     {key:"division_2"},
                     {key:"division_3"},
-                    {key:"division_4"}
+                    {key:"division_4"},
+					{key:"disease"},
+					{key:"tags"}
             ]
         };
 
@@ -67,9 +69,17 @@
 
 	function show_selected(data_source) {
 		selected_rows = data_source.getSelectedRows();
+		log(selected_rows);
 		for ( row in selected_rows ) {
-			data_source.getRecordSet().getRecord(parseInt(row)).getData('id');
+			my_row = data_source.getRecordSet().getRecord(selected_rows[row]);
+			my_glycodb = new EnzymeDbApi.Glycodb();
+			disconnectAll(my_glycodb, 'TagResult');
+			connect(my_glycodb, 'TagResult', partial(update_tags,data_source,selected_rows[row],'tags'));
+			my_glycodb.Tag(my_row.getData('id'),$('tags').value);
 		}
+	}
+	function update_tags(table,a_row,column) {
+		table.updateCell(table.getRecordSet().getRecord(a_row),column,this._tag_result);
 	}
 
 	function onloader() {

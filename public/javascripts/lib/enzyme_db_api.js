@@ -106,8 +106,9 @@ EnzymeDbApi._RestImpl = {
 	*/
 	initialize: function()
 	{
-		EnzymeDbApi.Geneinfo.onLoad((new EnzymeDbApi._RestImpl.GeneinfoProxy()));
+		EnzymeDbApi.Geneinfo.onLoad(new EnzymeDbApi._RestImpl.GeneinfoProxy());
 		EnzymeDbApi.EnzymeReaction.onLoad(new EnzymeDbApi._RestImpl.EnzymeReactionProxy());
+//		EnzymeDbApi.Glycodb.onLoad(new EnzymeDbApi._RestImpl.GlycodbProxy());
 	},
 	/*
 		A prototype class for the REST based proxy objects. Like the SOAP implementation,
@@ -157,7 +158,6 @@ EnzymeDbApi._RestImpl.GeneinfoProxy = function() {
 
 EnzymeDbApi._RestImpl.GeneinfoProxy.prototype = new EnzymeDbApi._RestImpl.proxyPrototype();
 
-
 EnzymeDbApi._RestImpl.EnzymeReactionProxy = function() {
 
 	this.AssociateEnzyme = function(reaction_id, enzyme_id) {
@@ -188,6 +188,29 @@ EnzymeDbApi._RestImpl.EnzymeReactionProxy = function() {
 
 EnzymeDbApi._RestImpl.EnzymeReactionProxy.prototype = new EnzymeDbApi._RestImpl.proxyPrototype();
 
+EnzymeDbApi._RestImpl.GlycodbProxy = function() {
+	
+	this.Tag = function(glycodb_id, tagname) {
+		message = '';
+		request = this.getRequest(EnzymeDbConstants.REST['glycodb'].tag+'/'+glycodb_id+'/'+tagname);
+		deferred = sendXMLHttpRequest(request,toHTML(message));
+		deferred.addCallback(bind(this.getListener().TagCallback,this.getListener()));
+		deferred.addErrback(EnzymeDbApi.onError);
+	};
+
+	this.Untag = function(glycodb_id, tagname) {
+		message = '';
+		request = this.getRequest(EnzymeDbConstants.REST['glycodb'].untag+'/'+glycodb_id+'/'+tagname);
+		deferred = sendXMLHttpRequest(request,toHTML(message));
+		deferred.addCallback(partial(this.dataReceived,bind(this.getListener().UntagCallback,this.getListener())));
+		deferred.addErrback(EnzymeDbApi.onError);
+	};
+
+};
+
+EnzymeDbApi._RestImpl.GlycodbProxy.prototype = new EnzymeDbApi._RestImpl.proxyPrototype();
+
+
 /*
 =head2 Ports
 
@@ -215,9 +238,6 @@ such as REST or SOAP.
 =cut
 */
 	onLoad: function(proxy) {
-		log(this);
-		log(proxy.__class__);
-		log(this.__proxy__);
 		this.__proxy__ = proxy;
 		this.__proxy__.setListener(this);
 	},
@@ -388,5 +408,86 @@ Usage
 }
 
 update(EnzymeDbApi.EnzymeReaction,EnzymeDbApi.PortClass);
+
+/*
+=back
+
+=item EnzymeDbApi.Glycodb
+
+Implementation of the Glycodb API for the EnzymeDb.
+
+=over
+
+=cut
+*/
+
+//EnzymeDbApi.Glycodb = {
+EnzymeDbApi.Glycodb = function() {
+	this.onLoad(new EnzymeDbApi._RestImpl.GlycodbProxy());
+};
+
+update(EnzymeDbApi.Glycodb.prototype, {
+	__port__: 'EnzymeDbGlycodbPort',
+	__class__: 'EnzymeDbApi.Glycodb',
+
+/*
+=item EnzymeDbApi.Glycodb.Tag(glycodb_id,tagname)
+
+Tag a glycodb entry with a tag
+
+Usage
+
+	connect(EnzymeDbApi.Glycodb, 'TagResult', function() { alert('Tagged an entry!'); });
+	EnzymeDbApi.Glycodb.Tag('123-4567','tag:sometag');
+
+=cut
+=item EnzymeDbApi.Glycodb.Untag(glycodb_id,tagname)
+
+Untag a glycodb entry with a tag
+
+Usage
+
+	connect(EnzymeDbApi.Glycodb, 'UntagResult', function() { alert('Untagged an entry!'); });
+	EnzymeDbApi.Glycodb.Untag('123-4567','tag:sometag');
+
+=cut
+
+*/
+	
+	Tag: function(glycodb_id,tagname)
+	{
+		if ( ! this.proxy() ) {
+			log("Proxy not initialized!");
+			return;
+		}
+		this._tag_result = null;
+		this.proxy().Tag(glycodb_id,tagname);
+	},
+
+	TagCallback: function(result)
+	{
+		this._tag_result = result.responseText;
+		signal(this,'TagResult');
+	},
+
+	Untag: function(glycodb_id,tagname)
+	{
+		if ( ! this.proxy() ) {
+			log("Proxy not initialized!");
+			return;
+		}
+		this._untag_result = null;
+		this.proxy().Untag(glycodb_id,tagname);
+	},
+
+	UntagCallback: function(result)
+	{
+		this._untag_result = result;
+		signal(this,'UntagResult');
+	},
+
+
+});
+update(EnzymeDbApi.Glycodb.prototype,EnzymeDbApi.PortClass);
 
 EnzymeDbApi.initialize();

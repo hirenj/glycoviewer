@@ -4,6 +4,10 @@ EnzymeDbConstants = {
 		<% for rest_controller in [EnzymeReactionsController, GeneinfosController, RefsController, EnzymeinfosController ]%>
 		<%= render :partial => 'rest_controller', :locals => { :rest_controller => rest_controller }  %>,
 		<% end %>
+		'glycodb' : {
+			tag: '<%= url_for :controller => 'glycodbs' , :action => 'tag', :format => 'txt' %>',
+			untag: '<%= url_for :controller => 'glycodbs' , :action => 'untag', :format => 'txt' %>'			
+		},
 	},
 	SOAP: {
 		WSDL: '<%= url_for :controller => "enzyme_db_api", :action => "wsdl" %>',
