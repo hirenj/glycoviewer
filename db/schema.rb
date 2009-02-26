@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090226012236) do
+ActiveRecord::Schema.define(:version => 20090226045558) do
 
   create_table "bdrb_job_queues", :force => true do |t|
     t.binary   "args"
@@ -115,7 +115,7 @@ ActiveRecord::Schema.define(:version => 20090226012236) do
   add_index "geneinfos", ["id", "genename"], :name => "geneinfos_id_genename_idx"
   add_index "geneinfos", ["id"], :name => "geneinfos_id_idx"
 
-  create_table "glycodbs", :id => false, :force => true do |t|
+  create_table "glycodbs", :force => true do |t|
     t.string  "COMPOSITION_ID",           :limit => 28,                                  :null => false
     t.string  "COMPOSITION2",             :limit => 32,                                  :null => false
     t.integer "HEXOSE",                   :limit => 2,                                   :null => false
@@ -170,7 +170,7 @@ ActiveRecord::Schema.define(:version => 20090226012236) do
     t.string  "LINKAGE",                  :limit => 10,                                  :null => false
     t.date    "RELEASE_DATE",                                                            :null => false
     t.date    "LAST_UPDATE"
-    t.string  "GLYCODB_NO",               :limit => 23
+    t.string  "tags"
   end
 
   create_table "reactions", :force => true do |t|
