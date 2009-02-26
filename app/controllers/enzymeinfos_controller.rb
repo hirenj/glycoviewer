@@ -29,12 +29,23 @@ class EnzymeinfosController < ApplicationController
 
   def list_tissues
     @tissues = Enzymeinfo.find(:all, :conditions => ["mesh_tissue is not null AND record_class = 'context'"]).collect { |e| e.mesh_tissue}.uniq.sort
-    render
+    respond_to do |wants|
+      wants.html
+    end
   end
 
   def show_tissue
     @enzymeinfos = Enzymeinfo.find(:all, :conditions => ['mesh_tissue = :mesh_tissue', { :mesh_tissue => params[:mesh_tissue]}])
+    @unseen_genes = Geneinfo.find(:all) - @enzymeinfos.collect { |e| e.geneinfo }
     @expressed_tissues = get_expressed_tissues
+    @seen_genes = @enzymeinfos.collect {|enz| enz.geneinfo }.uniq
+    @unseen_reactions = @unseen_genes.collect { |g| g.reactions }.flatten.uniq
+    @seen_reactions = @seen_genes.collect { |g| g.reactions }.flatten.uniq
+    seen_reactions_deltas = @seen_reactions.collect { |r| r.residuedelta }
+    @unseen_reactions.reject! { |r| seen_reactions_deltas.include?(r.residuedelta)}
+    
+    @reactions = @unseen_reactions
+    
     render
   end
 

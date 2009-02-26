@@ -48,7 +48,7 @@ class ReactionsController < ApplicationController
     @disaccharides = @disaccharides.delete_if { |d| @invalid_glycosciences.include? d.glycosciences }
     
     respond_to do |wants|
-      wants.html 
+      wants.html { render :action => 'list_by_donor' }
       wants.xml { render :action => 'list.rxml', :layout => false }
     end
   end

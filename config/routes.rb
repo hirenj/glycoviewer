@@ -35,8 +35,11 @@ ActionController::Routing::Routes.draw do |map|
 
   map.connect ':controller.:format/:action/:id/'
 
+  map.connect ':controller/:action', :format => 'html'
 
   #map.connect 'sviewer/:seq', :controller => 'sviewer', ':ns' => 'dkfz'
+
+
 
   # Install the default route as the lowest priority.
   map.connect ':controller/:action/:id'

@@ -80,6 +80,11 @@ class Geneinfo < ActiveRecord::Base
     return
   end
 
+  def reactions
+    results = self.enzymeinfo.delete_if { |ei| ! ei.is_gene? }.collect { |ei| ei.enzyme_reactions.collect { |er| er.reaction } }.flatten.uniq
+		seen = Hash.new { |h,k| h[k] = true; false }
+		return results.reject { |v| seen[v.residuedelta] }
+  end
 
   private
 

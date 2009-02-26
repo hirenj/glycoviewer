@@ -1,12 +1,37 @@
+<style type="text/css">
+	a.all_reactions_link {
+		display: none;
+	}
+</style>
+<%= javascript_include_tag 'http://yui.yahooapis.com/2.3.0/build/yahoo-dom-event/yahoo-dom-event.js' %>
+<%= javascript_include_tag 'http://yui.yahooapis.com/2.3.0/build/element/element-beta-min.js' %>
+<%= javascript_include_tag 'http://yui.yahooapis.com/2.3.0/build/tabview/tabview-min.js' %>
+<%= javascript_include_tag 'MochiKit/packed/MochiKit/MochiKit.js' %>
+<%= javascript_include_tag 'lib/AlphabetisedTabbedList.js' %>
 <h1>Expression information for <%= params[:mesh_tissue] %></h1>
+<h2>Clayton database structural results</h2>
 <% if @expressed_tissues == true || @expressed_tissues == false %>
 <p>Performing expression analysis</p>
 <% else %>
 	<pre><%= @expressed_tissues %></pre>
 <% end %>
-  <ul>
+<h2>Genes expressed in this system</h2>
+  <ul id="gene_list">
 <% for enzymeinfo in @enzymeinfos %>
     <li><%= link_to enzymeinfo.geneinfo.genename, :controller => 'geneinfos', :action => 'show', :id => enzymeinfo.geneinfo %></li>
 <% end %>
   </ul>
+<h2>Reactions not synthesised in this tissue</h2>
+<%= render :partial => 'reactions/matrix'%>
+
 <br />
+
+<script type="text/javascript">
+	function onloader() {
+		tabber = new AlphabetisedTabbedList('gene_list');
+	 	tabber.maxListLength = 10;
+		tabber.buildTabbedList();
+	}
+	MochiKit.DOM.addLoadEvent(onloader);
+
+</script>

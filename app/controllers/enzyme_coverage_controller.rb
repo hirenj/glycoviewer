@@ -86,26 +86,6 @@ class EnzymeCoverageController < ApplicationController
     if params[:mesh_tissue] != nil && params[:mesh_tissue] != ''
       gene_results = execute_genecoverage
       logger.info("Total number of bad linkages #{gene_results.size}")
-      bad_links = Element.new('svg:g')
-      self.sugar.overlays << bad_links
-      gene_results.each { |link|
-        link.callbacks.push( lambda { |link_element|
-          x1 = -1*(link.centre[:x] - 20)
-          y1 = -1*(link.centre[:y] - 20)
-          x2 = -1*(link.centre[:x] + 20)
-          y2 = -1*(link.centre[:y] + 20)
-          x3 = -1*(link.centre[:x] - 20)
-          y3 = -1*(link.centre[:y] + 20)
-          x4 = -1*(link.centre[:x] + 20)
-          y4 = -1*(link.centre[:y] - 20)
-          cross = Element.new('svg:line')
-          cross.add_attributes({'class' => 'bad_link', 'x1' => x1, 'x2' => x2, 'y1' => y1, 'y2' => y2, 'stroke'=>'#ff0000','stroke-width'=>'5.0'})
-          cross_inv = Element.new('svg:line')
-          cross_inv.add_attributes({'class' => 'bad_link', 'x1' => x3, 'x2' => x4, 'y1' => y3, 'y2' => y4, 'stroke'=>'#ff0000','stroke-width'=>'5.0'})
-          bad_links.add_element(cross)
-          bad_links.add_element(cross_inv)
-        })
-      }
       markup_linkages(gene_results)
     end
     
@@ -115,22 +95,55 @@ class EnzymeCoverageController < ApplicationController
 
   def markup_linkages(linkages)
     sug = self.sugar
+
+    shadow_filter = Element.new('svg:filter')
+    shadow_filter.add_attributes({'id' => 'drop-shadow'})
+    el = Element.new('svg:feGaussianBlur')
+    el.add_attributes({ 'in' => 'SourceAlpha', 'result' => 'blur-out', 'stdDeviation' => '10' })
+    shadow_filter.add_element(el)
+    el = Element.new('svg:feOffset')
+    el.add_attributes({ 'in' => 'blur-out', 'result' => 'the-shadow', 'dx' => '8', 'dy' => '8' })
+    shadow_filter.add_element(el)
+    el = Element.new('svg:feBlend')
+    el.add_attributes({ 'in' => 'SourceGraphic', 'in2' => 'the-shadow', 'mode' => 'normal' })
+    shadow_filter.add_element(el)
+    new_defs = Element.new('svg:defs')
+    new_defs.add_element(shadow_filter)
+    sugar.overlays << new_defs
+    
     gene_overlay = Element.new('svg:g')
     sugar.overlays.insert(0,gene_overlay)
     linkages.each { |link|
       genes = link.genes
       link.callbacks.push( lambda { |link_element|
-        x1 = -1*(link.centre[:x] + 100)
+
+        bad_linkage = Element.new('svg:g')
+        bad_linkage.add_attributes({'id' => "link-#{link_element.object_id}" })
+        
+        x1 = -1*(link.centre[:x] - 20)
+        y1 = -1*(link.centre[:y] - 20)
+        x2 = -1*(link.centre[:x] + 20)
+        y2 = -1*(link.centre[:y] + 20)
+        x3 = -1*(link.centre[:x] - 20)
+        y3 = -1*(link.centre[:y] + 20)
+        x4 = -1*(link.centre[:x] + 20)
+        y4 = -1*(link.centre[:y] - 20)
+        cross = Element.new('svg:line')
+        cross.add_attributes({'class' => 'bad_link', 'x1' => x1, 'x2' => x2, 'y1' => y1, 'y2' => y2, 'stroke'=>'#ff0000','stroke-width'=>'5.0'})
+        cross_inv = Element.new('svg:line')
+        cross_inv.add_attributes({'class' => 'bad_link', 'x1' => x3, 'x2' => x4, 'y1' => y3, 'y2' => y4, 'stroke'=>'#ff0000','stroke-width'=>'5.0'})
+
+        x1 = -1*(link.centre[:x] + 110)
         y1 = -1*(link.centre[:y] - 10)
 
         max_height = genes.size * 30 + 25
         
         back_el = Element.new('svg:rect')
-        back_el.add_attributes({'x' => x1, 'y' => y1, 'rx' => 10, 'ry' => 10, 'width' => 220, 'height' => max_height, 'stroke' => '#ff0000', 'stroke-width' => '5px', 'fill' => '#ffffff', 'fill-opacity' => 0.8, 'stroke-opacity' => 0.5 })
+        back_el.add_attributes({'x' => x1, 'y' => y1, 'rx' => 10, 'ry' => 10, 'width' => 220, 'height' => max_height, 'stroke' => '#ff0000', 'stroke-width' => '5px', 'fill' => '#ffffff', 'fill-opacity' => 1, 'stroke-opacity' => 0.5 })
         back_circle = Element.new('svg:svg')
         back_circle.add_attributes('viewBox' => '0 0 90 58', 'height' => 58, 'width' => '90', 'x' => -1*(link.centre[:x]+45), 'y' => -1*(link.centre[:y]+45))
         back_circle_shape = Element.new('svg:circle')
-        back_circle_shape.add_attributes({'cx' => 45, 'cy' => 45, 'r' => 40, 'stroke' => '#ff0000', 'stroke-width' => '5px', 'fill' => '#ffffff', 'fill-opacity' => 0.8, 'stroke-opacity' => 0.5 })
+        back_circle_shape.add_attributes({'cx' => 45, 'cy' => 45, 'r' => 40, 'stroke' => '#ff0000', 'stroke-width' => '5px', 'fill' => '#ffffff', 'fill-opacity' => 1, 'stroke-opacity' => 0.5 })
         back_circle.add_element(back_circle_shape)
         text = Element.new('svg:text')
         text.add_attributes({ 'x' => x1, 'y' => y1+10, 'width' => 210, 'font-size' => 30, 'height' => max_height })
@@ -140,9 +153,19 @@ class EnzymeCoverageController < ApplicationController
           li.text = gene.genename
           text.add_element(li)
         }
-        gene_overlay.add_element(back_el)
-        gene_overlay.add_element(back_circle)        
-        gene_overlay.add_element(text)
+        bad_linkage.add_element(back_el)
+        bad_linkage.add_element(back_circle)        
+        bad_linkage.add_element(text)
+        bad_linkage.add_element(cross)
+        bad_linkage.add_element(cross_inv)
+        gene_overlay.add_element(bad_linkage)
+        
+        drop_shadow = Element.new('svg:g')
+        drop_shadow.add_attribute('filter','url(#drop-shadow)')
+        shadow = Element.new('svg:use')
+        shadow.add_attribute('xlink:href' , "#link-#{link_element.object_id}")
+        drop_shadow.add_element(shadow)
+        gene_overlay.add_element(drop_shadow)
       })
     }
   end

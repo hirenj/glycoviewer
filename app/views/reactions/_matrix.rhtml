@@ -1,0 +1,43 @@
+<%
+	donor_string_hash = Hash.new()
+	donor_hash = Hash.new() {|h,k| h[k] = Hash.new() {|h2,k2| h2[k2] = Array.new() } }
+	for reaction in @reactions
+		donor = reaction.donor
+		substrate = reaction.substrate_residue
+		link = donor.linkage_at_position
+		donor_hash[donor.name][substrate.name] << reaction.linkage
+		donor_string_hash[donor.name] = donor
+		donor_string_hash[substrate.name] = substrate
+	end
+%>
+<table>
+	<colgroup>
+		<col/>
+	<% 1..donor_string_hash.keys.length.times do %>
+		<col width="75em" style="background:<%= cycle("#dddddd", "#ffffff") %>;"/>
+	<% end %>
+	</colgroup>
+	<tr><th></th>
+<% for donor in donor_string_hash.keys.sort %>
+	<th><%= link_to donor_string_hash[donor].name(:ic), :action => 'list_by_donor', :acceptor => donor_string_hash[donor].name %></th>
+<% end %>
+	</tr>
+<% for donor in donor_string_hash.keys.sort %>
+	<tr>
+	<td><%= link_to donor_string_hash[donor].name(:ic), :action => 'list_by_donor', :donor => donor_string_hash[donor].name %></td>
+	<% for substrate in donor_string_hash.keys.sort %>
+	<td style="vertical-align: top;">
+		<% if donor_hash[donor][substrate].length > 0 %>
+		<div style="width: 100%;"><%= link_to "All..", { :action => 'list_by_donor', :donor => donor_string_hash[donor].name, :acceptor => donor_string_hash[substrate].name }, :style => "background: red;", :class => ' all_reactions_link ' %>
+		</div>
+		<% end %>
+			<ul style="list-style-type: none; padding-left: 0px; margin-left: 40%;">
+				<% for linkage in donor_hash[donor][substrate].uniq %>				
+				<li><%= link_to linkage, :controller => 'reactions', :action => 'list_by_donor', :donor => donor_string_hash[donor].name, :acceptor => donor_string_hash[substrate].name, :linkage => linkage %></li>
+				<% end %>
+			</ul>
+	</td>
+	<% end %>
+	</tr>
+<% end %>
+</table>

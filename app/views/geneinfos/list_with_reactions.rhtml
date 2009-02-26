@@ -13,12 +13,7 @@
     <td><%=h geneinfo.send(column.name) %></td>
   <% end %>
 	<td>
-		<% 
-			reactions = geneinfo.enzymeinfo.delete_if { |ei| ! ei.is_gene? }.collect { |ei| ei.enzyme_reactions.collect { |er| er.reaction } }.flatten.uniq
-			seen = Hash.new { |h,k| h[k] = true; false }
-			reactions = reactions.reject { |v| seen[v.residuedelta] }
-		%>
-		<% for reac in reactions %>
+		<% for reac in geneinfo.reactions %>
 			<%= reac.id %>
 		<% end %>
 	</td>
