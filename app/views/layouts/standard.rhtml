@@ -1,7 +1,8 @@
 <%= render :partial => "layouts/doctype" %>
 <head>
   <title>Taxonomy <%= params[:taxonomy_id] || session[:taxonomy_id] || '9606' %> Enzymes: <%= controller.action_name %></title>
-  <%= stylesheet_link_tag 'scaffold' %>
+  	<%= stylesheet_link_tag 'scaffold' %>
+	<%= stylesheet_link_tag 'http://yui.yahooapis.com/2.7.0/build/datatable/assets/skins/sam/datatable.css' %>
   	<style type="text/css">
 		* {
 			font-family: Helvetica, Arial, Sans-serif;

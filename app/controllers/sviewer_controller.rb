@@ -15,10 +15,10 @@ class SviewerController < ApplicationController
   attr_accessor :input_sugar
 
   def index
-    @seq = params[:seq]
+    @seq = params[:seq].gsub(/\+.*$/,'')
     @width = params[:width]
     @height = params[:height]
-    
+
     respond_to do |wants|
       wants.html { render_html }
       wants.xhtml { render_div }

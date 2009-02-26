@@ -1,4 +1,11 @@
 ActionController::Routing::Routes.draw do |map|
+
+  map.connect 'glycodbs', :controller => 'glycodbs', :action => 'index', :format => 'html'
+  map.connect 'glycodbs/:id', :controller => 'glycodbs', :action => 'show', :format => 'html'
+
+
+  map.resources :glycodbs
+
   # The priority is based upon order of creation: first created -> highest priority.
   
   # Sample of regular route:
@@ -35,11 +42,11 @@ ActionController::Routing::Routes.draw do |map|
 
   map.connect ':controller.:format/:action/:id/'
 
-  map.connect ':controller/:action', :format => 'html'
+  map.connect ':controller/:action/', :format => 'html'
 
   #map.connect 'sviewer/:seq', :controller => 'sviewer', ':ns' => 'dkfz'
 
-
+  map.connect ':controller/:action/:id', :format => 'html'
 
   # Install the default route as the lowest priority.
   map.connect ':controller/:action/:id'
