@@ -55,12 +55,18 @@
 			appendChildNodes(out_canvases[a_canvas],slider.canvas());
 			connect(slider,'onchange',partial(changescale,mysvg,original_width,original_height));
 
-			toggle = XHtmlDOM.getElementsByClassName('gene_toggle',out_canvases[a_canvas])[0];
+			gene_toggle = XHtmlDOM.getElementsByClassName('gene_toggle',out_canvases[a_canvas])[0];
+			hits_toggle = XHtmlDOM.getElementsByClassName('hits_toggle',out_canvases[a_canvas])[0];
+
 			a_printer = XHtmlDOM.getElementsByClassName('print_button',out_canvases[a_canvas])[0];
 
-			target_layer = XHtmlDOM.getElementsByClassName('gene_overlay',mysvg)[0];
+			gene_layer = XHtmlDOM.getElementsByClassName('gene_overlay',mysvg)[0];
 
-			connect(toggle,'onclick',partial(togglelayer,target_layer));
+			hits_layer = XHtmlDOM.getElementsByClassName('hits_overlay',mysvg)[0];
+			
+			connect(gene_toggle,'onclick',partial(togglelayer,gene_layer));
+			connect(hits_toggle,'onclick',partial(togglelayer,hits_layer));
+
 			connect(a_printer,'onclick',partial(do_printing,mysvg));
 
 		}
@@ -94,8 +100,8 @@
 		
 		a_window.document.getElementsByTagName('body')[0].appendChild(copied_svg);
 		
-		copied_svg.setAttribute('width','40cm');
-		copied_svg.setAttribute('height','60cm');
+		copied_svg.setAttribute('width','80cm');
+		copied_svg.setAttribute('height','120cm');
 		
 		groups = copied_svg.getElementsByTagNameNS('http://www.w3.org/2000/svg','g');
 		for (var i = 0; i < groups.length; i++) {
@@ -119,6 +125,7 @@
 	<% @sugar = sugar %>
 <div style="height: 600px; overflow:auto;" class="result_structure">
 <input type="button" class="gene_toggle" value="Toggle gene display"/>
+<input type="button" class="hits_toggle" value="Toggle hits display"/>
 <input type="button" class="print_button" value="Print"/>
 <div style="overflow: none; height: 98%; width: 100%;">
 	<%= render :partial => "sviewer/render", :locals => { :sugar => sugar, :scale => 0.5, :padding => 50 } %>

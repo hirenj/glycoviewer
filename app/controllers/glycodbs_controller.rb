@@ -1,5 +1,20 @@
 require 'lax_residue_names'
 
+module HitCounter
+  attr_accessor :hits
+  def hits
+    @hits ||= 0
+  end  
+end
+
+class Monosaccharide
+  include HitCounter
+end
+
+MATCH_BLOCK = lambda { |residue,other_res,matched_yet|
+  residue.equals?(other_res) && ((! matched_yet && ((residue.hits += 1) > -1)) || true )
+}
+
 class GlycodbsController < ApplicationController
   layout 'standard'
   
@@ -164,7 +179,7 @@ class GlycodbsController < ApplicationController
       
       begin
         sugar_set.each { |sug|
-          sugar.union!(sug)
+          sugar.union!(sug,&MATCH_BLOCK)
           sugar.add_structure_count
         }
         SugarHelper.MakeRenderable(sugar)        
@@ -181,6 +196,25 @@ class GlycodbsController < ApplicationController
         if ! r.is_valid? && r.parent && r.parent.is_valid?
           r.parent.remove_child(r)
         end
+      }
+      targets = Element.new('svg:g')
+      targets.add_attributes({'class' => 'hits_overlay', 'display' => 'none'})
+      sugar.overlays << targets
+      sugar.residue_composition.each { |residue|
+        residue.hits += 1
+        residue.callbacks.push( lambda { |element|
+          xcenter = -1*(residue.centre[:x]) 
+          ycenter = -1*(residue.centre[:y])
+          label = Element.new('svg:text')
+          label.add_attributes({'x' => xcenter, 'y' => ycenter, 'text-anchor' => 'middle', 'style' => 'dominant-baseline: middle;','font-size' => '40px' })
+          label.text = residue.hits
+          label_back = Element.new('svg:circle')
+          label_back.add_attributes({'cx' => xcenter, 'cy' => ycenter, 'r' => '40px', 'fill' => '#ffffff', 'stroke-width' => '2px', 'stroke' => '#0000ff'})
+
+          targets.add_element(label_back)
+          targets.add_element(label)
+          
+        })
       }
       gene_tissue = tags.split(',').collect { |tag| tag.gsub!(/anat\:/,'') }.compact.first.humanize
       coverage_finder.markup_linkages(coverage_finder.execute_genecoverage(gene_tissue))
