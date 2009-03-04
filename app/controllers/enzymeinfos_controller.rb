@@ -28,7 +28,7 @@ class EnzymeinfosController < ApplicationController
   end
 
   def list_tissues
-    @tissues = Enzymeinfo.find(:all, :conditions => ["mesh_tissue is not null AND record_class = 'context'"]).collect { |e| e.mesh_tissue}.uniq.sort
+    @tissues = Enzymeinfo.All_Tissues
     respond_to do |wants|
       wants.html
     end

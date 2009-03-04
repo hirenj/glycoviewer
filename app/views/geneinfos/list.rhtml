@@ -27,9 +27,6 @@
 <% end %>
 </table>
 
-<%= link_to 'Previous page', { :page => @geneinfo_pages.current.previous } if @geneinfo_pages.current.previous %>
-<%= link_to 'Next page', { :page => @geneinfo_pages.current.next } if @geneinfo_pages.current.next %> 
-
 <br />
 
 <%= link_to 'New geneinfo', :action => 'new' %>

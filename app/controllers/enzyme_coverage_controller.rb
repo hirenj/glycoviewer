@@ -58,10 +58,18 @@ class EnzymeCoverageController < ApplicationController
   end
 
   def pathways
-    best_result_size = nil
-    best_results = nil
     self.sugar = params[:seq]
     self.sugar.root.anomer = 'u'
+    
+    execute_pathways_and_markup()
+    
+    render :action => 'pathway_coverage', :content_type => Mime::XHTML
+    sugar.finish()
+  end
+
+  def execute_pathways_and_markup
+    best_result_size = nil
+    best_results = nil
     
     self.sugar.residue_composition.each { |r|
       r.extend(ValidityTest)
@@ -80,17 +88,23 @@ class EnzymeCoverageController < ApplicationController
         best_results = results
       end
     }
-    
+
+    self.sugar.residue_composition.each { |r|
+      r.validate
+    }
+
+    self.sugar.linkages.each {|link|
+      link.extend(ValidityTest)
+      link.validate
+    }
+
     markup_chains(best_results)
 
-    if params[:mesh_tissue] != nil && params[:mesh_tissue] != ''
-      gene_results = execute_genecoverage
+    if params && params[:mesh_tissue] != nil && params[:mesh_tissue] != ''
+      gene_results = execute_genecoverage(params[:mesh_tissue])
       logger.info("Total number of bad linkages #{gene_results.size}")
       markup_linkages(gene_results)
     end
-    
-    render :action => 'pathway_coverage', :content_type => Mime::XHTML
-    sugar.finish()
   end
 
   def markup_linkages(linkages)
@@ -112,6 +126,7 @@ class EnzymeCoverageController < ApplicationController
     sugar.overlays << new_defs
     
     gene_overlay = Element.new('svg:g')
+    gene_overlay.add_attributes({'class' => 'gene_overlay'})
     sugar.overlays.insert(0,gene_overlay)
     linkages.each { |link|
       genes = link.genes
@@ -141,7 +156,10 @@ class EnzymeCoverageController < ApplicationController
         back_el = Element.new('svg:rect')
         back_el.add_attributes({'x' => x1, 'y' => y1, 'rx' => 10, 'ry' => 10, 'width' => 220, 'height' => max_height, 'stroke' => '#ff0000', 'stroke-width' => '5px', 'fill' => '#ffffff', 'fill-opacity' => 1, 'stroke-opacity' => 0.5 })
         back_circle = Element.new('svg:svg')
-        back_circle.add_attributes('viewBox' => '0 0 90 58', 'height' => 58, 'width' => '90', 'x' => -1*(link.centre[:x]+45), 'y' => -1*(link.centre[:y]+45))
+        
+        cross_mark_height = genes.size == 0 ? 90 : 58
+        
+        back_circle.add_attributes('viewBox' =>"0 0 90 #{cross_mark_height}", 'height' => cross_mark_height, 'width' => '90', 'x' => -1*(link.centre[:x]+45), 'y' => -1*(link.centre[:y]+45))
         back_circle_shape = Element.new('svg:circle')
         back_circle_shape.add_attributes({'cx' => 45, 'cy' => 45, 'r' => 40, 'stroke' => '#ff0000', 'stroke-width' => '5px', 'fill' => '#ffffff', 'fill-opacity' => 1, 'stroke-opacity' => 0.5 })
         back_circle.add_element(back_circle_shape)
@@ -153,9 +171,9 @@ class EnzymeCoverageController < ApplicationController
           li.text = gene.genename
           text.add_element(li)
         }
-        bad_linkage.add_element(back_el)
+        bad_linkage.add_element(back_el) if genes.size > 0
         bad_linkage.add_element(back_circle)        
-        bad_linkage.add_element(text)
+        bad_linkage.add_element(text) if genes.size > 0
         bad_linkage.add_element(cross)
         bad_linkage.add_element(cross_inv)
         gene_overlay.add_element(bad_linkage)
@@ -173,7 +191,7 @@ class EnzymeCoverageController < ApplicationController
   def markup_chains(results,markup_sugar=true)
     sug = self.sugar
     results[:deltas].reject { |delta| results[:deltas].include?(delta.parent) }.each { |delta|
-      chains = sug.get_chains_from_residue(delta) # Array of arrays of residues (i.e. array of paths)
+      chains = sug.get_chains_from_residue(delta).reject { |chain| chain[0] && chain[0].name(:ic) == 'GlcNAc' && chain[0].parent && chain[0].parent.name(:ic) == 'Man' && chain[0].paired_residue_position == 3 } # Array of arrays of residues (i.e. array of paths)
       all_residues = sug.residue_composition(delta)
       decoration_residues = all_residues - chains.flatten.uniq
       invalid_residues = markup_decorations(decoration_residues,markup_sugar)
@@ -369,8 +387,11 @@ class EnzymeCoverageController < ApplicationController
     sug.underlays << delta_occurence if markup_sugar
     
     #reject { |r| invalid_residues.include? r.parent }
-    invalid_residues.each { |residue|
-      all_links = SugarUtil.FindDisaccharides(sugar,residue)
+    invalid_residues.each { |residue|      
+      all_links = SugarUtil.FindDisaccharides(sug,residue)
+      if residue.parent == nil
+        next
+      end
       all_links[SugarUtil.SugarFromDisaccharide(sug,residue)] << residue.linkage_at_position
       all_links.each { |disac, links|
         next unless markup_sugar
@@ -531,8 +552,8 @@ class EnzymeCoverageController < ApplicationController
     end    
   end
 
-  def execute_genecoverage
-    @genes = Enzymeinfo.find(:all, :conditions => ['mesh_tissue = :mesh_tissue', { :mesh_tissue => params[:mesh_tissue]}]).collect { |e| e.geneinfo }.uniq
+  def execute_genecoverage(tissue_name)
+    @genes = Enzymeinfo.find(:all, :conditions => ['mesh_tissue = :mesh_tissue', { :mesh_tissue => tissue_name }]).collect { |e| e.geneinfo }.uniq
     @genes = @genes + ['ALG1','ALG2','ALG3','ALG12','ALG13','ALG14'].collect { |name| Geneinfo.find(:first, :conditions => { :genename => name } ) }
     bad_linkages = []
     @disacs_cache ||= {}
@@ -553,6 +574,10 @@ class EnzymeCoverageController < ApplicationController
       }
       if (linkage_genes - @genes).size == linkage_genes.size
         bad_linkages += links
+        bad_linkages.each { |link|
+          link.invalidate
+        }
+
       end
     }
     return bad_linkages

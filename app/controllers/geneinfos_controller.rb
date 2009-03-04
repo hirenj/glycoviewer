@@ -23,7 +23,7 @@ class GeneinfosController < ApplicationController
   end
 
   def list
-    @geneinfo_pages, @geneinfos = paginate :geneinfos, :per_page => 100
+    @geneinfos = Geneinfo.paginate :page => params[:page], :order => 'id ASC'
   end
 
   def list_with_reactions

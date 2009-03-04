@@ -1,3 +1,5 @@
+require 'lax_residue_names'
+
 class GlycodbsController < ApplicationController
   layout 'standard'
   
@@ -70,6 +72,15 @@ class GlycodbsController < ApplicationController
     end
   end
 
+  def tags
+    @tags = Glycodb.All_Tags
+    @defined_tissues = Enzymeinfo.All_Tissues
+    respond_to do |format|
+        format.txt { render :text => @tags.join(',') }
+        format.html { render :action => 'list_tags' }
+    end
+  end
+
   def untag
     @glycodb = Glycodb.find(params[:id])
     new_tag = params[:tag]    
@@ -115,6 +126,66 @@ class GlycodbsController < ApplicationController
   def tissue
     @glycodbs = Glycodb.easyfind(:keywords => params[:id], :fieldnames => ['SYSTEM','DIVISION1','DIVISION2','DIVISION3','DIVISION4'])
     @glycodbs.reject! { |glycodb| glycodb.SPECIES != 'HOMO SAPIENS'}
+  end
+
+  def coverage_for_tag
+    @sugars = execute_coverage_for_tag(params[:id])
+    render :action => 'coverage', :content_type => Mime::XHTML
+  end
+
+  def execute_coverage_for_tag(tags)
+    individual_sugars = Glycodb.easyfind(:keywords => tags.split(','), :fieldnames => ['tags']).collect { |entry|
+      my_seq = entry.GLYCAN_ST.gsub(/\+.*/,'').gsub(/\(\?/,'(u')
+      my_sug = nil
+      begin
+        my_sug = SugarHelper.CreateMultiSugar(my_seq,:ic).get_unique_sugar        
+      rescue Exception => e
+      end      
+      my_sug
+    }.compact
+    sugar_sets = 
+      [ individual_sugars.reject { |sug| sug.root.name(:ic) != 'GlcNAc'},
+        individual_sugars.reject { |sug| sug.root.name(:ic) != 'GalNAc'},
+        individual_sugars.reject { |sug| sug.root.name(:ic) != 'Gal'},
+        individual_sugars.reject { |sug| sug.root.name(:ic) != 'Glc'}
+      ].compact
+    return sugar_sets.collect { |sugar_set|
+      sugar = sugar_set.shift
+      def sugar.add_structure_count
+        @struct_count = (@struct_count || 0) + 1
+      end
+      def sugar.structure_count
+        @struct_count
+      end
+      
+      if sugar == nil
+        next
+      end
+      
+      begin
+        sugar_set.each { |sug|
+          sugar.union!(sug)
+          sugar.add_structure_count
+        }
+        SugarHelper.MakeRenderable(sugar)        
+      rescue Exception => e
+        logger.info(e)
+      end
+      
+    
+      coverage_finder = EnzymeCoverageController.new()
+      coverage_finder.sugar = sugar
+      sugar.root.anomer = 'u'
+      coverage_finder.execute_pathways_and_markup()
+      sugar.residue_composition.each { |r|
+        if ! r.is_valid? && r.parent && r.parent.is_valid?
+          r.parent.remove_child(r)
+        end
+      }
+      gene_tissue = tags.split(',').collect { |tag| tag.gsub!(/anat\:/,'') }.compact.first.humanize
+      coverage_finder.markup_linkages(coverage_finder.execute_genecoverage(gene_tissue))
+      sugar
+    }.compact
   end
 
 end

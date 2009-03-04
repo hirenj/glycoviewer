@@ -1,4 +1,9 @@
 class Glycodb < ActiveRecord::Base
+  
+  def self.All_Tags()
+    self.find(:all).collect { |gdb| (gdb.tags || '').split(',') }.flatten.sort.uniq
+  end
+  
   def self.easyfind(argHash)
       fieldnames = argHash[:fieldnames]
       keywords = argHash[:keywords]

@@ -9,18 +9,31 @@
 <style type="text/css">
 .yui-skin-sam .yui-dt-body { cursor:pointer; } /* when rows are selectable */
 </style>
-<input type="text" value="" id="tags"/><input type="button" id="tag_button" value="Tag"/>
+<%
+	current_tissue = Enzymeinfo.find( :first, :conditions => ['ucase(mesh_tissue) like ucase(:tag)', { :tag => "#{params[:id]}%"}])
+	if current_tissue != nil
+		current_tissue = current_tissue.mesh_tissue
+    	all_tissues = Enzymeinfo.find(:all, :conditions => ["mesh_tissue is not null AND record_class = 'context'"]).collect { |e| e.mesh_tissue }.uniq.sort
+		next_tissue = all_tissues[all_tissues.index(current_tissue)+1].downcase	
+	else
+		next_tissue = ''
+	end
+%>
+
+
+<input type="text" value="anat:<%= params[:id]%>" id="tags"/><input type="button" id="tag_button" value="Tag"/>
+<%= link_to 'Next', :action => 'tissue', :id => next_tissue %>
 <div class=" yui-skin-sam">
 <div id="glycodb_results">
 <table id="glycodbs">
 <thead>
 	<tr>
-		<th>ID</th><th>System</th><th>Division 1</th><th>Division 2</th><th>Division 3</th><th>Division 4</th><th>Disease</th><th>Tags</th>
+		<th>ID</th><th>System</th><th>Division 1</th><th>Division 2</th><th>Division 3</th><th>Division 4</th><th>Life stage</th><th>Disease</th><th>Tags</th>
 	</tr>
 </thead>
 <tbody>
 <% for glycodb in @glycodbs %>
-<tr><td><%= glycodb.id %></td><td><%= glycodb.SYSTEM %></td><td><%= glycodb.DIVISION1 %></td><td><%= glycodb.DIVISION2 %></td><td><%= glycodb.DIVISION3 %></td><td><%= glycodb.DIVISION4 %></td><td><%= glycodb.DISEASE != '' ? glycodb.DISEASE : 'healthy' %></td><td><%= glycodb.tags %></td></tr>
+<tr><td><%= glycodb.id %></td><td><%= glycodb.SYSTEM %></td><td><%= glycodb.DIVISION1 %></td><td><%= glycodb.DIVISION2 %></td><td><%= glycodb.DIVISION3 %></td><td><%= glycodb.DIVISION4 %></td><td><%= glycodb.LIFE_STAGE %></td><td><%= glycodb.DISEASE != '' ? glycodb.DISEASE : 'healthy' %></td><td><%= glycodb.tags %></td></tr>
 <% end %>
 </tbody>
 </table>
@@ -36,6 +49,7 @@
             {key:"division_2",label:"Division 2",sortable:true},
             {key:"division_3",label:"Division 3",sortable:true},
             {key:"division_4",label:"Division 4",sortable:true},
+			{key:"life_stage",label:"Life stage", sortable:true},
             {key:"disease",label:"Disease",sortable:true},
 			{key:"tags",label:"Tags",sortable:true}
         ];
@@ -49,6 +63,7 @@
                     {key:"division_2"},
                     {key:"division_3"},
                     {key:"division_4"},
+					{key:"life_stage"},
 					{key:"disease"},
 					{key:"tags"}
             ]

@@ -9,6 +9,10 @@ class Enzymeinfo < ActiveRecord::Base
 	validates_presence_of :geneinfo
 
   before_validation :ensure_unique
+  
+  def self.All_Tissues
+    return Enzymeinfo.find(:all, :conditions => ["mesh_tissue is not null AND record_class = 'context'"]).collect { |e| e.mesh_tissue}.uniq.sort
+  end
     
 	def ensure_unique
     #logger.error(geneinfo.methods.join(','))
