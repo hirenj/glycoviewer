@@ -216,7 +216,7 @@ class GlycodbsController < ApplicationController
           
         })
       }
-      gene_tissue = tags.split(',').collect { |tag| tag.gsub!(/anat\:/,'') }.compact.first.humanize
+      gene_tissue = (tags.split(',').collect { |tag| tag.gsub!(/anat\:/,'') }.compact.first || 'nil').humanize
       coverage_finder.markup_linkages(coverage_finder.execute_genecoverage(gene_tissue))
       sugar
     }.compact
