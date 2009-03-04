@@ -1,0 +1,129 @@
+<%= javascript_include_tag 'MochiKit/packed/MochiKit/MochiKit.js' %>
+<%= javascript_include_tag 'lib/XHtmlDOM.js' %>
+<%= javascript_include_tag 'lib/sugarbuilder.js' %>
+<%= javascript_include_tag 'lib/sugarbuilder_pallette.js' %>
+<%= javascript_include_tag 'http://yui.yahooapis.com/2.7.0/build/yahoo-dom-event/yahoo-dom-event.js' %>
+<%= javascript_include_tag 'http://yui.yahooapis.com/2.7.0/build/element/element-min.js' %>
+<%= javascript_include_tag 'http://yui.yahooapis.com/2.7.0/build/dragdrop/dragdrop-min.js' %>
+<%= javascript_include_tag 'http://yui.yahooapis.com/2.7.0/build/container/container-min.js' %>
+<%= javascript_include_tag 'http://yui.yahooapis.com/2.7.0/build/tabview/tabview-min.js' %>
+<%= javascript_include_tag 'http://yui.yahooapis.com/2.7.0/build/slider/slider-min.js' %>
+<style type="text/css">
+	.enzyme {
+		stroke: #00ff00;
+		stroke-width: 5;
+
+	}
+	.evidenced {
+		stroke: #0000ff;
+		stroke-width: 5;
+
+	}
+	.supported {
+		stroke: #dddddd;
+		stroke-width: 5;
+	}
+	.noenzyme {
+		stroke: #ff0000;
+		stroke-width: 5;
+
+	}
+	@media print {		
+		.result_structure {
+			position: absolute;
+			top: 0;
+			left: 0;
+			height: 100%;
+			width: 100%;
+		}
+	}
+</style>
+<script type="text/javascript">
+//<![CDATA[
+	function onloader() {
+
+		out_canvases = XHtmlDOM.getElementsByClassName('result_structure',document);
+		for ( a_canvas in out_canvases ) {
+
+			mysvg = out_canvases[a_canvas].getElementsByTagNameNS('http://www.w3.org/2000/svg','svg')[0];
+
+			original_width = mysvg.getAttribute('width');
+			original_height = mysvg.getAttribute('height');
+
+			slider = new SugarBuilder.Slider();
+			slider.canvas().style.zIndex = 2;
+			appendChildNodes(out_canvases[a_canvas],slider.canvas());
+			connect(slider,'onchange',partial(changescale,mysvg,original_width,original_height));
+
+			toggle = XHtmlDOM.getElementsByClassName('gene_toggle',out_canvases[a_canvas])[0];
+			a_printer = XHtmlDOM.getElementsByClassName('print_button',out_canvases[a_canvas])[0];
+
+			target_layer = XHtmlDOM.getElementsByClassName('gene_overlay',mysvg)[0];
+
+			connect(toggle,'onclick',partial(togglelayer,target_layer));
+			connect(a_printer,'onclick',partial(do_printing,mysvg));
+
+		}
+		build_tabs();
+	}
+	
+	function togglelayer(svg_group) {
+		if (svg_group.getAttribute('display')) {
+			svg_group.removeAttribute('display');
+		} else {
+			svg_group.setAttribute('display','none');
+		}
+	}
+	
+	function changescale(svg,original_width,original_height,e) {
+		scale = e.target().value;
+		svg.setAttribute('width', original_width*scale);
+		svg.setAttribute('height', original_height*scale);
+	}
+	
+	function build_tabs() {
+		var myTabs = new YAHOO.widget.TabView("coverage_tabs");
+	}
+	
+	function do_printing(svg_element) {
+		a_window = window.open('','_blank');
+		a_window.document.write('<xml version="1.0" standalone="no"?>\n');
+		a_window.document.close();
+
+		copied_svg = a_window.document.importNode(svg_element,true);
+		
+		a_window.document.getElementsByTagName('body')[0].appendChild(copied_svg);
+		
+		copied_svg.setAttribute('width','40cm');
+		copied_svg.setAttribute('height','60cm');
+		
+		groups = copied_svg.getElementsByTagNameNS('http://www.w3.org/2000/svg','g');
+		for (var i = 0; i < groups.length; i++) {
+			groups[i].removeAttribute('filter');
+		}
+	}
+	
+	connect(window,'onload',onloader);
+//]]>	
+</script>
+<div id="coverage_tabs" class="yui-navset" style="width: 95%;">
+	<ul class="yui-nav">
+<% seen_first = true %>
+<% for sugar in @sugars %>
+		<li <%= seen_first ? 'class="selected"' : '' %>><a><%= sugar.root.name(:ic) %></a></li>
+		<% seen_first = false %>
+<% end %>
+	</ul>
+<div class="yui-content">
+<% for sugar in @sugars %>
+	<% @sugar = sugar %>
+<div style="height: 600px; overflow:auto;" class="result_structure">
+<input type="button" class="gene_toggle" value="Toggle gene display"/>
+<input type="button" class="print_button" value="Print"/>
+<div style="overflow: none; height: 98%; width: 100%;">
+	<%= render :partial => "sviewer/render", :locals => { :sugar => sugar, :scale => 0.5, :padding => 50 } %>
+</div>
+</div>
+<% end %>
+</div>
+</div>

@@ -1,0 +1,10 @@
+<ul>
+<% for tag in @tags %>
+<%
+	if anat_name = tag.gsub(/anat\:/,'').humanize
+		has_expression = @defined_tissues.include? anat_name
+	end
+%>
+<li><%= link_to anat_name || tag, :controller => "glycodbs", :action => "coverage_for_tag", :id => tag %> <%= has_expression ? 'Expression data' : 'No expression data'%></li>
+<% end %>
+</ul>
