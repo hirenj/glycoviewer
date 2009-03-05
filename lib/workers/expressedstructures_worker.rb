@@ -1,3 +1,4 @@
+require 'open3'
 class ExpressedstructuresWorker < BackgrounDRb::MetaWorker
   set_worker_name :expressedstructures_worker
   def create(args = nil)
@@ -22,9 +23,10 @@ class ExpressedstructuresWorker < BackgrounDRb::MetaWorker
     
     cache[job_key] = true
     
-    f = IO.popen("./a.out #{type} #{bitfields[0]} #{bitfields[1]} #{bitfields[2]}")
-    result_text = f.readlines || " "
+    f = IO.popen("./a.out #{type} #{bitfields[0]} #{bitfields[1]} #{bitfields[2]} 2> /Users/hirenj/dev/SugarImport/GlycoEnzyme/log/expression.log")
+    result_text = f.readlines || " "      
     f.close
+    
     logger.info(job_key,"Complete job key #{job_key}")
     if result_text.size > 256
       cache[job_key] = ["#{result_text.size} results"]

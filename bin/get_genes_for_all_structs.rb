@@ -31,11 +31,12 @@ verbosity = 0
 ARGV.options {
   |opt|
 
-  opt.banner = "Usage:\n\truby run_coverage_on_all_structs.rb [options] \n"
+  opt.banner = "Usage:\n\truby get_genes_for_all_structs.rb [options] \n"
 
   opt.on("Options:\n")
   opt.on("-v", "--[no-]verbose", TrueClass, "Increase verbosity") { |verbose| opts[:verbose] = verbose ? (opts[:verbose] - 1) : (opts[:verbose] + 1) }
   opt.on("-o", "--outfile OUTFILE", String, "Filename to write results to") { |opts[:outfile]| }
+  opt.on("-i", "--infile INFILE", String, "Filename to read structures from") { |opts[:infile]| }
   opt.on("-t", "--test",TrueClass,"Test run") { |opts[:test]| }
   opt.on("-h", "--help", "This text") { puts opt; exit 0 }
   opt.parse!
@@ -95,7 +96,7 @@ __SQL__
 # }
 
 id = 0
-res = IO.read('seq_results_o.txt').split("\n")
+res = IO.read(opts[:infile]).split("\n")
 total_sequences = res.size
 
 if opts[:test]

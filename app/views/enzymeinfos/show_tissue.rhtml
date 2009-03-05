@@ -11,7 +11,7 @@
 <h1>Expression information for <%= params[:mesh_tissue] %></h1>
 <h2>Clayton database structural results</h2>
 <% if @expressed_tissues == true || @expressed_tissues == false %>
-<p>Performing expression analysis</p>
+<p>Performing expression analysis <%=@status%></p> 
 <% else %>
 	<pre><%= @expressed_tissues %></pre>
 <% end %>

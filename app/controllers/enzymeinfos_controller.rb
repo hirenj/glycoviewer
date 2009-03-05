@@ -49,6 +49,25 @@ class EnzymeinfosController < ApplicationController
     render
   end
 
+  def show_expression_hex
+    @enzymeinfos = Enzymeinfo.find(:all, :conditions => ['mesh_tissue = :mesh_tissue', { :mesh_tissue => params[:mesh_tissue]}])
+    hex_strings = expression_hex
+    render :text => hex_strings.join(',')
+  end
+
+  def expression_hex
+    genes = ((@enzymeinfos.collect { |e| e.geneinfo })+(['ALG1','ALG2','ALG3','ALG12','ALG13','ALG14'].collect { |name| Geneinfo.find(:first, :conditions => { :genename => name } ) })).uniq
+    sum = 0
+    genes.each  { |g| sum += 2**(g.id - 1) }
+
+    hex_rep = sprintf('%048x',sum)
+    hex_strings = []
+    while hex_rep.size > 0
+      hex_strings << "#{hex_rep.slice!(0,16)}"
+    end
+    return hex_strings    
+  end
+
   def get_expressed_tissues
     worker_key = 'expression_worker'
     job_key = params[:mesh_tissue]
@@ -81,15 +100,8 @@ class EnzymeinfosController < ApplicationController
       return true
     end
     
-    genes = ((@enzymeinfos.collect { |e| e.geneinfo })+(['ALG1','ALG2','ALG3','ALG12','ALG13','ALG14'].collect { |name| Geneinfo.find(:first, :conditions => { :genename => name } ) })).uniq
-    sum = 0
-    genes.each  { |g| sum += 2**(g.id - 1) }
-
-    hex_rep = sprintf('%048x',sum)
-    hex_strings = []
-    while hex_rep.size > 0
-      hex_strings << "#{hex_rep.slice!(0,16)}"
-    end
+    hex_strings = expression_hex
+    
     logger.info("Dispatching job with job key #{job_key}-n")
     
     session[:running_jobs] << job_key+'-n'

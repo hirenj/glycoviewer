@@ -28,14 +28,8 @@
 		stroke-width: 5;
 
 	}
-	@media print {		
-		.result_structure {
-			position: absolute;
-			top: 0;
-			left: 0;
-			height: 100%;
-			width: 100%;
-		}
+	.yui-navset .yui-content {
+		background: #ffffff !important;
 	}
 </style>
 <script type="text/javascript">
@@ -108,7 +102,7 @@
 			groups[i].removeAttribute('filter');
 		}
 	}
-	
+		
 	connect(window,'onload',onloader);
 //]]>	
 </script>
@@ -123,12 +117,12 @@
 <div class="yui-content">
 <% for sugar in @sugars %>
 	<% @sugar = sugar %>
-<div style="height: 600px; overflow:auto;" class="result_structure">
+<div class="result_structure">
 <input type="button" class="gene_toggle" value="Toggle gene display"/>
 <input type="button" class="hits_toggle" value="Toggle hits display"/>
 <input type="button" class="print_button" value="Print"/>
-<div style="overflow: none; height: 98%; width: 100%;">
-	<%= render :partial => "sviewer/render", :locals => { :sugar => sugar, :scale => 0.5, :padding => 50 } %>
+<div style="position: relative; overflow: auto; height: 600px; width: 100%;">
+	<%= render :partial => "sviewer/render", :locals => { :sugar => sugar, :scale => 0.5, :padding => 200 } %>
 </div>
 </div>
 <% end %>
