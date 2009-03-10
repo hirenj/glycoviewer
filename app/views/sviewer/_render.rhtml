@@ -13,5 +13,8 @@ Padding can be nil, or a number > 0
 	if defined? padding && padding != nil
 		options[:padding] = padding
 	end
+	if defined? scheme && scheme != nil
+		options[:sugarscheme] = scheme
+	end
 %>
 <%= write_sugar(@sugar, options) %>

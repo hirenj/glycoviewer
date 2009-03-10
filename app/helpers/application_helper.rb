@@ -8,7 +8,7 @@ module ApplicationHelper
   end  
 
   def write_sugar(sugar,options={})
-    return SugarHelper.RenderSugar(sugar,:full,session[:sugarscheme],options)
+    return SugarHelper.RenderSugar(sugar,:full,options[:sugarscheme] || session[:sugarscheme],options)
   end
 
   def write_sugar_html(sugar)

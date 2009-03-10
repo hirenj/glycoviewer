@@ -5,6 +5,7 @@ require 'Sugar/IO/Glyde'
 require 'SugarException'
 require 'Render/Renderable'
 require 'Render/CondensedLayout'
+require 'Render/CondensedScalableLayout'
 require 'Render/GridLayout'
 require 'Render/SvgRenderer'
 require 'Render/PngRenderer'
@@ -242,12 +243,20 @@ class SugarHelper
     elsif renderscheme == :oxford
       renderer.scheme = 'oxford'
       GridLayout.new().layout(sugar)    
+    elsif renderscheme == :composite
+      renderer.scheme = 'boston'
+      renderer.sugar = sugar
+      renderer.initialise_prototypes()
+      CondensedScalableLayout.new().layout(sugar)
+
     else
       renderer.scheme = 'text:ic'
       CondensedLayout.new().layout(sugar)    
     end
-    renderer.sugar = sugar
-    renderer.initialise_prototypes()
+    if (renderscheme != :composite)
+      renderer.sugar = sugar
+      renderer.initialise_prototypes()
+    end
     return renderer.render(sugar)    
   end
     

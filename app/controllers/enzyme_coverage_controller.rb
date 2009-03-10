@@ -276,8 +276,13 @@ class EnzymeCoverageController < ApplicationController
     
     if res.name(:ic) == 'NeuAc'
 
+      if res.parent.name(:ic) == 'Gal' && res.is_a?(Sugar::MultiResidue)
+        if res.paired_residue_position == 3 || res.paired_residue_position == 6
+          return true
+        end        
+      end
+
       if res.parent.name(:ic) == 'Gal' && ( res.siblings.size == 0 || ( res.siblings.size == 1 && (res.siblings[0].name(:ic) == 'GlcNAc' || res.siblings[0].name(:ic) == 'GalNAc'))) # and parent is in chain
-        logger.debug("A dead neuac #{res.paired_residue_position}")
         if res.paired_residue_position == 3 || res.paired_residue_position == 6
           return true
         end        
@@ -314,16 +319,17 @@ class EnzymeCoverageController < ApplicationController
     end
     
     if res.name(:ic) == 'GalNAc'
-      if res.anomer == 'a' && res.paired_residue_position == 3 && res.parent.name(:ic) == 'Gal' # and in chain
+      if res.anomer == 'a' && res.paired_residue_position == 3 && (res.parent.name(:ic) == 'Gal' || (res.parent.name(:ic) == 'GalNAc' && res.parent.parent == nil )) #and in chain
         return true
       end
+      
       if res.anomer == 'b' && res.paired_residue_position == 4 && (res.parent.name(:ic) == 'Gal' || res.parent.name(:ic) == 'GlcNAc') # and in chain
         return true
       end
     end
 
     if res.name(:ic) == 'Gal'
-      if res.anomer == 'a' && res.paired_residue_position == 3 && res.parent.name(:ic) == 'Gal' # and in chain
+      if res.anomer == 'a' && res.paired_residue_position == 3 && (res.parent.name(:ic) == 'Gal' || (res.parent.name(:ic) == 'GalNAc' && res.parent == @root )) # and in chain
         return true
       end
     end
@@ -362,6 +368,13 @@ class EnzymeCoverageController < ApplicationController
         y2 = -1*link.second_residue.centre[:y]
         link_width = (x2-x1).abs
         link_height = (y2-y1).abs
+        if link_width == 0
+          link_width = 1
+        end
+        if link_height == 0
+          link_height = 1
+        end
+
         link_length = Math.hypot(link_width,link_height)
         deltax = -1 * (60 * link_height / link_length).to_i
         deltay = (60 * link_width / link_length).to_i
@@ -442,8 +455,8 @@ class EnzymeCoverageController < ApplicationController
     # from all the search structures.
 
     sugar.leaves.delete_if { |r| r.name(:ic) != 'Fuc' }.each { |r|
-      if r.parent == sugar.root
-        r.parent.remove_child(r)
+      if r.parent == sugar.root && sugar.root.name(:ic) == 'GlcNAc'
+#        r.parent.remove_child(r)
       end
     }
 

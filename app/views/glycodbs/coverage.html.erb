@@ -122,7 +122,7 @@
 <input type="button" class="hits_toggle" value="Toggle hits display"/>
 <input type="button" class="print_button" value="Print"/>
 <div style="position: relative; overflow: auto; height: 600px; width: 100%;">
-	<%= render :partial => "sviewer/render", :locals => { :sugar => sugar, :scale => 0.5, :padding => 200 } %>
+	<%= render :partial => "sviewer/render", :locals => { :sugar => sugar, :scale => 0.5, :padding => 200, :scheme => :composite } %>
 </div>
 </div>
 <% end %>
