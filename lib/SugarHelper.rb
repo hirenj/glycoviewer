@@ -8,6 +8,7 @@ require 'Render/CondensedLayout'
 require 'Render/CondensedScalableLayout'
 require 'Render/GridLayout'
 require 'Render/SvgRenderer'
+require 'Render/CollapsedStubs'
 require 'Render/PngRenderer'
 
 require 'Render/HtmlTextRenderer'
@@ -244,6 +245,7 @@ class SugarHelper
       renderer.scheme = 'oxford'
       GridLayout.new().layout(sugar)    
     elsif renderscheme == :composite
+      renderer.extend(CollapsedStubs)
       renderer.scheme = 'boston'
       renderer.sugar = sugar
       renderer.initialise_prototypes()

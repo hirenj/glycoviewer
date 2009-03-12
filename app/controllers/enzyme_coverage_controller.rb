@@ -63,6 +63,8 @@ class EnzymeCoverageController < ApplicationController
     
     execute_pathways_and_markup()
     
+    add_sugar_callbacks()
+    
     render :action => 'pathway_coverage', :content_type => Mime::XHTML
     sugar.finish()
   end
@@ -80,8 +82,9 @@ class EnzymeCoverageController < ApplicationController
       self.sugar.residue_composition.each { |r|
         r.validate
       }
-#    markup_extensions(results)
-      markup_chains(results,false)
+
+      validate_residues_for_results(results)
+
       result_size = self.sugar.residue_composition.reject { |r| r.is_valid? }.size
       if best_result_size == nil || result_size < best_result_size        
         best_result_size = result_size
@@ -98,13 +101,25 @@ class EnzymeCoverageController < ApplicationController
       link.validate
     }
 
-    markup_chains(best_results)
-
+    validate_residues_for_results(best_results)
+    
     if params && params[:mesh_tissue] != nil && params[:mesh_tissue] != ''
       gene_results = execute_genecoverage(params[:mesh_tissue])
       logger.info("Total number of bad linkages #{gene_results.size}")
       markup_linkages(gene_results)
     end
+  end
+
+  def add_sugar_callbacks
+
+    self.sugar.callbacks << lambda { |sug_root,renderer|
+      renderer.chain_background_width = 20
+      renderer.chain_background_padding = 65
+      renderer.render_valid_decorations(sugar,@valid_residues)
+      renderer.render_invalid_decorations(sugar,@invalid_residues)
+      renderer.render_chains(sugar,@chains,'sugar_chain')
+    }
+
   end
 
   def markup_linkages(linkages)
@@ -188,69 +203,22 @@ class EnzymeCoverageController < ApplicationController
     }
   end
 
-  def markup_chains(results,markup_sugar=true)
+  def validate_residues_for_results(results)
     sug = self.sugar
     results[:deltas].reject { |delta| results[:deltas].include?(delta.parent) }.each { |delta|
       chains = sug.get_chains_from_residue(delta).reject { |chain| chain[0] && chain[0].name(:ic) == 'GlcNAc' && chain[0].parent && chain[0].parent.name(:ic) == 'Man' && chain[0].paired_residue_position == 3 } # Array of arrays of residues (i.e. array of paths)
       all_residues = sug.residue_composition(delta)
       decoration_residues = all_residues - chains.flatten.uniq
-      invalid_residues = markup_decorations(decoration_residues,markup_sugar)
+      valid_residues = decoration_residues.reject { |res|
+        ( decoration_residues.include?(res.parent) && ! is_valid_decoration?(res.parent) ) || ! is_valid_decoration?(res) 
+      }
+      invalid_residues = decoration_residues - valid_residues
       invalid_residues.each { |r|
         r.invalidate
       }
-      chains.each { |chain|
-        markup_single_chain(chain,markup_sugar)
-      }
-    }
-  end
-
-  def markup_single_chain(chain,markup_sugar)
-    sug = self.sugar
-    single_chain = Element.new('svg:g')
-    if markup_sugar
-      sug.underlays << single_chain
-    end
-    chain.reverse.each { |residue|
-      residue.callbacks.push( lambda { |element|
-        xcenter = -1*(residue.centre[:x]) 
-        ycenter = -1*(residue.centre[:y])
-        back = Element.new('svg:circle')
-        back.add_attributes({'cx' => xcenter, 'cy' => ycenter, 'r' => 65, 'fill'=>'#ddffdd','stroke' => '#ddffdd', 'stroke-width' => '1.0' })
-        single_chain.add_element(back)
-      }) if markup_sugar      
-      link = residue.linkage_at_position || next
-      link.callbacks.push( lambda { |link_element|
-        x1 = -1*link.first_residue.centre[:x]
-        y1 = -1*link.first_residue.centre[:y]
-        x2 = -1*link.second_residue.centre[:x]
-        y2 = -1*link.second_residue.centre[:y]
-        link_width = (x2-x1).abs
-        link_height = (y2-y1).abs
-        link_length = Math.hypot(link_width,link_height)
-        deltax = -1 * (55 * link_height / link_length).to_i
-        deltay = (55 * link_width / link_length).to_i
-        points = ""
-        if y2 < y1
-          points = "#{x1-deltax},#{y1+deltay} #{x2-deltax},#{y2+deltay} #{x2+deltax},#{y2-deltay} #{x1+deltax},#{y1-deltay}"
-        else
-          points = "#{x1+deltax},#{y1+deltay} #{x2+deltax},#{y2+deltay} #{x2-deltax},#{y2-deltay} #{x1-deltax},#{y1-deltay}"              
-        end
-
-        back = Element.new('svg:polygon')
-        back.add_attributes({'points' => points, 'stroke'=>'#ddffdd','fill'=>'#ddffdd','stroke-width'=>'1.0'})
-        single_chain.add_element(back)
-      }) if markup_sugar
-      if ! chain.include?(residue.parent)
-        logger.debug("I have reached the end of a chain")
-        res_parent = residue.parent
-        res_parent.callbacks.push( lambda { |element|
-          xcenter = -1*(res_parent.centre[:x]) 
-          ycenter = -1*(res_parent.centre[:y])
-          back = Element.new('svg:circle')
-          back.add_attributes({'cx' => xcenter, 'cy' => ycenter, 'r' => 65, 'fill'=>'#ddffdd','stroke' => '#ddffdd', 'stroke-width' => '1.0' })
-          single_chain.add_element(back)
-        }) if markup_sugar
-      end      
+      @valid_residues = valid_residues
+      @chains = chains
+      @invalid_residues = invalid_residues
     }
   end
 
@@ -343,122 +311,11 @@ class EnzymeCoverageController < ApplicationController
     return false
   end
 
-  def markup_decorations(decorated_residues,markup_sugar)
-    sug = self.sugar
-    delta_occurence = Element.new('svg:g')
-    sug.underlays << delta_occurence if markup_sugar
-
-    valid_residues = decorated_residues.reject { |res|
-      ( decorated_residues.include?(res.parent) && ! is_valid_decoration?(res.parent) ) || ! is_valid_decoration?(res) 
-    }
-    invalid_residues = decorated_residues - valid_residues
-    valid_residues.each { |residue|
-      residue.callbacks.push( lambda { |element|
-        xcenter = -1*(residue.centre[:x]) 
-        ycenter = -1*(residue.centre[:y])
-        back = Element.new('svg:circle')
-        back.add_attributes({'cx' => xcenter, 'cy' => ycenter, 'r' => 70, 'fill'=>'#ccccff','stroke' => '#ccccff', 'stroke-width' => '1.0' })
-        delta_occurence.add_element(back)
-      }) if markup_sugar
-      link = residue.linkage_at_position || next
-      link.callbacks.push( lambda { |link_element|
-        x1 = -1*link.first_residue.centre[:x]
-        y1 = -1*link.first_residue.centre[:y]
-        x2 = -1*link.second_residue.centre[:x]
-        y2 = -1*link.second_residue.centre[:y]
-        link_width = (x2-x1).abs
-        link_height = (y2-y1).abs
-        if link_width == 0
-          link_width = 1
-        end
-        if link_height == 0
-          link_height = 1
-        end
-
-        link_length = Math.hypot(link_width,link_height)
-        deltax = -1 * (60 * link_height / link_length).to_i
-        deltay = (60 * link_width / link_length).to_i
-        points = ""
-        if y2 < y1
-          points = "#{x1-deltax},#{y1+deltay} #{x2-deltax},#{y2+deltay} #{x2+deltax},#{y2-deltay} #{x1+deltax},#{y1-deltay}"
-        else
-          points = "#{x1+deltax},#{y1+deltay} #{x2+deltax},#{y2+deltay} #{x2-deltax},#{y2-deltay} #{x1-deltax},#{y1-deltay}"              
-        end
-
-        back = Element.new('svg:polygon')
-        back.add_attributes({'points' => points, 'stroke'=>'#ccccff','fill'=>'#ccccff','stroke-width'=>'1.0'})
-        delta_occurence.add_element(back)
-      }) if markup_sugar
-    }
-    markup_invalid_residues(invalid_residues,markup_sugar)
-    return invalid_residues
-  end
-
-  def markup_invalid_residues(invalid_residues,markup_sugar)
-    sug = self.sugar
-    delta_occurence = Element.new('svg:g')
-    sug.underlays << delta_occurence if markup_sugar
-    
-    #reject { |r| invalid_residues.include? r.parent }
-    invalid_residues.each { |residue|      
-      all_links = SugarUtil.FindDisaccharides(sug,residue)
-      if residue.parent == nil
-        next
-      end
-      all_links[SugarUtil.SugarFromDisaccharide(sug,residue)] << residue.linkage_at_position
-      all_links.each { |disac, links|
-        next unless markup_sugar
-        disac.get_path_to_root[0].anomer = 'u'
-        
-        a_disaccharide = Disaccharide.find_by_residuedelta(disac.sequence)
-
-        if ! a_disaccharide
-          a_disaccharide = Disaccharide.new()
-          a_disaccharide.residuedelta = disac.sequence
-        end
-        if a_disaccharide.has_enzyme?
-          logger.debug("It has an enzyme")
-          links.each { |l| l.labels << 'enzyme' }
-          next
-        end
-        if a_disaccharide.is_evidenced?
-          logger.debug("It has evidence")
-          links.each { |l| l.labels << 'evidenced' }
-          next
-        end
-        if a_disaccharide.evidence_count > 6
-          logger.debug("It has supported evidence")
-          links.each { |l| l.labels << 'supported' }
-          next
-        end
-
-        links.each { |l| l.labels = ['link','noenzyme'] }
-
-      }
-      residue.callbacks.push( lambda { |element|
-        xcenter = -1*(residue.centre[:x]) 
-        ycenter = -1*(residue.centre[:y])
-        back = Element.new('svg:circle')
-        back.add_attributes({'cx' => xcenter, 'cy' => ycenter, 'r' => 75, 'fill'=>'#ffdddd','stroke' => '#ffdddd', 'stroke-width' => '1.0' })
-        delta_occurence.add_element(back)
-      }) if markup_sugar
-    }
-  end
-
   def execute_pathways
     reacs = Reaction.find(:all, :conditions => ["pathway is not null and pathway != ''"])
     max_pathway_reacs = []
     max_deltas = []
     min_delta = nil
-
-    # Core fucosylation is totally optional, so don't analyse it by removing it 
-    # from all the search structures.
-
-    sugar.leaves.delete_if { |r| r.name(:ic) != 'Fuc' }.each { |r|
-      if r.parent == sugar.root && sugar.root.name(:ic) == 'GlcNAc'
-#        r.parent.remove_child(r)
-      end
-    }
 
     reacs.each { |r|
       r.extend(EndStructureAsSugar)
@@ -595,111 +452,6 @@ class EnzymeCoverageController < ApplicationController
     }
     return bad_linkages
   end
-
-  # def enzyme_list
-  #   self.sugar=(params[:seq])
-  #   SugarUtil.FindDisaccharides(sugar).each { |disac, links|
-  #     links.each { |link|
-  #       link.labels = ['link','noenzyme']
-  #     }
-  #     disac.get_path_to_root[0].anomer = 'u'
-  #     
-  #     Reaction.find_all_by_residuedelta(disac.sequence).each { |reac|
-  #       links.each { |link|
-  #         link.callbacks.push( lambda { |element|
-  #           enz_list = element.attribute('enzymes') || ''
-  #           enz_list = "#{enz_list}#{reac.id}rn,"
-  #           element.add_attribute('enzymes', enz_list)
-  #         })
-  #         link.labels = ['link']
-  #       }
-  #     }
-  #   }
-  #   sugar.name = 'user'
-  #   render :action => 'enzyme_list'
-  # end
-  # 
-  # def resolve_linkages
-  #   self.sugar=params[:seq]
-  #   @genereaction_mapping = Hash.new { |hash,key| hash[key] = Array.new() }
-  # 
-  #   SugarUtil.FindDisaccharides(sugar).each { |disac, links|
-  #     links.each { |link|
-  #       link.labels = ['link','noenzyme']
-  #     }
-  #     disac.get_path_to_root[0].anomer = 'u'
-  #     
-  #     links.each { |link|
-  #     
-  #       linkage_residues = sugar.get_path_to_root(link.parent_residue)
-  # 
-  #       # How much of the main path from the substrate transfer point
-  #       # to the reducing end of the sequence does each reaction have in 
-  #       # common with the path from the parent of this linkage to the root?
-  #       logger.debug("Linkage residue on the sugar is:")
-  #       linkage_residues.each { |linkres|
-  #         logger.debug(linkres.name)
-  #       }
-  #       
-  #       link.extend(ResolvedLinkage)
-  #       link.associated_reactions = {}
-  #       
-  #       genescores = {}
-  #       
-  #       disac.target_namespace = :ecdb
-  #       
-  #       Reaction.find_all_by_residuedelta(disac.sequence).each { |reac|
-  # 
-  #         endstruct = SugarHelper.CreateSugar(reac.endstructure)
-  #         startstruct = SugarHelper.CreateSugar(reac.substrate)
-  #         deltares = endstruct.subtract(startstruct)
-  #         next unless deltares.size > 0
-  #         reac_residues = endstruct.get_path_to_root(deltares[0].parent)
-  #         score = 0
-  #         reac_residues.zip(linkage_residues).each { |r_res,l_res|
-  #           break unless l_res && r_res
-  #           
-  #           if r_res.name(:id) == l_res.name(:id)
-  #             if l_res.anomer 
-  #               if  l_res.anomer == r_res.anomer && 
-  #                   l_res.paired_residue_position == r_res.paired_residue_position
-  #                 score += 1
-  #               end
-  #             else
-  #               score += 1
-  #             end
-  #           end
-  #         }
-  #         
-  #         link.associated_reactions[reac] = score
-  #         reac.genes.each { |gene|
-  #           tempscore = genescores[gene] || 0 
-  #           genescores[gene] = score > tempscore ? score : tempscore 
-  #           @genereaction_mapping[gene.id] << reac.id
-  #         }
-  #         endstruct.finish
-  #         startstruct.finish
-  #       }
-  #       if link.associated_reactions.keys.size > 0
-  #         link.labels = ['link']
-  #         link.callbacks.push( lambda { |element|
-  #           enz_list = element.attribute('enzymes') || ''
-  #           link.associated_reactions.keys.sort_by { |r| link.associated_reactions[r] }.reverse.reject {|r| link.associated_reactions[r] < 0 }.each { |reac|              
-  #             enz_list += "#{link.associated_reactions[reac]}]#{reac.id}rn,"
-  #           }
-  #           element.add_attribute('enzymes', enz_list)
-  #         })
-  #         link.callbacks.push( lambda { |element|
-  #           gene_list = element.attribute('genes') || ''
-  #           gene_list += genescores.keys.sort_by { |g| genescores[g] }.reverse.collect { |g| "#{g.id}gn" }.join(',')
-  #           element.add_attribute('genes',gene_list)
-  #         })
-  #       end
-  #     }
-  #     
-  #   }
-  #   render :action => 'enzyme_list'
-  # end
 
   def sugar=(sug)
     if ! sug.is_a?(Sugar)

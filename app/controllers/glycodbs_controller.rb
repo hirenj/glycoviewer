@@ -191,12 +191,38 @@ class GlycodbsController < ApplicationController
       coverage_finder = EnzymeCoverageController.new()
       coverage_finder.sugar = sugar
       sugar.root.anomer = 'u'
-      coverage_finder.execute_pathways_and_markup()
+      def coverage_finder.do_stuff
+        execute_pathways_and_markup()
+        return [@chains,@valid_residues,@invalid_residues]
+      end
+      
+      chains,valid_residues,invalid_residues = coverage_finder.do_stuff
+      
+      all_gals = sugar.residue_composition.select { |r| r.name(:ic) == 'Gal' && r.parent && r.parent.name(:ic) == 'GlcNAc' }
+      type_i = all_gals.select { |r| r.paired_residue_position == 3 }
+      type_ii = all_gals.select { |r| r.paired_residue_position == 4 }
+      all_glcnacs = sugar.leaves.select { |r| r.name(:ic) == 'GlcNAc' && r.parent && r.parent.name(:ic) == 'Gal' }
+      type_ii_glcnac = (all_glcnacs.select { |r| r.parent.paired_residue_position == 4 }) + (type_ii.collect { |r| r.parent }.select { |r| r.paired_residue_position != 6 && r.parent.name(:ic) == 'Gal' })
+      type_i_glcnac = (all_glcnacs.select { |r| r.parent.paired_residue_position == 3 }) + (type_i.collect { |r| r.parent }.select { |r| r.paired_residue_position != 6 })
+      branching = sugar.residue_composition.select { |r| r.name(:ic) == 'GlcNAc' && r.parent && r.parent.name(:ic) == 'Gal' && r.paired_residue_position == 6 }
+      
+      sugar.callbacks << lambda { |sug_root,renderer|
+        renderer.chain_background_width = 20
+        renderer.chain_background_padding = 65
+        renderer.render_valid_decorations(sugar,valid_residues.uniq)
+        renderer.render_invalid_decorations(sugar,invalid_residues.uniq)
+        renderer.render_simplified_chains(sugar,[type_i+type_i_glcnac],'sugar_chain sugar_chain_type_i')
+        renderer.render_simplified_chains(sugar,[type_ii+type_ii_glcnac],'sugar_chain sugar_chain_type_ii')
+        renderer.render_simplified_chains(sugar,[branching],'sugar_chain sugar_chain_branching')
+      }
+      
       sugar.residue_composition.each { |r|
         if ! r.is_valid? && r.parent && r.parent.is_valid?
           r.parent.remove_child(r)
         end
       }
+
+
       targets = Element.new('svg:g')
       targets.add_attributes({'class' => 'hits_overlay', 'display' => 'none'})
       sugar.overlays << targets
@@ -216,6 +242,7 @@ class GlycodbsController < ApplicationController
           
         })
       }
+
       gene_tissue = (tags.split(',').collect { |tag| tag.gsub!(/anat\:/,'') }.compact.first || 'nil').humanize
       coverage_finder.markup_linkages(coverage_finder.execute_genecoverage(gene_tissue))
       sugar
