@@ -201,19 +201,19 @@ class GlycodbsController < ApplicationController
       all_gals = sugar.residue_composition.select { |r| r.name(:ic) == 'Gal' && r.parent && r.parent.name(:ic) == 'GlcNAc' }
       type_i = all_gals.select { |r| r.paired_residue_position == 3 }
       type_ii = all_gals.select { |r| r.paired_residue_position == 4 }
-      all_glcnacs = sugar.leaves.select { |r| r.name(:ic) == 'GlcNAc' && r.parent && r.parent.name(:ic) == 'Gal' }
-      type_ii_glcnac = (all_glcnacs.select { |r| r.parent.paired_residue_position == 4 }) + (type_ii.collect { |r| r.parent }.select { |r| r.paired_residue_position != 6 && r.parent.name(:ic) == 'Gal' })
-      type_i_glcnac = (all_glcnacs.select { |r| r.parent.paired_residue_position == 3 }) + (type_i.collect { |r| r.parent }.select { |r| r.paired_residue_position != 6 })
-      branching = sugar.residue_composition.select { |r| r.name(:ic) == 'GlcNAc' && r.parent && r.parent.name(:ic) == 'Gal' && r.paired_residue_position == 6 }
+      all_glcnacs = sugar.residue_composition.select { |r| r.name(:ic) == 'GlcNAc' && r.parent && r.parent.name(:ic) == 'Gal' }
+      type_i_glcnac = all_glcnacs.select { |r| (r.paired_residue_position == 3) && r.parent.paired_residue_position == 3 }
+      type_ii_glcnac = all_glcnacs.select { |r| (r.paired_residue_position == 3) && r.parent.paired_residue_position == 4 }
+      branching = all_glcnacs.select { |r| r.paired_residue_position == 6 }
       
       sugar.callbacks << lambda { |sug_root,renderer|
         renderer.chain_background_width = 20
         renderer.chain_background_padding = 65
-        renderer.render_valid_decorations(sugar,valid_residues.uniq)
-        renderer.render_invalid_decorations(sugar,invalid_residues.uniq)
-        renderer.render_simplified_chains(sugar,[type_i+type_i_glcnac],'sugar_chain sugar_chain_type_i')
-        renderer.render_simplified_chains(sugar,[type_ii+type_ii_glcnac],'sugar_chain sugar_chain_type_ii')
-        renderer.render_simplified_chains(sugar,[branching],'sugar_chain sugar_chain_branching')
+#        renderer.render_valid_decorations(sugar,valid_residues.uniq)
+#        renderer.render_invalid_decorations(sugar,invalid_residues.uniq)
+        renderer.render_simplified_chains(sugar,[type_i+type_i_glcnac],'sugar_chain sugar_chain_type_i','#FFEFD8')
+        renderer.render_simplified_chains(sugar,[type_ii+type_ii_glcnac],'sugar_chain sugar_chain_type_ii','#C9F6C6')
+        renderer.render_simplified_chains(sugar,[branching],'sugar_chain sugar_chain_branching','#C5D3EF')
       }
       
       sugar.residue_composition.each { |r|
