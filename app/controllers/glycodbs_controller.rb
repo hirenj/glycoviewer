@@ -190,6 +190,18 @@ class GlycodbsController < ApplicationController
       
       sugar.branch_points_count(sugar.branch_points.size)
       
+      # Branch point comparison
+      # For each branch point for the new sugar collect
+      #    get the unambiguous path to root for the branch point
+      #    find the analgous residue in the target sugar
+      # end
+      # Update the counter hash for each branch point
+      # counts[a_branch_point][co-occuring_branch_point] += 1
+      # counts[a_branch_point][self] += 1
+      #
+      # Profit!
+      
+      
       begin
         sugar_set.each { |sug|
           sugar.union!(sug,&MATCH_BLOCK)
