@@ -139,8 +139,13 @@ class GlycodbsController < ApplicationController
   end
 
   def tissue
-    @glycodbs = Glycodb.easyfind(:keywords => params[:id], :fieldnames => ['SYSTEM','DIVISION1','DIVISION2','DIVISION3','DIVISION4'])
+    @glycodbs = Glycodb.easyfind(:keywords => params[:id], :fieldnames => ['SYSTEM','DIVISION1','DIVISION2','DIVISION3','DIVISION4','SWISS_PROT'])
     @glycodbs.reject! { |glycodb| glycodb.SPECIES != 'HOMO SAPIENS'}
+  end
+
+  def proteins
+    @glycodbs = Glycodb.find(:all,:conditions => ["species = 'HOMO SAPIENS' and protein_name != ''"],:select => 'SWISS_PROT,PROTEIN_NAME,SPECIES,count(distinct SYSTEM) as system_count,count(*) as record_count',:group => 'protein_name', :order => 'record_count')
+    @glycodbs.reject! { |glycodb| glycodb.SPECIES != 'HOMO SAPIENS'}    
   end
 
   def coverage_for_tag
@@ -173,13 +178,22 @@ class GlycodbsController < ApplicationController
         @struct_count
       end
       
+      def sugar.branch_points_count(branch_count=nil)
+        return @branch_points unless(branch_count)
+        @branch_points ||= {}
+        @branch_points[branch_count] = (@branch_points[branch_count] || 0) + 1
+      end
+      
       if sugar == nil
         next
       end
       
+      sugar.branch_points_count(sugar.branch_points.size)
+      
       begin
         sugar_set.each { |sug|
           sugar.union!(sug,&MATCH_BLOCK)
+          sugar.branch_points_count((sug.branch_points.size))
           sugar.add_structure_count
         }
         SugarHelper.MakeRenderable(sugar)        

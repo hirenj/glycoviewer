@@ -28,12 +28,12 @@
 <table id="glycodbs">
 <thead>
 	<tr>
-		<th>ID</th><th>System</th><th>Division 1</th><th>Division 2</th><th>Division 3</th><th>Division 4</th><th>Life stage</th><th>Disease</th><th>Tags</th>
+		<th>ID</th><th>System</th><th>Division 1</th><th>Division 2</th><th>Division 3</th><th>Division 4</th><th>SWISS PROT</th><th>Life stage</th><th>Disease</th><th>Tags</th>
 	</tr>
 </thead>
 <tbody>
 <% for glycodb in @glycodbs %>
-<tr><td><%= glycodb.id %></td><td><%= glycodb.SYSTEM %></td><td><%= glycodb.DIVISION1 %></td><td><%= glycodb.DIVISION2 %></td><td><%= glycodb.DIVISION3 %></td><td><%= glycodb.DIVISION4 %></td><td><%= glycodb.LIFE_STAGE %></td><td><%= glycodb.DISEASE != '' ? glycodb.DISEASE : 'healthy' %></td><td><%= glycodb.tags %></td></tr>
+<tr><td><%= glycodb.id %></td><td><%= glycodb.SYSTEM %></td><td><%= glycodb.DIVISION1 %></td><td><%= glycodb.DIVISION2 %></td><td><%= glycodb.DIVISION3 %></td><td><%= glycodb.DIVISION4 %></td><td><%= glycodb.SWISS_PROT %></td><td><%= glycodb.LIFE_STAGE %></td><td><%= glycodb.DISEASE != '' ? glycodb.DISEASE : 'healthy' %></td><td><%= glycodb.tags %></td></tr>
 <% end %>
 </tbody>
 </table>
@@ -49,6 +49,7 @@
             {key:"division_2",label:"Division 2",sortable:true},
             {key:"division_3",label:"Division 3",sortable:true},
             {key:"division_4",label:"Division 4",sortable:true},
+			{key:"swiss_prot",label:"Swiss prot",sortable:true},
 			{key:"life_stage",label:"Life stage", sortable:true},
             {key:"disease",label:"Disease",sortable:true},
 			{key:"tags",label:"Tags",sortable:true}
@@ -63,6 +64,7 @@
                     {key:"division_2"},
                     {key:"division_3"},
                     {key:"division_4"},
+					{key:"swiss_prot"},
 					{key:"life_stage"},
 					{key:"disease"},
 					{key:"tags"}

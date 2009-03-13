@@ -4,6 +4,9 @@ ActionController::Routing::Routes.draw do |map|
 
   map.connect 'glycodbs/tags', :controller => 'glycodbs', :action => 'tags', :format => 'html'
 
+  map.connect 'glycodbs/proteins', :controller => 'glycodbs', :action => 'proteins', :format => 'html'
+
+
   map.connect 'glycodbs/:id', :controller => 'glycodbs', :action => 'show', :format => 'html'
   
   map.connect 'glycodbs/tag/:id/:tag', :controller => 'glycodbs', :action => 'tag', :format => 'html'

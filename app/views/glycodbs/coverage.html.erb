@@ -46,7 +46,7 @@
 	.sugar_chain_branching * {
 		fill: #C5D3EF !important;
 	}
-	
+		
 </style>
 <script type="text/javascript">
 //<![CDATA[
@@ -82,7 +82,7 @@
 		}
 		build_tabs();
 	}
-	
+		
 	function togglelayer(svg_group) {
 		if (svg_group.getAttribute('display')) {
 			svg_group.removeAttribute('display');
@@ -134,6 +134,14 @@
 <% for sugar in @sugars %>
 	<% @sugar = sugar %>
 <div class="result_structure">
+<div class="branch_points_data">
+<table class="branch_points_table">
+	<tr><th>Branch points</th><th>Number</th></tr>
+<% sugar.branch_points_count.each { |branch_count,value| %>
+	<tr><td><%= branch_count %></td><td><%= value %></td></tr>
+<% } %>
+</table>
+</div>
 <input type="button" class="gene_toggle" value="Toggle gene display"/>
 <input type="button" class="hits_toggle" value="Toggle hits display"/>
 <input type="button" class="print_button" value="Print"/>
