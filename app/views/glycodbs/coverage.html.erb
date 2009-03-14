@@ -135,12 +135,31 @@
 	<% @sugar = sugar %>
 <div class="result_structure">
 <div class="branch_points_data">
+
 <table class="branch_points_table">
 	<tr><th>Branch points</th><th>Number</th></tr>
 <% sugar.branch_points_count.each { |branch_count,value| %>
 	<tr><td><%= branch_count %></td><td><%= value %></td></tr>
 <% } %>
 </table>
+
+<% branch_points = sugar.branch_point_totals.keys.select { |r| sugar.residue_composition.include?(r) } %>
+
+<table class="branch_points_totals">
+<tr><th></th>
+<% for branch_point in branch_points %>
+<th><%= branch_point.name(:ic)%><%= branch_point.anomer %>1-<%= branch_point.paired_residue_position %></th>
+<% end %>
+</tr>
+<% for branch_point in branch_points %>
+<tr><td><%= branch_point.name(:ic)%><%= branch_point.anomer %>1-<%= branch_point.paired_residue_position %></td>
+	<% for other_branch_point in branch_points %>
+		<td><%= sugar.branch_point_totals[branch_point][other_branch_point]%></td>
+	<% end %>
+</tr>
+<% end %>
+</table>
+
 </div>
 <input type="button" class="gene_toggle" value="Toggle gene display"/>
 <input type="button" class="hits_toggle" value="Toggle hits display"/>

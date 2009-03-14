@@ -1,0 +1,17 @@
+<%= javascript_include_tag 'MochiKit/packed/MochiKit/MochiKit.js' %>
+<%= javascript_include_tag 'lib/XHtmlDOM.js' %>
+<script src="<%= url_for :controller => 'config', :action => 'constants' %>" type="text/javascript"></script>
+<%= javascript_include_tag 'lib/enzyme_db_api.js' %>
+<%= javascript_include_tag 'http://yui.yahooapis.com/2.7.0/build/yahoo-dom-event/yahoo-dom-event.js' %>
+<%= javascript_include_tag 'http://yui.yahooapis.com/2.7.0/build/element/element-min.js' %>
+<%= javascript_include_tag 'http://yui.yahooapis.com/2.7.0/build/datasource/datasource-min.js' %>
+<%= javascript_include_tag 'http://yui.yahooapis.com/2.7.0/build/datatable/datatable-min.js' %>
+<style type="text/css">
+.yui-skin-sam .yui-dt-body { cursor:pointer; } /* when rows are selectable */
+</style>
+<table>
+<tr><th>Uniprot ID</th><th>Protein name</th><th>Unique systems</th><th>Record count</th>
+<% for glycodb in @glycodbs.reject { |g| g.system_count.to_i < 2 }.reverse %>
+<tr><td><%= glycodb.SWISS_PROT %></td><td><%= glycodb.PROTEIN_NAME %></td><td><%= glycodb.system_count %></td><td><%= glycodb.record_count %></td></tr>
+<% end %>
+</table>

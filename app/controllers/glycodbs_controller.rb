@@ -184,6 +184,14 @@ class GlycodbsController < ApplicationController
         @branch_points[branch_count] = (@branch_points[branch_count] || 0) + 1
       end
       
+      def sugar.branch_point_totals
+        @branch_point_totals
+      end
+      
+      def sugar.branch_point_totals=(totals)
+        @branch_point_totals = totals
+      end
+      
       if sugar == nil
         next
       end
@@ -201,17 +209,35 @@ class GlycodbsController < ApplicationController
       #
       # Profit!
       
+      branch_points_totals = []
       
-      begin
-        sugar_set.each { |sug|
-          sugar.union!(sug,&MATCH_BLOCK)
-          sugar.branch_points_count((sug.branch_points.size))
-          sugar.add_structure_count
+      sugar_set.each { |sug|
+        sugar.union!(sug,&MATCH_BLOCK)
+        branch_points = sug.branch_points
+        sugar.branch_points_count(branch_points.size)
+        branch_points = branch_points.collect { |r| sugar.find_residue_by_unambiguous_path(sug.get_unambiguous_path_to_root(r).reverse) }
+        branch_points_totals << branch_points
+        sugar.add_structure_count
+      }
+
+      logger.info("XXXXX TOTAL BRANCHING POINTS RECORDS IS #{branch_points_totals.size}")
+
+      branch_totals_by_point = {}
+      branch_points_totals.each { |branching_rec|
+        logger.info("XXXXX A BRANCHING RECORD SIZE IS #{branching_rec.size}")        
+        branching_rec.each { |point|
+          branch_totals_by_point[point] ||= {}
+          logger.info("XXXXX ADDING A KEY #{point == nil ? 'nil' : point.name(:ic)}")
+          branching_rec.each { |other_point|
+            branch_totals_by_point[point][other_point] ||= 0
+            branch_totals_by_point[point][other_point] += 1            
+          }
         }
-        SugarHelper.MakeRenderable(sugar)        
-      rescue Exception => e
-        logger.info(e)
-      end
+      }
+
+      sugar.branch_point_totals = branch_totals_by_point
+
+      SugarHelper.MakeRenderable(sugar)        
       
     
       coverage_finder = EnzymeCoverageController.new()
