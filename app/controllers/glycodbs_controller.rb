@@ -220,14 +220,10 @@ class GlycodbsController < ApplicationController
         sugar.add_structure_count
       }
 
-      logger.info("XXXXX TOTAL BRANCHING POINTS RECORDS IS #{branch_points_totals.size}")
-
       branch_totals_by_point = {}
       branch_points_totals.each { |branching_rec|
-        logger.info("XXXXX A BRANCHING RECORD SIZE IS #{branching_rec.size}")        
         branching_rec.each { |point|
           branch_totals_by_point[point] ||= {}
-          logger.info("XXXXX ADDING A KEY #{point == nil ? 'nil' : point.name(:ic)}")
           branching_rec.each { |other_point|
             branch_totals_by_point[point][other_point] ||= 0
             branch_totals_by_point[point][other_point] += 1            
@@ -274,6 +270,29 @@ class GlycodbsController < ApplicationController
         end
       }
 
+      sugar_residues = sugar.residue_composition
+      branch_totals_by_point.keys.each { |bp|
+        unless sugar_residues.include? bp
+            branch_totals_by_point.delete(bp)
+        end
+      }
+
+      labels = ('A'..'Z').to_a
+      
+      branch_totals_by_point.keys.each { |bp|
+        branch_label_text = labels.shift
+        def bp.branch_label
+          @branch_label
+        end
+       def bp.branch_label=(new_label)
+         @branch_label = new_label
+       end
+       bp.branch_label = branch_label_text
+
+        sugar.callbacks << lambda { |sug_root,renderer|
+          renderer.render_text_residue_label(sugar,bp,branch_label_text)
+        }
+      }
 
       targets = Element.new('svg:g')
       targets.add_attributes({'class' => 'hits_overlay', 'display' => 'none'})
