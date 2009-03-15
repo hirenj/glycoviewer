@@ -54,15 +54,19 @@
 		right: 50px;
 		width: 35%;
 		z-index: 100;
+		border: solid #9999ff 3px;
+		-moz-border-radius: 3px;
+		-webkit-border-radius: 3px;		
 	}
-	div.branch_graphs div.branch_graph {
+	div.branch_graphs div.single_branch_graph {
 		float: left;
 		padding-left: 10px;
 		background-color: #ffffff;
 	}
 	div.branch_graph_svg {
-		max-height: 200px;
-		margin-bottom: 20px;
+		height: 100px;
+		width: 100px;
+		margin-bottom: 5px;
 	}
 </style>
 <script type="text/javascript">
@@ -94,7 +98,7 @@
 			connect(gene_toggle,'onclick',partial(togglelayer,gene_layer));
 			connect(hits_toggle,'onclick',partial(togglelayer,hits_layer));
 
-			connect(a_printer,'onclick',partial(do_printing,mysvg));
+			connect(a_printer,'onclick',partial(do_printing,mysvg,a_canvas));
 
 		}
 		build_tabs();
@@ -118,7 +122,7 @@
 		var myTabs = new YAHOO.widget.TabView("coverage_tabs");
 	}
 	
-	function do_printing(svg_element) {
+	function do_printing(svg_element,result_structure_el) {
 		a_window = window.open('','_blank');
 		a_window.document.write('<xml version="1.0" standalone="no"?>\n');
 		a_window.document.close();
@@ -134,6 +138,31 @@
 		for (var i = 0; i < groups.length; i++) {
 			groups[i].removeAttribute('filter');
 		}
+
+		graph_container = XHtmlDOM.getElementsByClassName('branch_graphs',result_structure_el.parentNode)[0];
+		
+		copied_graph = a_window.document.importNode(graph_container,true);
+
+		a_window.document.getElementsByTagName('body')[0].appendChild(copied_graph);
+		
+		copied_graph.style.position = 'absolute';
+		copied_graph.style.top = '0px';
+		copied_graph.style.right = '0px';
+ 		
+		a_window.document.getElementsByTagName('body')[0].style.position = 'relative';
+		a_window.document.getElementsByTagName('body')[0].style.width = '80cm';
+		a_window.document.getElementsByTagName('body')[0].style.height = '120cm';
+		
+
+		each_graph = XHtmlDOM.getElementsByClassName('single_branch_graph',copied_graph);
+		
+		for ( var i in each_graph ) {
+			each_graph[i].style.float = 'left';
+			each_graph[i].style.width = '3cm';
+			each_graph[i].style.height = '8cm';
+			each_graph[i].style.padding = '0.5cm';
+		}
+		
 	}
 		
 	connect(window,'onload',onloader);
@@ -156,7 +185,13 @@
 
 <table class="branch_points_table">
 	<tr><th>Branch points</th><th>Number</th></tr>
+<% counts_keys = [] 
+	counts_values = []
+%>
 <% sugar.branch_points_count.each { |branch_count,value| %>
+	<% counts_keys << branch_count.to_s
+	   counts_values << value
+	%>
 	<tr><td><%= branch_count %></td><td><%= value %></td></tr>
 <% } %>
 </table>
@@ -178,14 +213,22 @@
 <% end %>
 </table>
 <div class="branch_graphs">
+<% biggest_bar = branch_points.collect { |branch_point| sugar.branch_point_totals[branch_point].keys.collect {|k| sugar.branch_point_totals[branch_point][k] }.max }.max %>
 <% for branch_point in branch_points %>
-<div class="branch_graph">
+<div class="single_branch_graph">
 <div>Branch <%= branch_point.branch_label %></div>
 <div class="branch_graph_svg">
-<%= render_hash_as_bar_chart(branch_points.collect { |k| k.branch_label },branch_points.collect { |k| sugar.branch_point_totals[branch_point][k] },sugar.root.hits,['#ff0000','#00ff00','#0000ff','#909090','#0f0f0f'] ) %>
+<%= render_hash_as_bar_chart(branch_points.collect { |k| k.branch_label },branch_points.collect { |k| sugar.branch_point_totals[branch_point][k] },biggest_bar,['#7C8FBB','#2D50A2','#7C8FBB','#2D50A2','#7C8FBB','#2D50A2'] ) %>
 </div>
 </div>
 <% end %>
+<div class="single_branch_graph">
+<div class="branch_graph_svg">
+	<div>Branching</div>
+	<%= render_hash_as_bar_chart(counts_keys,counts_values,counts_values.max,['#7C8FBB','#2D50A2','#7C8FBB','#2D50A2','#7C8FBB','#2D50A2'])%>
+</div>
+</div>
+<div style="clear:both; height: 0px; float: none;"></div>
 </div>
 <!-- end branch_points_data -->
 </div>

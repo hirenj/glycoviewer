@@ -29,7 +29,7 @@ module ApplicationHelper
     label_vals = labels.zip(values)
     plot = Element.new('svg:svg')
   	plot.add_namespace('svg', SVG_ELEMENT_NS)
-  	plot.add_attributes('preserveAspectRatio' => 'xMinYMin')
+  	plot.add_attributes('preserveAspectRatio' => 'xMidYMax')
     curr_x = 0
     max_height = values.max
     max_height = total_height
