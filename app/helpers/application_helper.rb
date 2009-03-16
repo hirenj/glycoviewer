@@ -26,13 +26,16 @@ module ApplicationHelper
   def render_hash_as_bar_chart(labels,values,total_height,fills)
     return '' unless labels.size > 0
     bar_width = 30
+    if (total_height.to_f / bar_width < 2)
+      bar_width = 15
+    end
+      
     values.collect! {|v| v || 0 }
     label_vals = labels.zip(values)
     plot = Element.new('svg:svg')
   	plot.add_namespace('svg', SVG_ELEMENT_NS)
   	plot.add_attributes('preserveAspectRatio' => 'xMidYMax')
-    curr_x = 0
-    max_height = values.max
+    curr_x = 10
     max_height = total_height
     label_vals.each { |lab,value|
       my_fill = fills.shift
@@ -45,7 +48,18 @@ module ApplicationHelper
       plot.add_element(label)
       curr_x += bar_width
     }
-    plot.add_attributes('width' => '100%', 'height' => '100%', 'viewBox' => "0 0 #{bar_width * labels.size} #{max_height+bar_width+10}" )
+    (0..(total_height+20)).step(20) { |y|
+      tick = Element.new('svg:line')
+      tick.add_attributes('x1' => 0, 'x2' => 5, 'y1' => (total_height - y)-1, 'y2' => (total_height - y)-1, 'stroke' => '#000000', 'stroke-weight' => '1' ) 
+      plot.add_element(tick)
+      if y > total_height || ((total_height - y) < 20)
+        tick_label = Element.new('svg:text')
+        tick_label.add_attributes('x' => 0, 'y' => (total_height - y) + (bar_width / 3), 'font-size' => bar_width / 3 )
+        tick_label.text = y
+        plot.add_element(tick_label)        
+      end
+    }
+    plot.add_attributes('width' => '100%', 'height' => '100%', 'viewBox' => "0 -20 #{bar_width * labels.size+10} #{max_height+bar_width+30}" )
     return plot.to_s
   end
 

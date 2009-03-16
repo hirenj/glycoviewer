@@ -3,8 +3,13 @@ require 'lax_residue_names'
 module HitCounter
   attr_accessor :hits
   def hits
-    @hits ||= 0
-  end  
+    @hits ||= 1
+  end 
+  def seen_structures
+    @seen_structs ||= []
+    @seen_structs
+  end
+
 end
 
 class Monosaccharide
@@ -12,7 +17,7 @@ class Monosaccharide
 end
 
 MATCH_BLOCK = lambda { |residue,other_res,matched_yet|
-  residue.equals?(other_res) && ((! matched_yet && ((residue.hits += 1) > -1)) || true )
+  residue.equals?(other_res) && ((! matched_yet && ((residue.hits += 1) > -1) && ( residue.seen_structures << other_res.seen_structures[0] != nil )) || true )
 }
 
 class GlycodbsController < ApplicationController
@@ -214,8 +219,11 @@ class GlycodbsController < ApplicationController
       my_sug = nil
       begin
         my_sug = SugarHelper.CreateMultiSugar(my_seq,:ic).get_unique_sugar        
+        my_sug.residue_composition.each { |res|
+          res.seen_structures << entry.id
+        }
       rescue Exception => e
-      end      
+      end
       my_sug
     }.compact
     sugar_sets = 
@@ -233,10 +241,12 @@ class GlycodbsController < ApplicationController
         @struct_count
       end
       
-      def sugar.branch_points_count(branch_count=nil)
-        return @branch_points unless(branch_count)
-        @branch_points ||= {}
-        @branch_points[branch_count] = (@branch_points[branch_count] || 0) + 1
+      def sugar.branch_points_count=(new_bc)
+        @branch_points = new_bc
+      end
+      
+      def sugar.branch_points_count
+        @branch_points
       end
       
       def sugar.branch_point_totals
@@ -250,9 +260,7 @@ class GlycodbsController < ApplicationController
       if sugar == nil
         next
       end
-      
-      sugar.branch_points_count(sugar.branch_points.size)
-      
+            
       # Branch point comparison
       # For each branch point for the new sugar collect
       #    get the unambiguous path to root for the branch point
@@ -267,9 +275,8 @@ class GlycodbsController < ApplicationController
       branch_points_totals = []
       
       sugar_set.each { |sug|
-        sugar.union!(sug,&MATCH_BLOCK)
         branch_points = sug.branch_points
-        sugar.branch_points_count(branch_points.size)
+        sugar.union!(sug,&MATCH_BLOCK)
         branch_points = branch_points.collect { |r| sugar.find_residue_by_unambiguous_path(sug.get_unambiguous_path_to_root(r).reverse) }
         branch_points_totals << branch_points
         sugar.add_structure_count
@@ -294,12 +301,14 @@ class GlycodbsController < ApplicationController
       coverage_finder = EnzymeCoverageController.new()
       coverage_finder.sugar = sugar
       sugar.root.anomer = 'u'
-      def coverage_finder.do_stuff
-        execute_pathways_and_markup()
-        return [@chains,@valid_residues,@invalid_residues]
-      end
       
-      chains,valid_residues,invalid_residues = coverage_finder.do_stuff
+      coverage_finder.execute_pathways_and_markup
+
+      sugar.residue_composition.each { |r|
+        if ! r.is_valid? && r.parent && r.parent.is_valid?
+          r.parent.remove_child(r)
+        end
+      }
       
       all_gals = sugar.residue_composition.select { |r| r.name(:ic) == 'Gal' && r.parent && r.parent.name(:ic) == 'GlcNAc' }
       type_i = all_gals.select { |r| r.paired_residue_position == 3 }
@@ -319,18 +328,24 @@ class GlycodbsController < ApplicationController
         renderer.render_simplified_chains(sugar,[branching],'sugar_chain sugar_chain_branching','#C5D3EF')
       }
       
-      sugar.residue_composition.each { |r|
-        if ! r.is_valid? && r.parent && r.parent.is_valid?
-          r.parent.remove_child(r)
-        end
-      }
-
       sugar_residues = sugar.residue_composition
       branch_totals_by_point.keys.each { |bp|
         unless sugar_residues.include? bp
             branch_totals_by_point.delete(bp)
         end
       }
+      all_ids = branch_totals_by_point.keys.collect { |bp|
+        bp.seen_structures
+      }.flatten.sort
+
+      zero_count = sugar.root.hits
+      sizes = {}
+      all_id_sizes = all_ids.group_by { |i| i }.collect { |arr| arr[1].size }.group_by { |i| i }.each { |b_num,scount|
+        sizes[b_num] = scount.size
+        zero_count -= scount.size
+      }
+      sizes[0] = zero_count
+      sugar.branch_points_count = sizes
 
       labels = ('V'..'Z').to_a
       
