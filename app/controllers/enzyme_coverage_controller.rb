@@ -280,7 +280,6 @@ class EnzymeCoverageController < ApplicationController
           return true
         end         
       end
-
       
       return false
       
@@ -306,6 +305,10 @@ class EnzymeCoverageController < ApplicationController
       if res.paired_residue_position == 4 && res.anomer == 'b' && res.parent.name(:ic) == 'Man' && res.parent.parent && res.parent.parent.name(:ic) == 'GlcNAc'
         return true
       end
+    end
+
+    if res.name(:ic) == 'HSO3'
+      return true
     end
 
     return false

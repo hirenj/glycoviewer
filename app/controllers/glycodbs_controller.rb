@@ -216,6 +216,7 @@ class GlycodbsController < ApplicationController
   def execute_coverage_for_tag(tags)
     individual_sugars = Glycodb.easyfind(:keywords => tags.split(','), :fieldnames => ['tags']).collect { |entry|
       my_seq = entry.GLYCAN_ST.gsub(/\+.*/,'').gsub(/\(\?/,'(u')
+      my_seq.gsub!(/\(-/,'(u1-')
       my_sug = nil
       begin
         my_sug = SugarHelper.CreateMultiSugar(my_seq,:ic).get_unique_sugar        
