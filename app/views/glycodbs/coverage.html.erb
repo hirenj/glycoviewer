@@ -127,13 +127,17 @@
 		a_window = window.open('','_blank');
 		a_window.document.write('<xml version="1.0" standalone="no"?>\n');
 		a_window.document.close();
+		
+		report_title = a_window.document.importNode($('report_title'),true);
+
+		a_window.document.getElementsByTagName('body')[0].appendChild(report_title);
 
 		copied_svg = a_window.document.importNode(svg_element,true);
 		
 		a_window.document.getElementsByTagName('body')[0].appendChild(copied_svg);
 		
 		copied_svg.setAttribute('width','80cm');
-		copied_svg.setAttribute('height','120cm');
+		copied_svg.setAttribute('height','80cm');
 		
 		groups = copied_svg.getElementsByTagNameNS('http://www.w3.org/2000/svg','g');
 		for (var i = 0; i < groups.length; i++) {
@@ -147,7 +151,7 @@
 		a_window.document.getElementsByTagName('body')[0].appendChild(copied_graph);
 		
 		copied_graph.style.position = 'absolute';
-		copied_graph.style.bottom = '-10cm';
+		copied_graph.style.bottom = '-15cm';
 		copied_graph.style.right = '0px';
 		copied_graph.style.width = '100%';
 		copied_graph.style.height = '20cm';
@@ -156,7 +160,9 @@
 		a_window.document.getElementsByTagName('body')[0].style.position = 'relative';
 		a_window.document.getElementsByTagName('body')[0].style.width = '80cm';
 		a_window.document.getElementsByTagName('body')[0].style.height = '120cm';
-		a_window.document.getElementsByTagName('body')[0].style.fontSize = '1.5cm';		
+		a_window.document.getElementsByTagName('body')[0].style.fontSize = '1.5cm';
+		a_window.document.getElementsByTagName('body')[0].style.fontFamily = 'Helvetica,Arial,Sans-serif';
+				
 
 		each_graph = XHtmlDOM.getElementsByClassName('single_branch_graph',copied_graph);
 		
@@ -170,7 +176,7 @@
 		copied_key = a_window.document.importNode($('sugar_key'),true);
 		a_window.document.getElementsByTagName('body')[0].appendChild(copied_key);		
 		copied_key.style.position = 'absolute';
-		copied_key.style.bottom = '5cm';
+		copied_key.style.bottom = '15cm';
 		copied_key.style.width = '100%';
 		copied_key.style.height = '20cm';
 	}
@@ -178,6 +184,8 @@
 	connect(window,'onload',onloader);
 //]]>	
 </script>
+<% human_tags = params[:id].split(',').collect { |tag| tag.gsub!(/^.*:/,''); tag.capitalize }%>
+<h1 id="report_title">Coverage for tags: <%= human_tags.join(',') %></h1>
 <div id="coverage_tabs" class="yui-navset" style="width: 95%;">
 	<ul class="yui-nav">
 <% seen_first = true %>
@@ -267,14 +275,15 @@
 	</div>
 <div style="margin-left: 52%; width: 47%;">
 	<ol type="a">
-		<li>Neuac(a2-3) and Fuc(a1-2) on Gal</li>
-		<li>Neuac(a2-6) on Gal</li>
+		<li>NeuAc(α2→3) and Fuc(α1→2) on Gal with A antigen</li>
+		<li>NeuAc(α2→6) on Gal with B antigen</li>
 		<li>Type I chain</li>
 		<li>Type II chain</li>
-		<li>GlcNAc(b1-6) branching</li>
-		<li>Fuc(a1-4) on GlcNAc</li>
-		<li>Fuc(a1-3) on GlcNAc</li>
-		<li>Fuc(a1-6) on N-linked core GlcNAc</li>
+		<li>GlcNAc(β1→6) branching</li>
+		<li>Fuc(α1→4) on GlcNAc</li>
+		<li>Fuc(α1→3) on GlcNAc</li>
+		<li>Fuc(α1→6) on N-linked core GlcNAc</li>
 	</ol>
+	<p>The vividness of a residue is indicative of the number of times it has been observed.</p>
 </div>
 </div>
