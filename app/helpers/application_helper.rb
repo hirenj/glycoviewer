@@ -24,6 +24,7 @@ module ApplicationHelper
   end
 
   def render_hash_as_bar_chart(labels,values,total_height,fills)
+    return '' unless labels.size > 0
     bar_width = 30
     values.collect! {|v| v || 0 }
     label_vals = labels.zip(values)
@@ -44,7 +45,7 @@ module ApplicationHelper
       plot.add_element(label)
       curr_x += bar_width
     }
-    plot.add_attributes('width' => '100%', 'height' => '100%', 'viewBox' => "0 0 #{bar_width * labels.size} #{max_height+30}" )
+    plot.add_attributes('width' => '100%', 'height' => '100%', 'viewBox' => "0 0 #{bar_width * labels.size} #{max_height+bar_width+10}" )
     return plot.to_s
   end
 

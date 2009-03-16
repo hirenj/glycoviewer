@@ -57,11 +57,11 @@
 		border: solid #9999ff 3px;
 		-moz-border-radius: 3px;
 		-webkit-border-radius: 3px;		
+		background-color: #ffffff;
 	}
 	div.branch_graphs div.single_branch_graph {
 		float: left;
 		padding-left: 10px;
-		background-color: #ffffff;
 	}
 	div.branch_graph_svg {
 		height: 100px;
@@ -98,8 +98,9 @@
 			connect(gene_toggle,'onclick',partial(togglelayer,gene_layer));
 			connect(hits_toggle,'onclick',partial(togglelayer,hits_layer));
 
-			connect(a_printer,'onclick',partial(do_printing,mysvg,a_canvas));
-
+			connect(a_printer,'onclick',partial(do_printing,mysvg,out_canvases[a_canvas]));
+			
+			togglelayer(gene_layer);
 		}
 		build_tabs();
 	}
@@ -146,23 +147,32 @@
 		a_window.document.getElementsByTagName('body')[0].appendChild(copied_graph);
 		
 		copied_graph.style.position = 'absolute';
-		copied_graph.style.top = '0px';
+		copied_graph.style.bottom = '-10cm';
 		copied_graph.style.right = '0px';
+		copied_graph.style.width = '100%';
+		copied_graph.style.height = '20cm';
+
  		
 		a_window.document.getElementsByTagName('body')[0].style.position = 'relative';
 		a_window.document.getElementsByTagName('body')[0].style.width = '80cm';
 		a_window.document.getElementsByTagName('body')[0].style.height = '120cm';
-		
+		a_window.document.getElementsByTagName('body')[0].style.fontSize = '1.5cm';		
 
 		each_graph = XHtmlDOM.getElementsByClassName('single_branch_graph',copied_graph);
 		
 		for ( var i in each_graph ) {
 			each_graph[i].style.float = 'left';
-			each_graph[i].style.width = '3cm';
-			each_graph[i].style.height = '8cm';
+			each_graph[i].style.width = '12cm';
+			each_graph[i].style.height = '16cm';
 			each_graph[i].style.padding = '0.5cm';
 		}
 		
+		copied_key = a_window.document.importNode($('sugar_key'),true);
+		a_window.document.getElementsByTagName('body')[0].appendChild(copied_key);		
+		copied_key.style.position = 'absolute';
+		copied_key.style.bottom = '5cm';
+		copied_key.style.width = '100%';
+		copied_key.style.height = '20cm';
 	}
 		
 	connect(window,'onload',onloader);
@@ -247,5 +257,24 @@
 <!-- end sugar_result -->
 </div>
 <% end %>
+</div>
+<!-- end coverage_tabs -->
+</div>
+<div id="sugar_key">
+	<div id="sugar_key_image" style="width: 50%; float: left;">
+		<% @sugar = @key_sugar %>
+		<%= render :partial => "sviewer/render", :locals => { :sugar => @sugar, :padding => 30, :scheme => :composite } %>
+	</div>
+<div style="margin-left: 52%; width: 47%;">
+	<ol type="a">
+		<li>Neuac(a2-3) and Fuc(a1-2) on Gal</li>
+		<li>Neuac(a2-6) on Gal</li>
+		<li>Type I chain</li>
+		<li>Type II chain</li>
+		<li>GlcNAc(b1-6) branching</li>
+		<li>Fuc(a1-4) on GlcNAc</li>
+		<li>Fuc(a1-3) on GlcNAc</li>
+		<li>Fuc(a1-6) on N-linked core GlcNAc</li>
+	</ol>
 </div>
 </div>
