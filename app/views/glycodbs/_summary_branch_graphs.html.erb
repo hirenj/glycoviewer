@@ -1,0 +1,31 @@
+<%  
+	counts_keys = [] 
+	counts_values = []
+ 	sugar.branch_points_count.each { |branch_count,value|
+       counts_keys << branch_count.to_s
+	   counts_values << value
+ 	}
+
+ 	branch_points = sugar.branch_point_totals.keys
+	biggest_bar = branch_points.collect { |branch_point|
+		sugar.branch_point_totals[branch_point].keys.collect {|k|
+			sugar.branch_point_totals[branch_point][k]
+		}.max
+	}.max
+%>
+<% for branch_point in branch_points %>
+<div class="single_branch_graph">
+	<div>Branch <%= branch_point.branch_label %></div>
+	<div class="branch_graph_svg">
+		<%= render_hash_as_bar_chart(branch_points.collect { |k| k.branch_label },branch_points.collect { |k|
+				sugar.branch_point_totals[branch_point][k]
+			},biggest_bar,['#7C8FBB','#2D50A2','#7C8FBB','#2D50A2','#7C8FBB','#2D50A2'] ) %>
+	</div>
+</div>
+<% end %>
+<div class="single_branch_graph">
+<div class="branch_graph_svg">
+	<div>Branching</div>
+	<%= render_hash_as_bar_chart(counts_keys,counts_values,counts_values.max,['#7C8FBB','#2D50A2','#7C8FBB','#2D50A2','#7C8FBB','#2D50A2'])%>
+	</div>
+</div>

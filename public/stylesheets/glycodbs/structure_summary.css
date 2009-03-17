@@ -1,0 +1,74 @@
+.enzyme {
+	stroke: #00ff00;
+	stroke-width: 5;
+
+}
+.evidenced {
+	stroke: #0000ff;
+	stroke-width: 5;
+
+}
+.supported {
+	stroke: #dddddd;
+	stroke-width: 5;
+}
+.noenzyme {
+	stroke: #ff0000;
+	stroke-width: 5;
+
+}
+.yui-navset .yui-content {
+	background: #ffffff !important;
+}
+.sugar_decorations {
+	display: none;
+}
+
+.sugar_chain_type_i * {
+	fill: #FFEFD8 !important;
+}
+
+.sugar_chain_type_ii * {
+	fill: #C9F6C6 !important;
+}
+
+.sugar_chain_branching * {
+	fill: #C5D3EF !important;
+}
+.branch_points_data table {
+	display: none;
+}
+div.branch_graphs {
+	position: absolute;
+	right: 50px;
+	width: 35%;
+	z-index: 100;
+	border: solid #9999ff 3px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;		
+	background-color: #ffffff;
+}
+
+div.branch_graph_svg {
+	height: 100px;
+	width: 100px;
+	margin-bottom: 5px;
+}
+
+div.summary_branch_graphs div.single_branch_graph {
+	float: left;
+	padding-left: 10px;
+}
+
+div.summary_branch_graphs div.branch_graph_svg {
+	height: 200px;
+}
+div.summary_branch_graphs div.branch_graph_svg_wide {
+	width: 200px;
+	height: 200px;
+}
+
+div.branch_graphs div.single_branch_graph {
+	float: left;
+	padding-left: 10px;
+}

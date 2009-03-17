@@ -1,0 +1,19 @@
+<div id="sugar_key">
+	<div id="sugar_key_image" style="width: 50%; float: left;">
+		<% @sugar = @key_sugar %>
+		<%= render :partial => "sviewer/render", :locals => { :sugar => @sugar, :padding => 30, :scheme => :composite } %>
+	</div>
+<div style="margin-left: 52%; width: 47%;">
+	<ol type="a">
+		<li>NeuAc(α2→3) and Fuc(α1→2) on Gal with A antigen</li>
+		<li>NeuAc(α2→6) on Gal with B antigen</li>
+		<li>Type I chain</li>
+		<li>Type II chain</li>
+		<li>GlcNAc(β1→6) branching</li>
+		<li>Fuc(α1→4) on GlcNAc</li>
+		<li>Fuc(α1→3) on GlcNAc</li>
+		<li>Fuc(α1→6) on N-linked core GlcNAc</li>
+	</ol>
+	<p>The vividness of a residue is indicative of the number of times it has been observed.</p>
+</div>
+</div>
