@@ -8,177 +8,24 @@
 <%= javascript_include_tag 'http://yui.yahooapis.com/2.7.0/build/container/container-min.js' %>
 <%= javascript_include_tag 'http://yui.yahooapis.com/2.7.0/build/tabview/tabview-min.js' %>
 <%= javascript_include_tag 'http://yui.yahooapis.com/2.7.0/build/slider/slider-min.js' %>
-<style type="text/css">
-	.enzyme {
-		stroke: #00ff00;
-		stroke-width: 5;
-
-	}
-	.evidenced {
-		stroke: #0000ff;
-		stroke-width: 5;
-
-	}
-	.supported {
-		stroke: #dddddd;
-		stroke-width: 5;
-	}
-	.noenzyme {
-		stroke: #ff0000;
-		stroke-width: 5;
-
-	}
-	.yui-navset .yui-content {
-		background: #ffffff !important;
-	}
-	.sugar_decorations {
-		display: none;
-	}
-
-	.sugar_chain_type_i * {
-		fill: #FFEFD8 !important;
-	}
-
-	.sugar_chain_type_ii * {
-		fill: #C9F6C6 !important;
-	}
-
-	.sugar_chain_branching * {
-		fill: #C5D3EF !important;
-	}
-	.branch_points_data table {
-		display: none;
-	}
-	div.branch_graphs {
-		position: absolute;
-		right: 50px;
-		width: 35%;
-		z-index: 100;
-		border: solid #9999ff 3px;
-		-moz-border-radius: 3px;
-		-webkit-border-radius: 3px;		
-		background-color: #ffffff;
-	}
-	div.branch_graphs div.single_branch_graph {
-		float: left;
-		padding-left: 10px;
-	}
-	div.branch_graph_svg {
-		height: 100px;
-		width: 100px;
-		margin-bottom: 5px;
-	}
-</style>
+<%= javascript_include_tag 'lib/structure_summary_page.js' %>
+<%= stylesheet_link_tag 'glycodbs/structure_summary.css' %>
 <script type="text/javascript">
 //<![CDATA[
+
 	function onloader() {
 
 		out_canvases = XHtmlDOM.getElementsByClassName('result_structure',document);
 		for ( a_canvas in out_canvases ) {
+			sugar_canvas = out_canvases[a_canvas];
+			mysvg = sugar_canvas.getElementsByTagNameNS('http://www.w3.org/2000/svg','svg')[0];
 
-			mysvg = out_canvases[a_canvas].getElementsByTagNameNS('http://www.w3.org/2000/svg','svg')[0];
+			sugar_canvas.targetSVG = mysvg;
+			connect_slider(sugar_canvas);
+			connect_buttons(sugar_canvas);		
 
-			original_width = mysvg.getAttribute('width');
-			original_height = mysvg.getAttribute('height');
-
-			slider = new SugarBuilder.Slider();
-			slider.canvas().style.zIndex = 2;
-			appendChildNodes(out_canvases[a_canvas],slider.canvas());
-			connect(slider,'onchange',partial(changescale,mysvg,original_width,original_height));
-
-			gene_toggle = XHtmlDOM.getElementsByClassName('gene_toggle',out_canvases[a_canvas])[0];
-			hits_toggle = XHtmlDOM.getElementsByClassName('hits_toggle',out_canvases[a_canvas])[0];
-
-			a_printer = XHtmlDOM.getElementsByClassName('print_button',out_canvases[a_canvas])[0];
-
-			gene_layer = XHtmlDOM.getElementsByClassName('gene_overlay',mysvg)[0];
-
-			hits_layer = XHtmlDOM.getElementsByClassName('hits_overlay',mysvg)[0];
-			
-			connect(gene_toggle,'onclick',partial(togglelayer,gene_layer));
-			connect(hits_toggle,'onclick',partial(togglelayer,hits_layer));
-
-			connect(a_printer,'onclick',partial(do_printing,mysvg,out_canvases[a_canvas]));
-			
-			togglelayer(gene_layer);
 		}
 		build_tabs();
-	}
-		
-	function togglelayer(svg_group) {
-		if (svg_group.getAttribute('display')) {
-			svg_group.removeAttribute('display');
-		} else {
-			svg_group.setAttribute('display','none');
-		}
-	}
-	
-	function changescale(svg,original_width,original_height,e) {
-		scale = e.target().value;
-		svg.setAttribute('width', original_width*scale);
-		svg.setAttribute('height', original_height*scale);
-	}
-	
-	function build_tabs() {
-		var myTabs = new YAHOO.widget.TabView("coverage_tabs");
-	}
-	
-	function do_printing(svg_element,result_structure_el) {
-		a_window = window.open('','_blank');
-		a_window.document.write('<xml version="1.0" standalone="no"?>\n');
-		a_window.document.close();
-		
-		report_title = a_window.document.importNode($('report_title'),true);
-
-		a_window.document.getElementsByTagName('body')[0].appendChild(report_title);
-
-		copied_svg = a_window.document.importNode(svg_element,true);
-		
-		a_window.document.getElementsByTagName('body')[0].appendChild(copied_svg);
-		
-		copied_svg.setAttribute('width','80cm');
-		copied_svg.setAttribute('height','80cm');
-		
-		groups = copied_svg.getElementsByTagNameNS('http://www.w3.org/2000/svg','g');
-		for (var i = 0; i < groups.length; i++) {
-			groups[i].removeAttribute('filter');
-		}
-
-		graph_container = XHtmlDOM.getElementsByClassName('branch_graphs',result_structure_el.parentNode)[0];
-		
-		copied_graph = a_window.document.importNode(graph_container,true);
-
-		a_window.document.getElementsByTagName('body')[0].appendChild(copied_graph);
-		
-		copied_graph.style.position = 'absolute';
-		copied_graph.style.bottom = '-15cm';
-		copied_graph.style.right = '0px';
-		copied_graph.style.width = '100%';
-		copied_graph.style.height = '20cm';
-
- 		
-		a_window.document.getElementsByTagName('body')[0].style.position = 'relative';
-		a_window.document.getElementsByTagName('body')[0].style.width = '80cm';
-		a_window.document.getElementsByTagName('body')[0].style.height = '120cm';
-		a_window.document.getElementsByTagName('body')[0].style.fontSize = '1.5cm';
-		a_window.document.getElementsByTagName('body')[0].style.fontFamily = 'Helvetica,Arial,Sans-serif';
-				
-
-		each_graph = XHtmlDOM.getElementsByClassName('single_branch_graph',copied_graph);
-		
-		for ( var i in each_graph ) {
-			each_graph[i].style.float = 'left';
-			each_graph[i].style.width = '12cm';
-			each_graph[i].style.height = '16cm';
-			each_graph[i].style.padding = '0.5cm';
-		}
-		
-		copied_key = a_window.document.importNode($('sugar_key'),true);
-		a_window.document.getElementsByTagName('body')[0].appendChild(copied_key);		
-		copied_key.style.position = 'absolute';
-		copied_key.style.bottom = '15cm';
-		copied_key.style.width = '100%';
-		copied_key.style.height = '20cm';
 	}
 		
 	connect(window,'onload',onloader);
@@ -201,52 +48,9 @@
 
 <div class="branch_points_data" style="position: relative;">
 
-<table class="branch_points_table">
-	<tr><th>Branch points</th><th>Number</th></tr>
-<% counts_keys = [] 
-	counts_values = []
-%>
-<% sugar.branch_points_count.each { |branch_count,value| %>
-	<% counts_keys << branch_count.to_s
-	   counts_values << value
-	%>
-	<tr><td><%= branch_count %></td><td><%= value %></td></tr>
-<% } %>
-</table>
-
-<% branch_points = sugar.branch_point_totals.keys %>
-
-<table class="branch_points_totals">
-<tr><th></th>
-<% for branch_point in branch_points %>
-<th>Branch point <%= branch_point.branch_label %></th>
-<% end %>
-</tr>
-<% for branch_point in branch_points %>
-<tr><td>Branch point <%= branch_point.branch_label %></td>
-	<% for other_branch_point in branch_points %>
-		<td><%= sugar.branch_point_totals[branch_point][other_branch_point]%></td>
-	<% end %>
-</tr>
-<% end %>
-</table>
 <div class="branch_graphs">
-<% biggest_bar = branch_points.collect { |branch_point| sugar.branch_point_totals[branch_point].keys.collect {|k| sugar.branch_point_totals[branch_point][k] }.max }.max %>
-<% for branch_point in branch_points %>
-<div class="single_branch_graph">
-<div>Branch <%= branch_point.branch_label %></div>
-<div class="branch_graph_svg">
-<%= render_hash_as_bar_chart(branch_points.collect { |k| k.branch_label },branch_points.collect { |k| sugar.branch_point_totals[branch_point][k] },biggest_bar,['#7C8FBB','#2D50A2','#7C8FBB','#2D50A2','#7C8FBB','#2D50A2'] ) %>
-</div>
-</div>
-<% end %>
-<div class="single_branch_graph">
-<div class="branch_graph_svg">
-	<div>Branching</div>
-	<%= render_hash_as_bar_chart(counts_keys,counts_values,counts_values.max,['#7C8FBB','#2D50A2','#7C8FBB','#2D50A2','#7C8FBB','#2D50A2'])%>
-</div>
-</div>
-<div style="clear:both; height: 0px; float: none;"></div>
+	<%= render :partial => "summary_branch_graphs", :locals => { :sugar => sugar } %>
+	<div style="clear:both; height: 0px; float: none;"></div>
 </div>
 <!-- end branch_points_data -->
 </div>
@@ -268,22 +72,4 @@
 </div>
 <!-- end coverage_tabs -->
 </div>
-<div id="sugar_key">
-	<div id="sugar_key_image" style="width: 50%; float: left;">
-		<% @sugar = @key_sugar %>
-		<%= render :partial => "sviewer/render", :locals => { :sugar => @sugar, :padding => 30, :scheme => :composite } %>
-	</div>
-<div style="margin-left: 52%; width: 47%;">
-	<ol type="a">
-		<li>NeuAc(α2→3) and Fuc(α1→2) on Gal with A antigen</li>
-		<li>NeuAc(α2→6) on Gal with B antigen</li>
-		<li>Type I chain</li>
-		<li>Type II chain</li>
-		<li>GlcNAc(β1→6) branching</li>
-		<li>Fuc(α1→4) on GlcNAc</li>
-		<li>Fuc(α1→3) on GlcNAc</li>
-		<li>Fuc(α1→6) on N-linked core GlcNAc</li>
-	</ol>
-	<p>The vividness of a residue is indicative of the number of times it has been observed.</p>
-</div>
-</div>
+<%= render :partial => "sugar_key" %>

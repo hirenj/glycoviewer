@@ -154,11 +154,41 @@ class GlycodbsController < ApplicationController
   end
 
   def coverage_for_tag
-    @sugars = execute_coverage_for_tag(params[:id])
+    @sugars = execute_coverage_for_tag(params[:id],true)
     @key_sugar = generate_key_sugar()
     render :action => 'coverage', :content_type => Mime::XHTML
   end
 
+  def compare_tag_summary
+    sugars_tag1 = execute_coverage_for_tag(params[:tags1])
+    sugars_tag2 = execute_coverage_for_tag(params[:tags2])
+    sugars_tag1.each { |sug| sug.name = params[:tags1] }
+    sugars_tag2.each { |sug| sug.name = params[:tags2] }
+    
+    @sugars = ['GlcNAc','GalNAc','Gal','Glc'].collect { |a_name|
+      [sugars_tag1.select { |sug| sug.root.name(:ic) == a_name }.first,
+      sugars_tag2.select { |sug| sug.root.name(:ic) == a_name }.first ]
+    }.compact.reject { |sugs|
+      sugs.compact.size == 0
+    }
+    @sugars.each { |sugset|
+      all_branch_points = sugset.compact.collect { |sug|
+        sug.branch_point_totals.keys
+      }.flatten
+      labels = ('S'..'Z').to_a.reverse
+      all_branch_points.group_by { |bp|
+        bp.sort_key
+      }.each { |sort_key,points|
+        label = labels.shift
+        points.each { |bp|
+          bp.branch_label = label
+        }
+      }
+    }
+    @key_sugar = generate_key_sugar()
+    render :action => 'compare_tag_summary', :content_type => Mime::XHTML
+  end
+  
   def generate_key_sugar
       key_sug = SugarHelper.CreateMultiSugar('NeuAc(a2-6)[GalNAc(a1-3)]Gal(b1-3)[Fuc(a1-4)]GlcNAc(b1-3)[Fuc(a1-3)[Fuc(a1-2)[NeuAc(a2-3)][Gal(a1-3)]Gal(b1-4)GlcNAc(b1-3)Gal(b1-4)]GlcNAc(b1-6)]Gal(b1-3)[Fuc(a1-6)]GlcNAc',:ic)
 
@@ -213,7 +243,29 @@ class GlycodbsController < ApplicationController
       key_sug
   end
 
-  def execute_coverage_for_tag(tags)
+  def markup_hits(sugar)    
+    targets = Element.new('svg:g')
+    targets.add_attributes({'class' => 'hits_overlay', 'display' => 'none'})
+    sugar.overlays << targets
+    sugar.residue_composition.each { |residue|
+      residue.hits += 1
+      residue.callbacks.push( lambda { |element|
+        xcenter = -1*(residue.centre[:x]) 
+        ycenter = -1*(residue.centre[:y])
+        label = Element.new('svg:text')
+        label.add_attributes({'x' => xcenter, 'y' => ycenter, 'text-anchor' => 'middle', 'style' => 'dominant-baseline: middle;','font-size' => '40px' })
+        label.text = residue.hits
+        label_back = Element.new('svg:circle')
+        label_back.add_attributes({'cx' => xcenter, 'cy' => ycenter, 'r' => '40px', 'fill' => '#ffffff', 'stroke-width' => '2px', 'stroke' => '#0000ff'})
+    
+        targets.add_element(label_back)
+        targets.add_element(label)
+        
+      })
+    }
+  end
+
+  def execute_coverage_for_tag(tags,do_genes=false)
     individual_sugars = Glycodb.easyfind(:keywords => tags.split(','), :fieldnames => ['tags']).collect { |entry|
       my_seq = entry.GLYCAN_ST.gsub(/\+.*/,'').gsub(/\(\?/,'(u')
       my_seq.gsub!(/\(-/,'(u1-')
@@ -247,11 +299,11 @@ class GlycodbsController < ApplicationController
       end
       
       def sugar.branch_points_count
-        @branch_points
+        @branch_points || { 0 => 0 }
       end
       
       def sugar.branch_point_totals
-        @branch_point_totals
+        @branch_point_totals || {}
       end
       
       def sugar.branch_point_totals=(totals)
@@ -349,44 +401,37 @@ class GlycodbsController < ApplicationController
       sugar.branch_points_count = sizes
 
       labels = ('V'..'Z').to_a
-      
       branch_totals_by_point.keys.each { |bp|
+        sort_key = sugar.depth(bp).to_s+'|'+sugar.get_unambiguous_path_to_root(bp).collect {|path| path[:residue].paired_residue_position.to_s+path[:residue].name(:ic) }.join(',')
+        def bp.sort_key=(key)
+          @sort_key = key
+        end
+        def bp.sort_key
+          @sort_key
+        end
+        bp.sort_key = sort_key
+      }
+      branch_totals_by_point.keys.sort_by { |bp|
+        bp.sort_key
+      }.each { |bp|
         branch_label_text = labels.shift
         def bp.branch_label
           @branch_label
         end
-       def bp.branch_label=(new_label)
+        def bp.branch_label=(new_label)
          @branch_label = new_label
-       end
-       bp.branch_label = branch_label_text
-
+        end
+        bp.branch_label = branch_label_text
         sugar.callbacks << lambda { |sug_root,renderer|
-          renderer.render_text_residue_label(sugar,bp,branch_label_text)
+          renderer.render_text_residue_label(sugar,bp,bp.branch_label)
         }
       }
 
-      targets = Element.new('svg:g')
-      targets.add_attributes({'class' => 'hits_overlay', 'display' => 'none'})
-      sugar.overlays << targets
-      sugar.residue_composition.each { |residue|
-        residue.hits += 1
-        residue.callbacks.push( lambda { |element|
-          xcenter = -1*(residue.centre[:x]) 
-          ycenter = -1*(residue.centre[:y])
-          label = Element.new('svg:text')
-          label.add_attributes({'x' => xcenter, 'y' => ycenter, 'text-anchor' => 'middle', 'style' => 'dominant-baseline: middle;','font-size' => '40px' })
-          label.text = residue.hits
-          label_back = Element.new('svg:circle')
-          label_back.add_attributes({'cx' => xcenter, 'cy' => ycenter, 'r' => '40px', 'fill' => '#ffffff', 'stroke-width' => '2px', 'stroke' => '#0000ff'})
-
-          targets.add_element(label_back)
-          targets.add_element(label)
-          
-        })
-      }
-
-      gene_tissue = (tags.split(',').collect { |tag| tag.gsub!(/anat\:/,'') }.compact.first || 'nil').humanize
-      coverage_finder.markup_linkages(coverage_finder.execute_genecoverage(gene_tissue))
+      if do_genes
+        gene_tissue = (tags.split(',').collect { |tag| tag.gsub!(/anat\:/,'') }.compact.first || 'nil').humanize
+        coverage_finder.markup_linkages(coverage_finder.execute_genecoverage(gene_tissue))
+      end
+      
       sugar
     }.compact
   end

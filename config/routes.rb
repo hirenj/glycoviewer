@@ -6,6 +6,7 @@ ActionController::Routing::Routes.draw do |map|
 
   map.connect 'glycodbs/proteins', :controller => 'glycodbs', :action => 'proteins', :format => 'html'
 
+  map.connect 'glycodbs/compare_tags/:tags1/:tags2', :controller => 'glycodbs', :action => 'compare_tag_summary'
 
   map.connect 'glycodbs/:id', :controller => 'glycodbs', :action => 'show', :format => 'html'
   
