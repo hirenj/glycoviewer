@@ -38,7 +38,7 @@ module ApplicationHelper
     if values.min < 0
       total_minimum = values.min
     end
-    label_vals = labels.zip(values).sort_by { |l,v| l }
+    label_vals = labels.zip(values).sort_by { |l,v| l || '' }
     plot = Element.new('svg:svg')
   	plot.add_namespace('svg', SVG_ELEMENT_NS)
   	plot.add_attributes('preserveAspectRatio' => 'xMidYMax')

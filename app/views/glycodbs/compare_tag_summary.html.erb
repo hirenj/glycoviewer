@@ -21,6 +21,14 @@
 				connect_slider(sugar_canvas);
 			}
 		}
+		
+		sugar_results = XHtmlDOM.getElementsByClassName('sugar_result',document);
+
+		for ( a_result in sugar_results ) {
+			a_printer = XHtmlDOM.getElementsByClassName('print_button',sugar_results[a_result])[0];
+			connect(a_printer,'onclick',partial(do_summary_printing,sugar_results[a_result]));
+		}
+		
 		build_tabs();
 	}
 	
@@ -40,13 +48,15 @@
 <div class="sugar_result">
 <div>
 <div><input type="button" class="print_button" value="Print"/></div>
+<div class="report_title">
 <% for sugar in compared_sugars %>
 <div style="width: 49%; float: left;">
 	<% human_tags = sugar ? sugar.name.split(',').collect { |tag| tag.gsub!(/^.*:/,''); tag.capitalize } : ['No glycans'] %>
-	<h1 class="report_title"><%= human_tags.join(',') %> <%= sugar ? sugar.root.hits.to_s+' structures ' : '' %></h1>
+	<h1><%= human_tags.join(',') %> <%= sugar ? sugar.root.hits.to_s+' structures ' : '' %></h1>
 </div>
 <% end %>
 <div style="clear: both; float: none;"/>
+</div>
 <% for sugar in compared_sugars %>
 <div class="result_structure" style="float: left; height: 600px; width: 49.5%; position: relative;">
 <div style="position: relative; overflow: auto; height: 100%; width: 100%;">
@@ -59,6 +69,7 @@
 <% end %>
 <!-- end result_structure -->
 <div style="clear: both; float: none;"/>
+<!-- end sugar_result -->
 </div>
 <div class="sugar_graphs">
 <%
@@ -101,7 +112,7 @@ data_for_label = {}
 		value_multiplier *= -1
 	end %>
 	
-	<div class="summary_branch_graphs">
+	<div id="summary_graphs" class="summary_branch_graphs">
 	<% for label in data_for_label.keys %>
 	<div class="single_branch_graph">
 		<div>Branch <%= label %></div>

@@ -146,6 +146,7 @@ class GlycodbsController < ApplicationController
   def tissue
     @glycodbs = Glycodb.easyfind(:keywords => params[:id], :fieldnames => ['SYSTEM','DIVISION1','DIVISION2','DIVISION3','DIVISION4','SWISS_PROT'])
     @glycodbs.reject! { |glycodb| glycodb.SPECIES != 'HOMO SAPIENS'}
+#    @glycodbs.reject! { |glycodb| glycodb.SPECIES != 'MUS MUSCULUS'}
   end
 
   def proteins
@@ -400,7 +401,7 @@ class GlycodbsController < ApplicationController
       sizes[0] = zero_count
       sugar.branch_points_count = sizes
 
-      labels = ('V'..'Z').to_a
+      labels = ('S'..'Z').to_a.reverse
       branch_totals_by_point.keys.each { |bp|
         sort_key = sugar.depth(bp).to_s+'|'+sugar.get_unambiguous_path_to_root(bp).collect {|path| path[:residue].paired_residue_position.to_s+path[:residue].name(:ic) }.join(',')
         def bp.sort_key=(key)

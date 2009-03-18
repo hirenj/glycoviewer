@@ -46,60 +46,139 @@ function build_tabs() {
 	var myTabs = new YAHOO.widget.TabView("coverage_tabs");
 }
 
-function do_printing(svg_element,result_structure_el) {
+function init_print_window() {
 	a_window = window.open('','_blank');
 	a_window.document.write('<xml version="1.0" standalone="no"?>\n');
 	a_window.document.close();
-	
-	report_title = a_window.document.importNode($('report_title'),true);
+	return a_window;	
+}
 
-	a_window.document.getElementsByTagName('body')[0].appendChild(report_title);
+function setup_print_document_style(target_document,title_element,width,height) {
+	report_title = target_document.importNode(title_element,true);
+	target_document.getElementsByTagName('body')[0].appendChild(report_title);
+	target_document.getElementsByTagName('body')[0].style.position = 'relative';
+	target_document.getElementsByTagName('body')[0].style.width = width+'cm';
+	target_document.getElementsByTagName('body')[0].style.height = height+'cm';
+	target_document.getElementsByTagName('body')[0].style.fontSize = '0.25cm';
+	target_document.getElementsByTagName('body')[0].style.fontFamily = 'Helvetica,Arial,Sans-serif';
+	target_document.print_width = width;
+	target_document.print_height = height;
+	
+}
 
-	copied_svg = a_window.document.importNode(svg_element,true);
-	
-	a_window.document.getElementsByTagName('body')[0].appendChild(copied_svg);
-	
-	copied_svg.setAttribute('width','80cm');
-	copied_svg.setAttribute('height','80cm');
-	
-	groups = copied_svg.getElementsByTagNameNS('http://www.w3.org/2000/svg','g');
-	for (var i = 0; i < groups.length; i++) {
-		groups[i].removeAttribute('filter');
+function append_print_document_key(target_document) {
+	if ($('sugar_key') == null) {
+		return;
 	}
-
-	graph_container = XHtmlDOM.getElementsByClassName('branch_graphs',result_structure_el.parentNode)[0];
+	doc_height = target_document.print_height;
 	
-	copied_graph = a_window.document.importNode(graph_container,true);
+	key_height = (1/6 * doc_height);
+	
+	copied_key = a_window.document.importNode($('sugar_key'),true);
+	target_document.getElementsByTagName('body')[0].appendChild(copied_key);		
+	copied_key.style.position = 'absolute';
+	copied_key.style.top = ((2/3) * doc_height)+'cm';
+	copied_key.style.width = '100%';
+	copied_key.style.height = (key_height-0.5)+'cm';
+}
+
+function append_print_branch_graphs(target_document,graph_container) {
+
+	doc_width = target_document.print_width;
+	doc_height = target_document.print_height;
+	
+	copied_graph = target_document.importNode(graph_container,true);
 
 	a_window.document.getElementsByTagName('body')[0].appendChild(copied_graph);
 	
+	top_height = (2/3 + 1/6)*doc_height;
+	remaining_size = doc_height - top_height;
+
 	copied_graph.style.position = 'absolute';
-	copied_graph.style.bottom = '-15cm';
-	copied_graph.style.right = '0px';
-	copied_graph.style.width = '100%';
-	copied_graph.style.height = '20cm';
+	copied_graph.style.top = (top_height - 1)+'cm';
+	copied_graph.style.left = '0cm';
+	copied_graph.style.width = doc_width+'cm';
+	copied_graph.style.height = (remaining_size - 0.5)+'cm';
 
 	
-	a_window.document.getElementsByTagName('body')[0].style.position = 'relative';
-	a_window.document.getElementsByTagName('body')[0].style.width = '80cm';
-	a_window.document.getElementsByTagName('body')[0].style.height = '120cm';
-	a_window.document.getElementsByTagName('body')[0].style.fontSize = '1.5cm';
-	a_window.document.getElementsByTagName('body')[0].style.fontFamily = 'Helvetica,Arial,Sans-serif';
-			
-
 	each_graph = XHtmlDOM.getElementsByClassName('single_branch_graph',copied_graph);
 	
-	for ( var i in each_graph ) {
-		each_graph[i].style.float = 'left';
-		each_graph[i].style.width = '12cm';
-		each_graph[i].style.height = '16cm';
-		each_graph[i].style.padding = '0.5cm';
-	}
+	graph_width = doc_width / each_graph.length;
 	
-	copied_key = a_window.document.importNode($('sugar_key'),true);
-	a_window.document.getElementsByTagName('body')[0].appendChild(copied_key);		
-	copied_key.style.position = 'absolute';
-	copied_key.style.bottom = '15cm';
-	copied_key.style.width = '100%';
-	copied_key.style.height = '20cm';
+	for ( var i in each_graph ) {
+		graph_svg = each_graph[i].getElementsByTagNameNS('http://www.w3.org/2000/svg','svg')[0];
+		graph_svg.setAttribute('height',(remaining_size - 0.5)+'cm');
+		each_graph[i].style.position = 'absolute';
+		each_graph[i].style.left = ((graph_width*i) + 1)+'cm';
+		each_graph[i].style.top = '0cm';
+		each_graph[i].style.overflow = 'hidden';
+		each_graph[i].style.width = (graph_width - 1)+'cm';
+		each_graph[i].style.height = (remaining_size - 0.5)+'cm';
+	}
+}
+
+function append_print_svgs(target_document,svgs) {
+	width = target_document.print_width / svgs.length;
+	height = (2 * target_document.print_height) / 3;
+
+	for (i in svgs) {
+		copied_svg = target_document.importNode(svgs[i],true);
+
+		target_document.getElementsByTagName('body')[0].appendChild(copied_svg);
+		setup_print_single_svg_style(copied_svg,width,height);
+
+		copied_svg.style.left = i*width+'cm';
+		
+		groups = copied_svg.getElementsByTagNameNS('http://www.w3.org/2000/svg','g');
+		
+		for (var i = 0; i < groups.length; i++) {
+			groups[i].removeAttribute('filter');
+		}
+	}
+}
+
+function setup_print_single_svg_style(new_svg,width,height) {
+	new_svg.setAttribute('width',width+'cm');
+	new_svg.setAttribute('height',height+'cm');	
+	new_svg.style.position = 'absolute';
+}
+
+function do_printing(svg_element,result_structure_el) {
+	a_window = init_print_window();
+	
+	setup_print_document_style(a_window.document,$('report_title'),20,29);
+	
+	append_print_svgs(a_window.document,[svg_element]);
+
+	graph_container = XHtmlDOM.getElementsByClassName('branch_graphs',result_structure_el.parentNode)[0];
+
+	append_print_branch_graphs(a_window.document,graph_container);
+
+	append_print_document_key(a_window.document);
+	
+}
+
+function do_summary_printing(sugar_result) {
+	a_window = init_print_window();
+	
+	report_title = XHtmlDOM.getElementsByClassName('report_title',sugar_result)[0];
+
+	setup_print_document_style(a_window.document,report_title,29,20);
+	
+	graph_container = $('summary_graphs');
+	
+	sugar_results = XHtmlDOM.getElementsByClassName('result_structure',sugar_result);
+	
+	all_svgs = [];
+	
+	for (i in sugar_results) {
+		all_svgs.push(sugar_results[i].targetSVG);
+	}
+
+	append_print_svgs(a_window.document,all_svgs);
+
+
+	append_print_branch_graphs(a_window.document,graph_container);
+	
+	append_print_document_key(a_window.document);	
 }

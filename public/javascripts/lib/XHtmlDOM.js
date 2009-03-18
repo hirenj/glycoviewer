@@ -93,8 +93,9 @@ XHtmlDOM = {
 		startnode = $(startnode);
 		var xpath = ".//*[contains(@class,'"+clazz+"')]";
 		var results = [];
-		if (document.evaluate) {
-			var resultsnapshot = document.evaluate(xpath,startnode,null,XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+		ownerDoc = startnode.ownerDocument ? startnode.ownerDocument : document;
+		if (ownerDoc.evaluate) {
+			var resultsnapshot = ownerDoc.evaluate(xpath,startnode,null,XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
 			var i = 0;
 			while ( (anode = resultsnapshot.snapshotItem(i)) != null ) {
 				results.push(anode);
