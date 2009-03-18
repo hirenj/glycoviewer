@@ -81,28 +81,26 @@ biggest_bar = 0
 data_for_label = {}
 %>
 
-<% for sugar in compared_sugars
-	next unless sugar
- 	(6).times { |branch_count|
-		value = sugar.branch_points_count[branch_count]
-       	counts_keys << branch_count.to_s
-	   	counts_values << 100 * (value || 0).to_f / sugar.root.hits  * value_multiplier
- 	}
- 	branch_points = sugar.branch_point_totals.keys.sort_by { |bp| bp.branch_label }
-	current_biggest_bar = branch_points.collect { |branch_point|
-		sugar.branch_point_totals[branch_point].keys.collect {|k|
-			sugar.branch_point_totals[branch_point][k]
-		}.max
-	}.max || 0
-	if current_biggest_bar > biggest_bar
-		biggest_bar = current_biggest_bar
-	end
-	
-	all_labels = branch_points.collect { |k| k.branch_label }
+<% 	for sugar in compared_sugars
+		next unless sugar
+	 	(0..@max_branch_point_size).each { |branch_count|
+			value = sugar.branch_points_count[branch_count]
+	       	counts_keys << branch_count.to_s
+		   	counts_values << 100 * (value || 0).to_f / sugar.root.hits  * value_multiplier
+	 	}
+	 	branch_points = @sorted_branch_points
+
+		all_labels = branch_points.collect { |k| k.branch_label }
 
 		for branch_point in branch_points
-			self_value = sugar.branch_point_totals[branch_point][branch_point]
 			bp_label = branch_point.branch_label
+			if ! sugar.branch_point_totals[branch_point]
+				data_for_label[bp_label] ||= { :labels => [], :values => [] }
+				data_for_label[bp_label][:labels] += all_labels
+				data_for_label[bp_label][:values] += [0]*all_labels.size
+				next
+			end
+			self_value = sugar.branch_point_totals[branch_point][branch_point]
 			data_for_label[bp_label] ||= { :labels => [], :values => [] }
 			data_for_label[bp_label][:labels] += all_labels
 			data_for_label[bp_label][:values] += branch_points.collect { |k|
@@ -110,6 +108,7 @@ data_for_label = {}
 												 }
 		end
 		value_multiplier *= -1
+
 	end %>
 	
 	<div id="summary_graphs" class="summary_branch_graphs">
@@ -117,7 +116,7 @@ data_for_label = {}
 	<div class="single_branch_graph">
 		<div>Branch <%= label %></div>
 		<div class="branch_graph_svg">
-			<%= render_hash_as_bar_chart(data_for_label[label][:labels],data_for_label[label][:values],100,['#7C8FBB','#2D50A2'],['#ff0000','#ffbbbb'] ) %>
+			<%= render_hash_as_bar_chart(data_for_label[label][:labels],data_for_label[label][:values],-100,['#7C8FBB','#2D50A2'],['#ff0000','#ffbbbb'].reverse ) %>
 		</div>
 	</div>
 	<% end %>
@@ -125,7 +124,7 @@ data_for_label = {}
 	<div class="single_branch_graph">
 	<div class="branch_graph_svg branch_graph_svg_wide">
 		<div>Branching</div>
-		<%= render_hash_as_bar_chart(counts_keys,counts_values,100,['#7C8FBB','#2D50A2'],['#ff0000','#ffbbbb'])%>
+		<%= render_hash_as_bar_chart(counts_keys,counts_values,[counts_values.min.abs,counts_values.max].max,['#7C8FBB','#2D50A2'],['#ff0000','#ffbbbb'].reverse)%>
 		</div>
 	</div>
 	</div>

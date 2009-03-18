@@ -172,20 +172,33 @@ class GlycodbsController < ApplicationController
     }.compact.reject { |sugs|
       sugs.compact.size == 0
     }
+    
+    @sorted_branch_points = []
+
+    max_branch_point_size = 0
+    
     @sugars.each { |sugset|
       all_branch_points = sugset.compact.collect { |sug|
-        sug.branch_point_totals.keys
+        all_keys = sug.branch_point_totals.keys
+        if all_keys.size > max_branch_point_size
+          max_branch_point_size = all_keys.size
+        end
+        all_keys
       }.flatten
       labels = ('S'..'Z').to_a.reverse
-      all_branch_points.group_by { |bp|
+      all_branch_points.sort_by { |bp| bp.sort_key }.group_by { |bp|
         bp.sort_key
       }.each { |sort_key,points|
         label = labels.shift
         points.each { |bp|
           bp.branch_label = label
-        }
+          @sorted_branch_points << bp
+        }        
       }
     }
+    
+    @max_branch_point_size = max_branch_point_size
+    
     @key_sugar = generate_key_sugar()
     render :action => 'compare_tag_summary', :content_type => Mime::XHTML
   end

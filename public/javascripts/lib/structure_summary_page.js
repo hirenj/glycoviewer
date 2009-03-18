@@ -80,6 +80,7 @@ function append_print_document_key(target_document) {
 	copied_key.style.top = ((2/3) * doc_height)+'cm';
 	copied_key.style.width = '100%';
 	copied_key.style.height = (key_height-0.5)+'cm';
+	target_document.key_printed = true;
 }
 
 function append_print_branch_graphs(target_document,graph_container) {
@@ -91,7 +92,11 @@ function append_print_branch_graphs(target_document,graph_container) {
 
 	a_window.document.getElementsByTagName('body')[0].appendChild(copied_graph);
 	
-	top_height = (2/3 + 1/6)*doc_height;
+	top_height = (2/3)*doc_height + 1;
+
+	if (target_document.key_printed) {
+		top_height = (2/3 + 1/6)*doc_height;		
+	}
 	remaining_size = doc_height - top_height;
 
 	copied_graph.style.position = 'absolute';
@@ -108,6 +113,7 @@ function append_print_branch_graphs(target_document,graph_container) {
 	for ( var i in each_graph ) {
 		graph_svg = each_graph[i].getElementsByTagNameNS('http://www.w3.org/2000/svg','svg')[0];
 		graph_svg.setAttribute('height',(remaining_size - 0.5)+'cm');
+		graph_svg.setAttribute('preserveAspectRatio','xMinYMid');
 		each_graph[i].style.position = 'absolute';
 		each_graph[i].style.left = ((graph_width*i) + 1)+'cm';
 		each_graph[i].style.top = '0cm';
