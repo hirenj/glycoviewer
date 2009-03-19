@@ -16,10 +16,20 @@
 		for ( a_canvas in out_canvases ) {
 			sugar_canvas = out_canvases[a_canvas];
 			mysvg = sugar_canvas.getElementsByTagNameNS('http://www.w3.org/2000/svg','svg')[0];
+
 			if (mysvg) {
+				original_width = mysvg.getAttribute('width');
+				sugar_canvas_width = MochiKit.Style.getElementDimensions(sugar_canvas).w;
+
+				scale = sugar_canvas_width / original_width;
+
 				sugar_canvas.targetSVG = mysvg;
-				connect_slider(sugar_canvas);
+				a_slider = connect_slider(sugar_canvas);
+				a_slider.setScale(scale);
+				
 			}
+			
+			
 		}
 		
 		sugar_results = XHtmlDOM.getElementsByClassName('sugar_result',document);
@@ -86,37 +96,44 @@ data_for_label = {}
 	 	(0..@max_branch_point_size).each { |branch_count|
 			value = sugar.branch_points_count[branch_count]
 	       	counts_keys << branch_count.to_s
-		   	counts_values << 100 * (value || 0).to_f / sugar.root.hits  * value_multiplier
+		   	counts_values << (100 * (value || 0.0001).to_f / sugar.root.hits)  * value_multiplier
 	 	}
 	 	branch_points = @sorted_branch_points
-
+		
 		all_labels = branch_points.collect { |k| k.branch_label }
-
-		for branch_point in branch_points
-			bp_label = branch_point.branch_label
+		branch_points_by_label = {}
+		branch_points.each { |bp|
+			if sugar.residue_composition.include? bp
+				branch_points_by_label[bp.branch_label] = bp
+			end
+		}
+		
+		for bp_label in all_labels.uniq
+			branch_point = branch_points_by_label[bp_label]
 			if ! sugar.branch_point_totals[branch_point]
 				data_for_label[bp_label] ||= { :labels => [], :values => [] }
-				data_for_label[bp_label][:labels] += all_labels
-				data_for_label[bp_label][:values] += [0]*all_labels.size
+				data_for_label[bp_label][:labels] += all_labels.uniq
+				data_for_label[bp_label][:values] += [0.0001 * value_multiplier]*all_labels.uniq.size
 				next
 			end
 			self_value = sugar.branch_point_totals[branch_point][branch_point]
 			data_for_label[bp_label] ||= { :labels => [], :values => [] }
-			data_for_label[bp_label][:labels] += all_labels
-			data_for_label[bp_label][:values] += branch_points.collect { |k|
-													(sugar.branch_point_totals[branch_point][k] || 0).to_f * 100 * value_multiplier / self_value
+			data_for_label[bp_label][:labels] += all_labels.uniq
+			data_for_label[bp_label][:values] += all_labels.uniq.collect { |lab|
+													other_bp = branch_points_by_label[lab]
+													((sugar.branch_point_totals[branch_point][other_bp] || 0.0001).to_f * 100 * value_multiplier / self_value)
 												 }
 		end
 		value_multiplier *= -1
 
 	end %>
 	
-	<div id="summary_graphs" class="summary_branch_graphs">
+	<div class="summary_branch_graphs">
 	<% for label in data_for_label.keys %>
 	<div class="single_branch_graph">
 		<div>Branch <%= label %></div>
 		<div class="branch_graph_svg">
-			<%= render_hash_as_bar_chart(data_for_label[label][:labels],data_for_label[label][:values],-100,['#7C8FBB','#2D50A2'],['#ff0000','#ffbbbb'].reverse ) %>
+			<%= render_hash_as_bar_chart(data_for_label[label][:labels],data_for_label[label][:values],-100,['#7C8FBB','#2D50A2'],['#ff0000','#ffbbbb'] ) %>
 		</div>
 	</div>
 	<% end %>
@@ -124,7 +141,7 @@ data_for_label = {}
 	<div class="single_branch_graph">
 	<div class="branch_graph_svg branch_graph_svg_wide">
 		<div>Branching</div>
-		<%= render_hash_as_bar_chart(counts_keys,counts_values,[counts_values.min.abs,counts_values.max].max,['#7C8FBB','#2D50A2'],['#ff0000','#ffbbbb'].reverse)%>
+		<%= render_hash_as_bar_chart(counts_keys,counts_values,[counts_values.min.abs,counts_values.max].max,['#7C8FBB','#2D50A2'],['#ff0000','#ffbbbb'])%>
 		</div>
 	</div>
 	</div>

@@ -39,6 +39,7 @@ module ApplicationHelper
     
     bar_width = 30
     estimated_size = (labels.size * bar_width).to_f / total_height
+    logger.info(estimated_size)
     if has_negatives
       estimated_size *= 0.5
     end
@@ -47,7 +48,7 @@ module ApplicationHelper
     end
       
     x_for_label = {}
-    label_vals = labels.zip(values).sort_by { |l,v| l || '' }
+    label_vals = labels.zip(values).sort_by { |l,v| l }
     plot = Element.new('svg:svg')
   	plot.add_namespace('svg', SVG_ELEMENT_NS)
   	plot.add_attributes('preserveAspectRatio' => 'xMidYMax')
@@ -67,14 +68,15 @@ module ApplicationHelper
     
     labels = []
     label_vals.each { |lab,value|
+      logger.info("Adding in label #{lab}")
       x_pos = x_for_label[lab] || last_x += bar_width
       my_fill = value > 0 ? cycle(*(fills + [:name => 'positives'])) : cycle(*(neg_fills + [:name => 'negatives']))
       box = Element.new('svg:rect')      
-      box.add_attributes('x' => x_pos, 'y' => (value > 0) ? (max_height - value) : max_height, 'height' => value.abs, 'width' => bar_width, 'fill' => my_fill, 'class' => "bar_#{lab}" )
+      box.add_attributes('x' => x_pos.round, 'y' => ((value > 0) ? (max_height - value) : max_height).round, 'height' => value.abs.to_i, 'width' => bar_width, 'fill' => my_fill, 'class' => "bar_#{lab}" )
       plot.add_element(box)
       unless x_for_label[lab]
         label = Element.new('svg:text')
-        label.add_attributes('x' => x_pos, 'y' => label_y_pos, 'font-size' => bar_width, 'fill' => text_colour)
+        label.add_attributes('x' => x_pos.round, 'y' => label_y_pos.round, 'font-size' => bar_width.round, 'fill' => text_colour)
         label.text = lab
         labels << label
       end
@@ -95,17 +97,18 @@ module ApplicationHelper
     
     (label_min..label_max).step(20) { |y|
       tick = Element.new('svg:line')
-      tick.add_attributes('x1' => 0, 'x2' => 5, 'y1' => (total_height - y)-1, 'y2' => (total_height - y)-1, 'stroke' => '#000000', 'stroke-weight' => '1' ) 
+      tick_end = (y == 0) ? bar_width*labels.size + 15 : 5
+      tick.add_attributes('x1' => 0, 'x2' => tick_end, 'y1' => ((total_height - y)).round, 'y2' => ((total_height - y)).round, 'stroke' => '#000000', 'stroke-weight' => '1' ) 
       plot.add_element(tick)
       if true || y == 0 || y > total_height || ((total_height - y) < 20)
         tick_label = Element.new('svg:text')
-        tick_label.add_attributes('x' => -30, 'y' => (total_height - y) + (bar_width / 3), 'font-size' => bar_width / 2 )
+        tick_label.add_attributes('x' => -30, 'y' => ((total_height - y) + (bar_width / 3)).round, 'font-size' => (bar_width / 2).round )
         tick_label.text = (y < 0 ? -1*y : y).to_s + '% '
         plot.add_element(tick_label)        
       end
     }
     plot_height = has_negatives ? 2*max_height+bar_width+40 : max_height+bar_width+60
-    plot.add_attributes('width' => '100%', 'height' => '100%', 'viewBox' => "-30 #{has_negatives ? -30 : -20} #{(bar_width * labels.size+10)+30} #{plot_height}" )
+    plot.add_attributes('width' => '100%', 'height' => '100%', 'viewBox' => "-30 #{has_negatives ? -30 : -20} #{((bar_width * labels.size+10)+30).to_i} #{plot_height.to_i}" )
     return plot.to_s
   end
 

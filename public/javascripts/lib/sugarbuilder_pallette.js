@@ -62,6 +62,11 @@ SugarBuilder.Slider.prototype.target = function() {
 	return this;
 }
 
+SugarBuilder.Slider.prototype.setScale = function(newValue) {
+	slider.value = newValue;
+	slider._element.setValue(100*(1 - newValue));
+}
+
 SugarBuilder.Slider.prototype._onchange = function(newValue, slider) {
 	slider.value = 2 - ((100 + newValue) / 100.0);
 	signal(slider,"onchange",slider);

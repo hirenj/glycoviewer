@@ -26,6 +26,7 @@ function connect_slider(sugar_canvas) {
 	slider.canvas().style.zIndex = 2;
 	appendChildNodes(sugar_canvas,slider.canvas());
 	connect(slider,'onchange',partial(changescale,sugar_canvas.targetSVG,original_width,original_height));
+	return slider;
 }
 	
 function togglelayer(svg_group) {
@@ -171,7 +172,7 @@ function do_summary_printing(sugar_result) {
 
 	setup_print_document_style(a_window.document,report_title,29,20);
 	
-	graph_container = $('summary_graphs');
+	graph_container = XHtmlDOM.getElementsByClassName('summary_branch_graphs',sugar_result)[0];;
 	
 	sugar_results = XHtmlDOM.getElementsByClassName('result_structure',sugar_result);
 	
