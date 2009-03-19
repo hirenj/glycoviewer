@@ -9,13 +9,20 @@ function connect_buttons(sugar_canvas) {
 	gene_layer = XHtmlDOM.getElementsByClassName('gene_overlay',target_svg)[0];
 
 	hits_layer = XHtmlDOM.getElementsByClassName('hits_overlay',target_svg)[0];
-	
-	connect(gene_toggle,'onclick',partial(togglelayer,gene_layer));
-	connect(hits_toggle,'onclick',partial(togglelayer,hits_layer));
+	if (gene_layer != null) {
+		connect(gene_toggle,'onclick',partial(togglelayer,gene_layer));
+		togglelayer(gene_layer);
+	} else {
+		gene_toggle.style.display = 'none';
+	}
+	if (hits_layer != null) {
+		connect(hits_toggle,'onclick',partial(togglelayer,hits_layer));
+	} else {
+		hits_toggle.style.display = 'none';
+	}
 
 	connect(a_printer,'onclick',partial(do_printing,target_svg,sugar_canvas));
 	
-	togglelayer(gene_layer);		
 }
 
 function connect_slider(sugar_canvas) {
