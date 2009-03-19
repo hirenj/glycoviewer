@@ -23,6 +23,31 @@ MATCH_BLOCK = lambda { |residue,other_res,matched_yet|
 class GlycodbsController < ApplicationController
   layout 'standard'
   
+  module SummaryStats
+    def add_structure_count
+      @struct_count = (@struct_count || 0) + 1
+    end
+    def structure_count
+      @struct_count
+    end
+    
+    def branch_points_count=(new_bc)
+      @branch_points = new_bc
+    end
+    
+    def branch_points_count
+      @branch_points || { 0 => 0 }
+    end
+    
+    def branch_point_totals
+      @branch_point_totals || {}
+    end
+    
+    def branch_point_totals=(totals)
+      @branch_point_totals = totals
+    end
+  end
+  
   # GET /glycodbs
   # GET /glycodbs.xml
   def index
@@ -154,15 +179,44 @@ class GlycodbsController < ApplicationController
     @glycodbs.reject! { |glycodb| glycodb.SPECIES != 'HOMO SAPIENS'}    
   end
 
+  def coverage_for_taxonomy
+    tagged_sugars = Glycodb.find(:all, :conditions => ["species = ?", params[:id]])
+    tagged_sugars.collect! { |g| g.GLYCAN_ST }.uniq
+    @sugars = execute_coverage_for_sequence_set(tagged_sugars,params[:dont_prune] ? false : true)
+    @key_sugar = generate_key_sugar()
+    render :action => 'coverage', :content_type => Mime::XHTML
+  end
+
   def coverage_for_tag
-    @sugars = execute_coverage_for_tag(params[:id],true)
+    all_tags = params[:id].split(',')
+    tagged_sugars = Glycodb.easyfind(:keywords => all_tags, :fieldnames => ['tags'])
+    aa_sites = tagged_sugars.collect { |g| (g.GLYCO_AA_SITE || '').split(/\s*,\s*/) }.flatten.uniq
+    tagged_sugars.collect! { |g| g.GLYCAN_ST }
+    @sugars = execute_coverage_for_sequence_set(tagged_sugars,params[:dont_prune] ? false : true)
+    @sugars.each { |sugar| 
+      coverage_finder = EnzymeCoverageController.new()
+      coverage_finder.sugar = sugar
+      sugar.root.anomer = 'u'
+      gene_tissue = (all_tags.collect { |tag| tag.gsub!(/anat\:/,'') }.compact.first || 'nil').humanize
+      coverage_finder.markup_linkages(coverage_finder.execute_genecoverage(gene_tissue))
+    }
+    if params[:id] =~ /prot:(.+),?/
+      @aa_sites = aa_sites
+    else
+      @aa_sites = ''
+    end
     @key_sugar = generate_key_sugar()
     render :action => 'coverage', :content_type => Mime::XHTML
   end
 
   def compare_tag_summary
-    sugars_tag1 = execute_coverage_for_tag(params[:tags1])
-    sugars_tag2 = execute_coverage_for_tag(params[:tags2])
+    tagged_sugars_1 = Glycodb.easyfind(:keywords => params[:tags1].split(','), :fieldnames => ['tags'])
+    tagged_sugars_2 = Glycodb.easyfind(:keywords => params[:tags2].split(','), :fieldnames => ['tags'])
+    tagged_sugars_1.collect! { |g| g.GLYCAN_ST }
+    tagged_sugars_2.collect! { |g| g.GLYCAN_ST }
+
+    sugars_tag1 = execute_coverage_for_sequence_set(tagged_sugars_1)
+    sugars_tag2 = execute_coverage_for_sequence_set(tagged_sugars_2)
     sugars_tag1.each { |sug| sug.name = params[:tags1] }
     sugars_tag2.each { |sug| sug.name = params[:tags2] }
     
@@ -279,15 +333,17 @@ class GlycodbsController < ApplicationController
     }
   end
 
-  def execute_coverage_for_tag(tags,do_genes=false)
-    individual_sugars = Glycodb.easyfind(:keywords => tags.split(','), :fieldnames => ['tags']).collect { |entry|
-      my_seq = entry.GLYCAN_ST.gsub(/\+.*/,'').gsub(/\(\?/,'(u')
+  def execute_coverage_for_sequence_set(sequences,prune_structure=true)
+    seq_counter = 0
+    individual_sugars = sequences.collect { |seq|
+      seq_counter += 1
+      my_seq = seq.gsub(/\+.*/,'').gsub(/\(\?/,'(u')
       my_seq.gsub!(/\(-/,'(u1-')
       my_sug = nil
       begin
         my_sug = SugarHelper.CreateMultiSugar(my_seq,:ic).get_unique_sugar        
         my_sug.residue_composition.each { |res|
-          res.seen_structures << entry.id
+          res.seen_structures << seq_counter
         }
       rescue Exception => e
       end
@@ -301,33 +357,13 @@ class GlycodbsController < ApplicationController
       ].compact
     return sugar_sets.collect { |sugar_set|
       sugar = sugar_set.shift
-      def sugar.add_structure_count
-        @struct_count = (@struct_count || 0) + 1
-      end
-      def sugar.structure_count
-        @struct_count
-      end
-      
-      def sugar.branch_points_count=(new_bc)
-        @branch_points = new_bc
-      end
-      
-      def sugar.branch_points_count
-        @branch_points || { 0 => 0 }
-      end
-      
-      def sugar.branch_point_totals
-        @branch_point_totals || {}
-      end
-      
-      def sugar.branch_point_totals=(totals)
-        @branch_point_totals = totals
-      end
       
       if sugar == nil
         next
       end
-            
+
+      sugar = sugar.extend(SummaryStats)
+      
       # Branch point comparison
       # For each branch point for the new sugar collect
       #    get the unambiguous path to root for the branch point
@@ -371,11 +407,13 @@ class GlycodbsController < ApplicationController
       
       coverage_finder.execute_pathways_and_markup
 
-      sugar.residue_composition.each { |r|
-        if ! r.is_valid? && r.parent && r.parent.is_valid?
-          r.parent.remove_child(r)
-        end
-      }
+      if prune_structure
+        sugar.residue_composition.each { |r|
+          if ! r.is_valid? && r.parent && r.parent.is_valid?
+            r.parent.remove_child(r)
+          end
+        }
+      end
       
       all_gals = sugar.residue_composition.select { |r| r.name(:ic) == 'Gal' && r.parent && r.parent.name(:ic) == 'GlcNAc' }
       type_i = all_gals.select { |r| r.paired_residue_position == 3 }
@@ -414,7 +452,7 @@ class GlycodbsController < ApplicationController
       sizes[0] = zero_count
       sugar.branch_points_count = sizes
 
-      labels = ('S'..'Z').to_a.reverse
+      labels = ('A'..'Z').to_a.reverse
       branch_totals_by_point.keys.each { |bp|
         sort_key = sugar.depth(bp).to_s+'|'+sugar.get_unambiguous_path_to_root(bp).collect {|path| path[:residue].paired_residue_position.to_s+path[:residue].name(:ic) }.join(',')
         def bp.sort_key=(key)
@@ -441,11 +479,6 @@ class GlycodbsController < ApplicationController
         }
       }
 
-      if do_genes
-        gene_tissue = (tags.split(',').collect { |tag| tag.gsub!(/anat\:/,'') }.compact.first || 'nil').humanize
-        coverage_finder.markup_linkages(coverage_finder.execute_genecoverage(gene_tissue))
-      end
-      
       sugar
     }.compact
   end
