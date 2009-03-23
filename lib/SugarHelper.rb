@@ -249,8 +249,10 @@ class SugarHelper
       renderer.scheme = 'boston'
       renderer.sugar = sugar
       renderer.initialise_prototypes()
-      CondensedScalableLayout.new().layout(sugar)
-
+      layout_engine = CondensedScalableLayout.new()
+      layout_engine.node_spacing = { :x => 150, :y => 150 }
+      layout_engine.layout(sugar)
+      
     else
       renderer.scheme = 'text:ic'
       CondensedLayout.new().layout(sugar)    

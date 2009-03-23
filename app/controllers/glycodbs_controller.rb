@@ -335,7 +335,13 @@ class GlycodbsController < ApplicationController
 
   def execute_coverage_for_sequence_set(sequences,prune_structure=true)
     seq_counter = 0
-    individual_sugars = sequences.collect { |seq|
+    individual_sugars = sequences.select { |seq|
+      if seq =~ /\?\)/ || seq =~ /u[1,2]/ || seq =~ /\?[1,2]/
+        false
+      else
+        true
+      end
+    }.collect { |seq|
       seq_counter += 1
       my_seq = seq.gsub(/\+.*/,'').gsub(/\(\?/,'(u')
       my_seq.gsub!(/\(-/,'(u1-')
@@ -475,7 +481,8 @@ class GlycodbsController < ApplicationController
         end
         bp.branch_label = branch_label_text
         sugar.callbacks << lambda { |sug_root,renderer|
-          renderer.render_text_residue_label(sugar,bp,bp.branch_label)
+          renderer.render_text_residue_label(sugar,bp,bp.branch_label,:top_right)
+          renderer.render_text_residue_label(sugar,bp,bp.hits,:bottom_right)
         }
       }
 

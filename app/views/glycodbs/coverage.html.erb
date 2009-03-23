@@ -32,7 +32,10 @@
 //]]>	
 </script>
 <% human_tags = params[:id].split(',').collect { |tag| tag.gsub!(/^.*:/,''); tag.capitalize }%>
-<h1 id="report_title">Coverage for tags: <%= human_tags.join(',') %></h1>
+<h1 id="report_title">Coverage for tags: <%= (human_tags || []).join(',') %></h1>
+<% if @aa_sites %>
+<h2>Glycosylation sites <%= @aa_sites.is_a?(Array) ? @aa_sites.join(',') : ''%></h2>
+<% end %>
 <div id="coverage_tabs" class="yui-navset" style="width: 95%;">
 	<ul class="yui-nav">
 <% seen_first = true %>
