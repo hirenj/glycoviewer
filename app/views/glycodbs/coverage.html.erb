@@ -40,7 +40,7 @@
 	<ul class="yui-nav">
 <% seen_first = true %>
 <% for sugar in @sugars %>
-		<li <%= seen_first ? 'class="selected"' : '' %>><a><%= sugar.root.name(:ic) %></a></li>
+		<li <%= seen_first ? 'class="selected"' : '' %>><a><%= sugar.root.name(:ic) %> <%= sugar.root.hits %> structures</a></li>
 		<% seen_first = false %>
 <% end %>
 	</ul>

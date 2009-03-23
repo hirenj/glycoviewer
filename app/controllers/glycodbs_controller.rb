@@ -370,6 +370,8 @@ class GlycodbsController < ApplicationController
 
       sugar = sugar.extend(SummaryStats)
       
+      
+      
       # Branch point comparison
       # For each branch point for the new sugar collect
       #    get the unambiguous path to root for the branch point
@@ -383,9 +385,11 @@ class GlycodbsController < ApplicationController
       
       branch_points_totals = []
       
-      sugar_set.each { |sug|
+      ([sugar]+sugar_set).each { |sug|
         branch_points = sug.branch_points
-        sugar.union!(sug,&MATCH_BLOCK)
+        if sug != sugar
+          sugar.union!(sug,&MATCH_BLOCK)
+        end
         branch_points = branch_points.collect { |r| sugar.find_residue_by_unambiguous_path(sug.get_unambiguous_path_to_root(r).reverse) }
         branch_points_totals << branch_points
         sugar.add_structure_count
