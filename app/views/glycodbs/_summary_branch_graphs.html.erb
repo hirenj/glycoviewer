@@ -23,5 +23,47 @@
 <div class="branch_graph_svg">
 	<div>Branching</div>
 	<%= render_hash_as_bar_chart(counts_keys,counts_values,counts_values.max,['#7C8FBB','#2D50A2'])%>
-	</div>
+</div>
+</div>
+
+<% 
+	stat_type = ['Sialic','Fucose']
+	stat_data = [sugar.terminal_sialics, sugar.terminal_fucoses]
+	stat_data.zip(stat_type).each { |stat_array,label|
+%>
+<div class="single_branch_graph">
+<div class="branch_graph_svg">
+	<div><%= label %> depths</div>
+	<%	
+		depths = Hash.new() { |h,k| h[k] = 0 }
+		grouped = stat_array.group_by { |r| r.parent }
+		grouped.each { |parent,res|
+			depths[sugar.depth(parent)] += res.size
+		}
+		all_parents = grouped.collect { |parent,fucs| parent }
+		all_depths = depths.keys.sort
+		all_values = all_depths.collect { |k|
+			max_val = all_parents.reject { |r| sugar.depth(r) != k }.inject(0) { |sum,r| sum += r.hits }
+			100 * depths[k].to_f / max_val
+		}
+	%>
+	<%= render_hash_as_bar_chart(all_depths,all_values,100,['#7C8FBB','#2D50A2']) %>
+</div>
+</div>
+<%	} %>
+<div class="single_branch_graph">
+<%
+	stat_type = ['NeuAc','Fuc']
+	stats = [sugar.sialic_capping_averages, sugar.fucose_capping_averages].collect { |values|
+		label = stat_type.shift
+		next unless values.size > 0
+		count = values.size
+		mean = (values.inject(0) { |sum,value| sum += value }) / count.to_f
+		stddev = Math.sqrt( values.inject(0) { |sum, e| sum + (e - mean) ** 2 } / count.to_f )
+		[mean,stddev,label]
+	}
+%>
+<% for stat in stats.compact %>
+	<%= stat[2] %>: <%= sprintf('%0.2f',100*stat[0]) %>+/- <%= sprintf('%0.2f',100*stat[1]) %>
+<% end %>
 </div>

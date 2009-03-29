@@ -230,6 +230,9 @@ class EnzymeCoverageController < ApplicationController
         if res.paired_residue_position == 3 || res.paired_residue_position == 4
           return true
         end
+        if res.paired_residue_position == 6 && res.parent == @root
+          return true          
+        end
       end
       
       if res.parent.name(:ic) == 'Gal'
@@ -328,7 +331,7 @@ class EnzymeCoverageController < ApplicationController
       
       r.endstructure_as_sugar.leaves.delete_if { |res| res.name(:ic) != 'Fuc' }.each { |res|
         if res.parent == r.endstructure_as_sugar.root
-          res.parent.remove_child(res)
+#          res.parent.remove_child(res)
         end
       }
 

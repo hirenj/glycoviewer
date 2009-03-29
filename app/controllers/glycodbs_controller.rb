@@ -2,33 +2,64 @@ require 'lax_residue_names'
 
 module HitCounter
   attr_accessor :hits
+  
   def hits
-    @hits ||= 1
+    get_counter(:id).size
   end 
   def seen_structures
-    @seen_structs ||= []
-    @seen_structs
+    get_counter(:id)
+  end
+  
+  def counter_keys
+    return @counters.keys
   end
 
+  def initialise_counter(id_key=:id)
+    @counters = @counters || Hash.new() { |h,k| h[k] = Array.new() }
+  end
+  
+  def increment_counter(value,id_key=:id)
+    @counters[id_key] << value
+  end
+  
+  def get_counter(id_key=:id)
+    initialise_counter(id_key)
+    @counters[id_key]
+  end
+  
+  def merge_counter(other_residue,id_key=:id)
+    @counters[id_key] += other_residue.get_counter(id_key)
+  end
+  
+  MATCH_BLOCK = lambda { |residue,other_res,matched_yet|
+    if residue.equals?(other_res)
+      if ! matched_yet
+        residue.counter_keys.each { |key|
+          residue.merge_counter(other_res,key)
+        }
+      end
+      true
+    else
+      false
+    end
+  }
+  
 end
 
 class Monosaccharide
   include HitCounter
 end
 
-MATCH_BLOCK = lambda { |residue,other_res,matched_yet|
-  residue.equals?(other_res) && ((! matched_yet && ((residue.hits += 1) > -1) && ( residue.seen_structures << other_res.seen_structures[0] != nil )) || true )
-}
 
 class GlycodbsController < ApplicationController
   layout 'standard'
   
   module SummaryStats
-    def add_structure_count
-      @struct_count = (@struct_count || 0) + 1
-    end
-    def structure_count
-      @struct_count
+
+    def reference_count
+      self.residue_composition.collect { |r|
+        r.get_counter(:ref)
+      }.flatten.uniq.size
     end
     
     def branch_points_count=(new_bc)
@@ -46,6 +77,24 @@ class GlycodbsController < ApplicationController
     def branch_point_totals=(totals)
       @branch_point_totals = totals
     end
+    
+    attr_accessor :sialic_capping_averages
+    
+    def sialic_capping_averages
+      @sialic_capping_averages = @sialic_capping_averages || []
+      @sialic_capping_averages
+    end
+
+    attr_accessor :fucose_capping_averages
+    
+    def fucose_capping_averages
+      @fucose_capping_averages = @fucose_capping_averages || []
+      @fucose_capping_averages
+    end
+    
+    attr_accessor :terminal_fucoses
+    attr_accessor :terminal_sialics
+    
   end
   
   # GET /glycodbs
@@ -181,7 +230,7 @@ class GlycodbsController < ApplicationController
 
   def coverage_for_taxonomy
     tagged_sugars = Glycodb.find(:all, :conditions => ["species = ?", params[:id]])
-    tagged_sugars.collect! { |g| g.GLYCAN_ST }.uniq
+#    tagged_sugars.collect! { |g| g.GLYCAN_ST }.uniq
     @sugars = execute_coverage_for_sequence_set(tagged_sugars,params[:dont_prune] ? false : true)
     @key_sugar = generate_key_sugar()
     render :action => 'coverage', :content_type => Mime::XHTML
@@ -191,7 +240,6 @@ class GlycodbsController < ApplicationController
     all_tags = params[:id].split(',')
     tagged_sugars = Glycodb.easyfind(:keywords => all_tags, :fieldnames => ['tags'])
     aa_sites = tagged_sugars.collect { |g| (g.GLYCO_AA_SITE || '').split(/\s*,\s*/) }.flatten.uniq
-    tagged_sugars.collect! { |g| g.GLYCAN_ST }
     @sugars = execute_coverage_for_sequence_set(tagged_sugars,params[:dont_prune] ? false : true)
     @sugars.each { |sugar| 
       coverage_finder = EnzymeCoverageController.new()
@@ -212,8 +260,8 @@ class GlycodbsController < ApplicationController
   def compare_tag_summary
     tagged_sugars_1 = Glycodb.easyfind(:keywords => params[:tags1].split(','), :fieldnames => ['tags'])
     tagged_sugars_2 = Glycodb.easyfind(:keywords => params[:tags2].split(','), :fieldnames => ['tags'])
-    tagged_sugars_1.collect! { |g| g.GLYCAN_ST }
-    tagged_sugars_2.collect! { |g| g.GLYCAN_ST }
+    # tagged_sugars_1.collect! { |g| g.GLYCAN_ST }
+    # tagged_sugars_2.collect! { |g| g.GLYCAN_ST }
 
     sugars_tag1 = execute_coverage_for_sequence_set(tagged_sugars_1)
     sugars_tag2 = execute_coverage_for_sequence_set(tagged_sugars_2)
@@ -335,13 +383,15 @@ class GlycodbsController < ApplicationController
 
   def execute_coverage_for_sequence_set(sequences,prune_structure=true)
     seq_counter = 0
-    individual_sugars = sequences.select { |seq|
+    individual_sugars = sequences.select { |glycodb|
+      seq = glycodb.GLYCAN_ST
       if seq =~ /\?\)/ || seq =~ /u[1,2]/ || seq =~ /\?[1,2]/
         false
       else
         true
       end
-    }.collect { |seq|
+    }.collect { |glycodb|
+      seq = glycodb.GLYCAN_ST
       seq_counter += 1
       my_seq = seq.gsub(/\+.*/,'').gsub(/\(\?/,'(u')
       my_seq.gsub!(/\(-/,'(u1-')
@@ -349,7 +399,13 @@ class GlycodbsController < ApplicationController
       begin
         my_sug = SugarHelper.CreateMultiSugar(my_seq,:ic).get_unique_sugar        
         my_sug.residue_composition.each { |res|
-          res.seen_structures << seq_counter
+          res.initialise_counter(:id)
+          res.increment_counter(seq_counter)
+          
+          res.initialise_counter(:ref)
+          glycodb.references.split(',').each { |ref|
+            res.increment_counter(ref,:ref)
+          }
         }
       rescue Exception => e
       end
@@ -385,14 +441,41 @@ class GlycodbsController < ApplicationController
       
       branch_points_totals = []
       
+      terminal_fucoses = []
+      terminal_sialics = []
+      
       ([sugar]+sugar_set).each { |sug|
         branch_points = sug.branch_points
         if sug != sugar
-          sugar.union!(sug,&MATCH_BLOCK)
+          sugar.union!(sug,&HitCounter::MATCH_BLOCK)
         end
         branch_points = branch_points.collect { |r| sugar.find_residue_by_unambiguous_path(sug.get_unambiguous_path_to_root(r).reverse) }
         branch_points_totals << branch_points
-        sugar.add_structure_count
+        
+        all_leaves = sug.leaves
+        fuc_leaves = all_leaves.select { |r| r.name(:ic) == 'Fuc' && r.parent && r.parent.name(:ic) == 'Gal' }
+        neuac_leaves = all_leaves.select { |r| r.name(:ic) == 'NeuAc' }
+        gal_leaves = all_leaves.select { |r|
+          ['Gal','GalNAc'].include?(r.name(:ic)) && r.anomer != 'a'          
+        }
+        
+        if fuc_leaves.size > 0
+          sugar.fucose_capping_averages << fuc_leaves.size.to_f / (gal_leaves.size + fuc_leaves.size)
+        end
+        if neuac_leaves.size > 0
+          sugar.sialic_capping_averages << neuac_leaves.size.to_f / (gal_leaves.size + neuac_leaves.size)
+        end
+
+        fuc_leaves = all_leaves.select { |r| r.name(:ic) == 'Fuc' }
+        
+        fuc_leaves.select { |fuc| fuc.siblings.reject { |r| r.anomer == 'a' && ['Gal','GalNAc'].include?(r.name(:ic))}.size == 0 }.each { |fuc|
+          terminal_fucoses << sugar.find_residue_by_unambiguous_path(sug.get_unambiguous_path_to_root(fuc).reverse)
+        }
+
+        neuac_leaves.select { |neuac| neuac.siblings.reject { |r| ['GalNAc'].include?(r.name(:ic)) }.size == 0 }.each { |neuac|
+          terminal_sialics << sugar.find_residue_by_unambiguous_path(sug.get_unambiguous_path_to_root(neuac).reverse)
+        }
+        
       }
 
       branch_totals_by_point = {}
@@ -419,7 +502,10 @@ class GlycodbsController < ApplicationController
 
       if prune_structure
         sugar.residue_composition.each { |r|
-          if ! r.is_valid? && r.parent && r.parent.is_valid?
+          next unless r.parent
+          if ! r.is_valid? && r.parent.is_valid?
+            r.parent.remove_child(r)
+          elsif r.get_counter(:ref).uniq.size < 2
             r.parent.remove_child(r)
           end
         }
@@ -449,6 +535,22 @@ class GlycodbsController < ApplicationController
             branch_totals_by_point.delete(bp)
         end
       }
+
+      terminal_sialics.each { |r|
+        unless sugar_residues.include? r
+            terminal_sialics.delete(r)
+        end        
+      }
+
+      terminal_fucoses.each { |r|
+        unless sugar_residues.include? r
+            terminal_fucoses.delete(r)
+        end        
+      }
+      
+      sugar.terminal_sialics = terminal_sialics
+      sugar.terminal_fucoses = terminal_fucoses
+      
       all_ids = branch_totals_by_point.keys.collect { |bp|
         bp.seen_structures
       }.flatten.sort
@@ -488,8 +590,17 @@ class GlycodbsController < ApplicationController
           renderer.render_text_residue_label(sugar,bp,bp.branch_label,:top_right)
           renderer.render_text_residue_label(sugar,bp,bp.hits,:bottom_right)
         }
+        bp.callbacks << lambda { |element|
+          render_text_residue_label(sugar,bp,bp.get_counter(:ref).uniq.size,:bottom_left)
+        }
       }
-
+      sugar.residue_composition.select { |r|
+        sugar.residue_height(r) <= 1 && r.name(:ic) == 'Gal' && r.anomer == 'b'
+      }.each { |r|
+        r.callbacks << lambda { |element|
+          render_text_residue_label(sugar,r,r.get_counter(:ref).uniq.size,:bottom_left)
+        }
+      }
       sugar
     }.compact
   end

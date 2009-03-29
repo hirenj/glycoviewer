@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090226045558) do
+ActiveRecord::Schema.define(:version => 20090327001414) do
 
   create_table "bdrb_job_queues", :force => true do |t|
     t.binary   "args"
@@ -171,7 +171,10 @@ ActiveRecord::Schema.define(:version => 20090226045558) do
     t.date    "RELEASE_DATE",                                                            :null => false
     t.date    "LAST_UPDATE"
     t.string  "tags"
+    t.string  "references"
   end
+
+  add_index "glycodbs", ["id"], :name => "glycodb_id_idx"
 
   create_table "reactions", :force => true do |t|
     t.string "residuedelta",     :limit => 512

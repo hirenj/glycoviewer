@@ -62,7 +62,7 @@
 <% for sugar in compared_sugars %>
 <div style="width: 49%; float: left;">
 	<% human_tags = sugar ? sugar.name.split(',').collect { |tag| tag.gsub!(/^.*:/,''); tag.capitalize } : ['No glycans'] %>
-	<h1><%= human_tags.join(',') %> <%= sugar ? sugar.root.hits.to_s+' structures ' : '' %></h1>
+	<h1><%= human_tags.join(',') %> <%= sugar ? sugar.root.hits.to_s+' structures ' : '' %>  <%= sugar ? sugar.reference_count.to_s+' references ' : '' %> </h1>
 </div>
 <% end %>
 <div style="clear: both; float: none;"/>

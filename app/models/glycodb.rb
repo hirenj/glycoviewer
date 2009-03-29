@@ -4,6 +4,16 @@ class Glycodb < ActiveRecord::Base
     self.find(:all).collect { |gdb| (gdb.tags || '').split(',') }.flatten.sort.uniq
   end
   
+  def add_tag(new_tag)
+    current_tags = (self.tags || '').split(',') || []
+    self.tags = (current_tags.push(new_tag)).uniq.join(',')
+  end
+  
+  def add_reference(ref_id)
+    current_references = (self.references || '').split(',') || []
+    self.references = (current_references.push(ref_id)).uniq.join(',')    
+  end
+  
   def self.easyfind(argHash)
       fieldnames = argHash[:fieldnames]
       keywords = argHash[:keywords]
