@@ -65,8 +65,8 @@ class SugarbuilderController < ApplicationController
     @sugar.overlays << targets
     @sugar.residue_composition.each { |res|
       res.callbacks.push( lambda { |element|
-        xcenter = -1*(res.centre[:x]) 
-        ycenter = -1*(res.centre[:y])
+        xcenter = -1*(res.center[:x]) 
+        ycenter = -1*(res.center[:y])
         target = Element.new('svg:circle')
         target.add_attributes({ 'cx' => xcenter, 'cy' => ycenter, 'r'=> 100, 'fill' => 'red', 'style' => 'opacity:0.01' })
         target.add_attribute('linkid',@sugar.get_attachment_point_path_to_root(res).reverse.join(','))

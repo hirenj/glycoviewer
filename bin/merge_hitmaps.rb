@@ -201,8 +201,8 @@ def render_hits_for_residue(residue,delta_occurence,parent_sugar)
       return
     end
     residue.callbacks.push( lambda { |element|
-      xcenter = -1*(residue.centre[:x]) 
-      ycenter = -1*(residue.centre[:y])
+      xcenter = -1*(residue.center[:x]) 
+      ycenter = -1*(residue.center[:y])
       back = Element.new('svg:circle')
       back.add_attributes({'cx' => xcenter, 'cy' => ycenter, 'r' => 100, 'fill' => HSV.new(65 - (15+0.01*residue.normalised_hits*50),1,1).to_hex })
       delta_occurence.add_element(back)
@@ -212,8 +212,8 @@ def render_hits_for_residue(residue,delta_occurence,parent_sugar)
     # 'b' is 125 == Green
     hue = (residue.parent_sug == 'a') ? 15 : 125
     residue.callbacks.push( lambda { |element|
-      xcenter = -1*(residue.centre[:x]) 
-      ycenter = -1*(residue.centre[:y])
+      xcenter = -1*(residue.center[:x]) 
+      ycenter = -1*(residue.center[:y])
       back = Element.new('svg:circle')
       back.add_attributes({'cx' => xcenter, 'cy' => ycenter, 'r' => 100, 'fill' => HSV.new(hue,1,1).to_hex })
       parent_sugar.add_element(back)
@@ -234,8 +234,8 @@ def render_sugar_with_coverage(sugar, filename)
 
       if @opts[:label_hits_for_residues]
         residue.callbacks.push( lambda { |element|
-          xcenter = -1*(residue.centre[:x] + 200 ) 
-          ycenter = -1*(residue.centre[:y])
+          xcenter = -1*(residue.center[:x] + 200 ) 
+          ycenter = -1*(residue.center[:y])
           label = Element.new('svg:text')
           label.add_attributes({'x' => xcenter, 'y' => ycenter, 'font-size' => 100, 'text-anchor' => 'middle' })
           label.text = "#{residue.hits}"
@@ -248,8 +248,8 @@ def render_sugar_with_coverage(sugar, filename)
           next
         end
         residue.callbacks.push( lambda { |element|
-          xcenter = -1*(residue.centre[:x]) 
-          ycenter = -1*(residue.centre[:y])
+          xcenter = -1*(residue.center[:x]) 
+          ycenter = -1*(residue.center[:y])
           back = Element.new('svg:circle')
           back.add_attributes({'cx' => xcenter, 'cy' => ycenter, 'r' => 100, 'fill'=>'none','stroke' => '#000000', 'stroke-width' => '1.0' })
           delta_occurence.add_element(back)
@@ -257,10 +257,10 @@ def render_sugar_with_coverage(sugar, filename)
         residue.children.each { |kid|
           link = kid[:link]
           link.callbacks.push( lambda { |link_element|
-            x1 = -1*link.first_residue.centre[:x]
-            y1 = -1*link.first_residue.centre[:y]
-            x2 = -1*link.second_residue.centre[:x]
-            y2 = -1*link.second_residue.centre[:y]
+            x1 = -1*link.first_residue.center[:x]
+            y1 = -1*link.first_residue.center[:y]
+            x2 = -1*link.second_residue.center[:x]
+            y2 = -1*link.second_residue.center[:y]
             link_width = (x2-x1).abs
             link_height = (y2-y1).abs
             link_length = Math.hypot(link_width,link_height)

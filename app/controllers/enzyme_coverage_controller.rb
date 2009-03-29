@@ -150,21 +150,21 @@ class EnzymeCoverageController < ApplicationController
         bad_linkage = Element.new('svg:g')
         bad_linkage.add_attributes({'id' => "link-#{link_element.object_id}" })
         
-        x1 = -1*(link.centre[:x] - 20)
-        y1 = -1*(link.centre[:y] - 20)
-        x2 = -1*(link.centre[:x] + 20)
-        y2 = -1*(link.centre[:y] + 20)
-        x3 = -1*(link.centre[:x] - 20)
-        y3 = -1*(link.centre[:y] + 20)
-        x4 = -1*(link.centre[:x] + 20)
-        y4 = -1*(link.centre[:y] - 20)
+        x1 = -1*(link.center[:x] - 20)
+        y1 = -1*(link.center[:y] - 20)
+        x2 = -1*(link.center[:x] + 20)
+        y2 = -1*(link.center[:y] + 20)
+        x3 = -1*(link.center[:x] - 20)
+        y3 = -1*(link.center[:y] + 20)
+        x4 = -1*(link.center[:x] + 20)
+        y4 = -1*(link.center[:y] - 20)
         cross = Element.new('svg:line')
         cross.add_attributes({'class' => 'bad_link', 'x1' => x1, 'x2' => x2, 'y1' => y1, 'y2' => y2, 'stroke'=>'#ff0000','stroke-width'=>'5.0'})
         cross_inv = Element.new('svg:line')
         cross_inv.add_attributes({'class' => 'bad_link', 'x1' => x3, 'x2' => x4, 'y1' => y3, 'y2' => y4, 'stroke'=>'#ff0000','stroke-width'=>'5.0'})
 
-        x1 = -1*(link.centre[:x] + 110)
-        y1 = -1*(link.centre[:y] - 10)
+        x1 = -1*(link.center[:x] + 110)
+        y1 = -1*(link.center[:y] - 10)
 
         max_height = genes.size * 30 + 25
         
@@ -174,7 +174,7 @@ class EnzymeCoverageController < ApplicationController
         
         cross_mark_height = genes.size == 0 ? 90 : 58
         
-        back_circle.add_attributes('viewBox' =>"0 0 90 #{cross_mark_height}", 'height' => cross_mark_height, 'width' => '90', 'x' => -1*(link.centre[:x]+45), 'y' => -1*(link.centre[:y]+45))
+        back_circle.add_attributes('viewBox' =>"0 0 90 #{cross_mark_height}", 'height' => cross_mark_height, 'width' => '90', 'x' => -1*(link.center[:x]+45), 'y' => -1*(link.center[:y]+45))
         back_circle_shape = Element.new('svg:circle')
         back_circle_shape.add_attributes({'cx' => 45, 'cy' => 45, 'r' => 40, 'stroke' => '#ff0000', 'stroke-width' => '5px', 'fill' => '#ffffff', 'fill-opacity' => 1, 'stroke-opacity' => 0.5 })
         back_circle.add_element(back_circle_shape)

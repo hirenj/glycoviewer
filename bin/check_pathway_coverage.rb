@@ -101,8 +101,8 @@ def render_sugar_with_coverage(sugar, filename)
     sugar.overlays << targets
     sugar.residue_composition.each { |residue|
       residue.callbacks.push( lambda { |element|
-        xcenter = -1*(residue.centre[:x]) 
-        ycenter = -1*(residue.centre[:y])
+        xcenter = -1*(residue.center[:x]) 
+        ycenter = -1*(residue.center[:y])
         label = Element.new('svg:text')
         label.add_attributes({'x' => xcenter, 'y' => ycenter })
         label.text = residue.hits

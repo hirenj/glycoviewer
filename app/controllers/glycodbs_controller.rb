@@ -366,8 +366,8 @@ class GlycodbsController < ApplicationController
     sugar.residue_composition.each { |residue|
       residue.hits += 1
       residue.callbacks.push( lambda { |element|
-        xcenter = -1*(residue.centre[:x]) 
-        ycenter = -1*(residue.centre[:y])
+        xcenter = -1*(residue.center[:x]) 
+        ycenter = -1*(residue.center[:y])
         label = Element.new('svg:text')
         label.add_attributes({'x' => xcenter, 'y' => ycenter, 'text-anchor' => 'middle', 'style' => 'dominant-baseline: middle;','font-size' => '40px' })
         label.text = residue.hits
