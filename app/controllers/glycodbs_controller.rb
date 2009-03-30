@@ -14,6 +14,10 @@ module HitCounter
     return @counters.keys
   end
 
+  def reset_counter(id_key=:id)
+    @counters[id_key] = []
+  end
+
   def initialise_counter(id_key=:id)
     @counters = @counters || Hash.new() { |h,k| h[k] = Array.new() }
   end
@@ -383,6 +387,10 @@ class GlycodbsController < ApplicationController
 
   def execute_coverage_for_sequence_set(sequences,prune_structure=true)
     seq_counter = 0
+    
+    last_sug = nil
+    last_seq = nil
+    
     individual_sugars = sequences.select { |glycodb|
       seq = glycodb.GLYCAN_ST
       if seq =~ /\?\)/ || seq =~ /u[1,2]/ || seq =~ /\?[1,2]/
@@ -390,19 +398,29 @@ class GlycodbsController < ApplicationController
       else
         true
       end
-    }.collect { |glycodb|
+    }.sort_by { |g| g.GLYCAN_ST }.collect { |glycodb|
       seq = glycodb.GLYCAN_ST
       seq_counter += 1
       my_seq = seq.gsub(/\+.*/,'').gsub(/\(\?/,'(u')
       my_seq.gsub!(/\(-/,'(u1-')
       my_sug = nil
       begin
-        my_sug = SugarHelper.CreateMultiSugar(my_seq,:ic).get_unique_sugar        
+        if my_seq == last_seq
+          my_sug = last_seq.deep_clone
+          my_sug.extend(Sugar::MultiSugar)
+        else
+          my_sug = SugarHelper.CreateMultiSugar(my_seq,:ic).get_unique_sugar
+          last_sug = my_sug
+          last_seq = my_seq
+        end
+        
         my_sug.residue_composition.each { |res|
           res.initialise_counter(:id)
+          res.reset_counter(:id)
           res.increment_counter(seq_counter)
           
           res.initialise_counter(:ref)
+          res.reset_counter(:ref)
           glycodb.references.split(',').each { |ref|
             res.increment_counter(ref,:ref)
           }
