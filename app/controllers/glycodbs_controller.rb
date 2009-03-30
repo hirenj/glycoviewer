@@ -447,6 +447,7 @@ class GlycodbsController < ApplicationController
       ([sugar]+sugar_set).each { |sug|
         branch_points = sug.branch_points
         if sug != sugar
+          sug.extend(CachingSugar)
           sugar.union!(sug,&HitCounter::MATCH_BLOCK)
         end
         branch_points = branch_points.collect { |r| sugar.find_residue_by_unambiguous_path(sug.get_unambiguous_path_to_root(r).reverse) }
@@ -499,6 +500,7 @@ class GlycodbsController < ApplicationController
       sugar.root.anomer = 'u'
       
       coverage_finder.execute_pathways_and_markup
+
 
       if prune_structure
         sugar.residue_composition.each { |r|
@@ -601,6 +603,8 @@ class GlycodbsController < ApplicationController
           render_text_residue_label(sugar,r,r.get_counter(:ref).uniq.size,:bottom_left)
         }
       }
+      sugar.extend(CachingSugar)
+      
       sugar
     }.compact
   end

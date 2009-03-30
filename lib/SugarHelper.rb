@@ -14,6 +14,8 @@ require 'Render/PngRenderer'
 require 'Render/HtmlTextRenderer'
 require 'MultiSugar'
 
+require 'CachingSugar'
+
 Monosaccharide.Load_Definitions("#{RAILS_ROOT}/SugarCoreRuby/data/dictionary.xml")
 NamespacedMonosaccharide.Default_Namespace = NamespacedMonosaccharide::NAMESPACES[:ecdb]
 

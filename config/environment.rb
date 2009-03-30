@@ -24,7 +24,7 @@ Rails::Initializer.run do |config|
 
   # Force all environments to use the same logger level 
   # (by default production uses :info, the others :debug)
-  # config.log_level = :debug
+  config.log_level = :info
 
   # Use the database for sessions instead of the file system
   # (create the session table with 'rake db:sessions:create')
@@ -71,7 +71,7 @@ require 'SugarHelper'
 
 # -1 = full logging
 # 5 = no logging
-DebugLog.log_level(-1)
+DebugLog.log_level(1)
 
 # Mime::Type.register "application/xml", :xml
 # Mime::Type.register "text/xml", :xml

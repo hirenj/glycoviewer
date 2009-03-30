@@ -355,15 +355,23 @@ class EnzymeCoverageController < ApplicationController
     }
     max_pathway_reacs = max_pathway_reacs.collect { |max_pathway_reac|
       logger.debug "Best pathway #{min_delta}"
-      logger.debug max_pathway_reac.endstructure_as_sugar.sequence
+      logger.debug { max_pathway_reac.endstructure_as_sugar.sequence }
       deltas = sugar.subtract(max_pathway_reac.endstructure_as_sugar)
       deltas.each { |delta|
         delta.linkage_at_position.extend(PathwayLinkage)
-      }      
+      }
+      cached_disac_seqs = {}
       deltas.each { |delta|
-        disac = SugarUtil.SugarFromDisaccharide(sugar,delta)
-        disac.get_path_to_root[0].anomer = 'u'
-        found_reactions = Reaction.find_all_by_residuedelta(disac.sequence)
+        disac_seq = nil
+        if cached_disac_seqs.has_key?(delta)
+          disac_seq = cached_disac_seqs[delta]
+        else
+          disac = SugarUtil.SugarFromDisaccharide(sugar,delta)
+          disac.get_path_to_root[0].anomer = 'u'
+          disac_seq = disac.sequence
+          cached_disac_seqs[delta] = disac_seq
+        end
+        found_reactions = Reaction.find_all_by_residuedelta(disac_seq)
         used_pathways = found_reactions.collect { |reac| reac.pathway }.compact.uniq
         used_genes = found_reactions.collect { |reac| reac.genes }.flatten.uniq
         if used_pathways.size > 0
@@ -433,9 +441,16 @@ class EnzymeCoverageController < ApplicationController
     @genes = @genes + ['ALG1','ALG2','ALG3','ALG12','ALG13','ALG14'].collect { |name| Geneinfo.find(:first, :conditions => { :genename => name } ) }
     bad_linkages = []
     @disacs_cache ||= {}
+    disac_seq_cache = {}
     SugarUtil.FindDisaccharides(sugar).each { |disac, links|
-      disac.get_path_to_root[0].anomer = 'u'
-      disac_seq = disac.sequence
+      disac_seq = nil
+      if disac_seq_cache.has_key?(disac.object_id)
+        disac_seq = disac_seq_cache[disac.object_id]
+      else
+        disac.get_path_to_root[0].anomer = 'u'
+        disac_seq = disac.sequence
+        disac_seq_cache[disac.object_id] = disac_seq
+      end
       linkage_genes = Reaction.find_all_by_residuedelta(disac_seq).collect { |reac|
         reac.genes
       }.flatten.uniq

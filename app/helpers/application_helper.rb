@@ -39,7 +39,6 @@ module ApplicationHelper
     
     bar_width = 30
     estimated_size = (labels.size * bar_width).to_f / total_height
-    logger.info(estimated_size)
     if has_negatives
       estimated_size *= 0.5
     end
@@ -68,7 +67,7 @@ module ApplicationHelper
     
     labels = []
     label_vals.each { |lab,value|
-      logger.info("Adding in label #{lab}")
+      logger.debug("Adding in label #{lab}")
       x_pos = x_for_label[lab] || last_x += bar_width
       my_fill = value > 0 ? cycle(*(fills + [:name => 'positives'])) : cycle(*(neg_fills + [:name => 'negatives']))
       box = Element.new('svg:rect')      
