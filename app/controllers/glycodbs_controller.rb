@@ -11,11 +11,13 @@ module HitCounter
   end
   
   def counter_keys
+    initialise_counter
     return @counters.keys
   end
 
-  def reset_counter(id_key=:id)
-    @counters[id_key] = []
+  def reset_counters
+    @counters = nil
+    initialise_counter
   end
 
   def initialise_counter(id_key=:id)
@@ -33,6 +35,7 @@ module HitCounter
   
   def merge_counter(other_residue,id_key=:id)
     @counters[id_key] += other_residue.get_counter(id_key)
+    @counters[id_key].uniq!
   end
   
   MATCH_BLOCK = lambda { |residue,other_res,matched_yet|
@@ -405,30 +408,34 @@ class GlycodbsController < ApplicationController
       my_seq.gsub!(/\(-/,'(u1-')
       my_sug = nil
       begin
-        if my_seq == last_seq
-          my_sug = last_seq.deep_clone
-          my_sug.extend(Sugar::MultiSugar)
+        if last_seq != nil && my_seq == last_seq
+          my_sug = last_sug
         else
           my_sug = SugarHelper.CreateMultiSugar(my_seq,:ic).get_unique_sugar
-          last_sug = my_sug
-          last_seq = my_seq
-        end
-        
+        end        
         my_sug.residue_composition.each { |res|
+
           res.initialise_counter(:id)
-          res.reset_counter(:id)
-          res.increment_counter(seq_counter)
+          res.increment_counter(glycodb.id,:id)
           
           res.initialise_counter(:ref)
-          res.reset_counter(:ref)
           glycodb.references.split(',').each { |ref|
             res.increment_counter(ref,:ref)
           }
         }
+        
+        next unless last_seq != my_seq
+        
+        last_sug = my_sug
+        last_seq = my_seq
+
       rescue Exception => e
+        last_seq = nil
+        last_sug = nil
       end
       my_sug
     }.compact
+    
     sugar_sets = 
       [ individual_sugars.reject { |sug| sug.root.name(:ic) != 'GlcNAc'},
         individual_sugars.reject { |sug| sug.root.name(:ic) != 'GalNAc'},
