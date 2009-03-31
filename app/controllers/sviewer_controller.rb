@@ -9,6 +9,8 @@ require 'Render/HtmlRenderer'
 
 class SviewerController < ApplicationController
 
+  caches_page :index, :if => Proc.new { |c| c.request.format.png? }
+
   after_filter :set_response_length
 
   attr_accessor :width, :height
@@ -70,7 +72,8 @@ class SviewerController < ApplicationController
     end
     sugar = get_sugar
     renderer.sugar = sugar
-    renderscheme = session[:sugarscheme] ? session[:sugarscheme] : 'text:ic'
+    params[:schema] = params[:schema] ? params[:schema].to_sym : nil
+    renderscheme = params[:schema] || session[:sugarscheme] || 'text:ic'
     
     begin
       if renderscheme == :boston

@@ -42,9 +42,15 @@ ActionController::Routing::Routes.draw do |map|
 
   map.connect 'sugarlist', :controller => 'sviewer', :action => 'show_list', :format => 'html'
 
-  map.connect 'sviewer.:format/:ns/:seq', :controller => 'sviewer', :action => 'index'
+  map.connect 'sviewer/:ns', :controller => 'sviewer', :action => 'index', :format => 'png'
+
+  map.connect 'sviewer/:schema/:ns/:seq.:format', :controller => 'sviewer', :action => 'index'
+
+  map.connect 'sviewer/:schema/:ns/:seq', :controller => 'sviewer', :action => 'index', :format => 'png'
+
+  map.connect 'sviewer/:ns/:seq.:format', :controller => 'sviewer', :action => 'index'
   
-  map.connect 'sviewer.:format/:seq', :controller => 'sviewer', :action => 'index', :ns => 'dkfz'
+  map.connect 'sviewer/:seq.:format', :controller => 'sviewer', :action => 'index', :ns => 'dkfz'
 
   map.connect 'sviewer/:ns/:seq', :controller => 'sviewer', :action => 'index', :format => 'svg'
 

@@ -9,4 +9,5 @@ class ConfigController < ApplicationController
   def rendering
     session[:sugarscheme] = params[:schema].to_sym
   end
+
 end

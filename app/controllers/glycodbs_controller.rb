@@ -60,6 +60,8 @@ end
 
 class GlycodbsController < ApplicationController
   layout 'standard'
+  caches_page :coverage_for_taxonomy
+  self.page_cache_extension = '.xml'
   
   module SummaryStats
 
@@ -524,6 +526,8 @@ class GlycodbsController < ApplicationController
       coverage_finder.sugar = sugar
       sugar.root.anomer = 'u'
       
+      sugar.extend(CachingSugar)
+      
       coverage_finder.execute_pathways_and_markup
 
 
@@ -628,7 +632,6 @@ class GlycodbsController < ApplicationController
           render_text_residue_label(sugar,r,r.get_counter(:ref).uniq.size,:bottom_left)
         }
       }
-      sugar.extend(CachingSugar)
       
       sugar
     }.compact
