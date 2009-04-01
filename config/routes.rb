@@ -42,6 +42,8 @@ ActionController::Routing::Routes.draw do |map|
 
   map.connect 'sugarlist', :controller => 'sviewer', :action => 'show_list', :format => 'html'
 
+  map.connect 'sviewer_thumbs/:width/:height/:schema/:ns/:seq.png', :format => 'png', :controller => 'sviewer', :action => 'index'
+
   map.connect 'sviewer/:ns', :controller => 'sviewer', :action => 'index', :format => 'png'
 
   map.connect 'sviewer/:schema/:ns/:seq.:format', :controller => 'sviewer', :action => 'index'

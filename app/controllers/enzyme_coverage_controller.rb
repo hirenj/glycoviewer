@@ -111,7 +111,7 @@ class EnzymeCoverageController < ApplicationController
   end
 
   def add_sugar_callbacks
-
+    logger.info("Total of #{@chains.size} chains")
     self.sugar.callbacks << lambda { |sug_root,renderer|
       renderer.chain_background_width = 20
       renderer.chain_background_padding = 65
@@ -205,6 +205,9 @@ class EnzymeCoverageController < ApplicationController
 
   def validate_residues_for_results(results)
     sug = self.sugar
+    @chains = []
+    @valid_residues = []
+    @invalid_residues = []
     results[:deltas].reject { |delta| results[:deltas].include?(delta.parent) }.each { |delta|
       chains = sug.get_chains_from_residue(delta).reject { |chain| chain[0] && chain[0].name(:ic) == 'GlcNAc' && chain[0].parent && chain[0].parent.name(:ic) == 'Man' && chain[0].paired_residue_position == 3 } # Array of arrays of residues (i.e. array of paths)
       all_residues = sug.residue_composition(delta)
@@ -216,9 +219,9 @@ class EnzymeCoverageController < ApplicationController
       invalid_residues.each { |r|
         r.invalidate
       }
-      @valid_residues = valid_residues
-      @chains = chains
-      @invalid_residues = invalid_residues
+      @valid_residues += valid_residues
+      @chains += chains
+      @invalid_residues += invalid_residues
     }
   end
 
