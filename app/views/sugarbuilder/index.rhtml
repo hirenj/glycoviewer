@@ -108,8 +108,8 @@ function onloader() {
 	myPanel.setHeader("Donors");
 	myPanel.setBody(pal.canvas());
 	//myPanel.render($('sugarbox'));
-	connect(Draggables,'start',partial(demotePanel,myPanel));
-	connect(Draggables,'end',partial(promotePanel,myPanel));
+	connect(Draggables,'start',partial(demotePanel,myPanel,pal));
+	connect(Draggables,'end',partial(promotePanel,myPanel,pal));
 	
 	//appendChildNodes($('sugarbox'),pal.canvas());
 	
@@ -129,17 +129,32 @@ function onloader() {
 	myPanel.render($('sugarbox'));
 	myPanel.center();
 	
+	connect(document,'onkeydown',sb,partial(triggerPrune,true));
+	connect(document,'onkeyup',sb,partial(triggerPrune,false));
+
+	
 	connect(slider,'onchange',sb,partial(updateScale,slider));
 }
 
 function demotePanel(apanel) {
 	apanel.cfg.setProperty('zindex',-1);
+	pal.screenPallette();
 }
 
 function promotePanel(apanel) {
 	apanel.cfg.setProperty('zindex',2);
+	pal.unScreenPallette();
 }
 
+function triggerPrune(start,e) {
+	if (e.modifier()['alt']) {
+		log("Beginning prune mode");
+		this.set_prune_mode(start);
+	} else {
+		log("Removing prune mode");
+		this.set_prune_mode(start);
+	}
+}
 
 
 function updateScale(slider) {

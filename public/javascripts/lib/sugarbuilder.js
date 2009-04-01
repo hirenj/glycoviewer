@@ -14,14 +14,15 @@ SugarBuilder = function(builderURL,sequence,opts) {
 SugarBuilder.prototype = {
 	__class__: SugarBuilder,
 	targetElement: null,
-	_state: { 'current_target'	: null,
+	_state: { 			'current_target'	: null,
 						'in_drag' 				: false,
 						'last_draggable'	: null,
 						'sequence'				: '',
 						'scale'						: 1,
 						'anomer'					: null,
 						'firstposition'		: 0,
-						'secondposition'	: 0
+						'secondposition'	: 0,
+						'mode'				: 'build'
 					},
 	opts: {	'drop_target_class': 'drop_target',
 					'pallette_element_class': 'pallette_element'
@@ -277,6 +278,10 @@ SugarBuilder.prototype.canvas = function() {
 	return this.build_elements['svg_canvas'];
 }
 
+SugarBuilder.prototype.set_prune_mode = function(prunemode) {
+	this._state['mode'] = prunemode ? 'prune' : 'build';
+}
+
 SugarBuilder.prototype.build_structure = function(linkagepath) {
 	state = this._state;
 	if (linkagepath == null) {
@@ -339,6 +344,8 @@ SugarBuilder.prototype._dragging = function(draggable,e) {
 SugarBuilder.prototype._dragStart = function(draggable) {
 	state = this._state;
 	state['dragging'] = true;
+	state['anomer'] = '';
+	state['firstposn'] = '';
 };
 
 SugarBuilder.prototype._dragEnd = function(draggable) {
@@ -357,8 +364,10 @@ SugarBuilder.prototype._dragEnd = function(draggable) {
 
 SugarBuilder.prototype._svg_mouseclick = function(e) {
 	state = this._state;
-	state['newres'] = 'prune';
-	this.refresh_structure(e.target().getAttribute('linkid'));
+	if (state['mode'] == 'prune') {
+		state['newres'] = 'prune';
+		this.refresh_structure(e.target().getAttribute('linkid'));
+	}
 };
 
 

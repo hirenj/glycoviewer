@@ -5,12 +5,27 @@ if ( typeof(SugarBuilder.Pallette) == undefined ) {
 SugarBuilder.Pallette = function(builderURL) {
 	this.builderURL = builderURL;
 	this._canvas = XHtmlDOM.makeElement('div');
-	appendChildNodes(this._canvas, XHtmlDOM.makeElement('div'));
+	appendChildNodes(this._canvas, XHtmlDOM.makeElement('div'));		
 	this._setupPallette();
+
+	screen_overlay = XHtmlDOM.makeElement('div');
+	updateNodeAttributes(screen_overlay, { 'style' : 'position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; background: #ffffff; opacity: 0.85; display: none;', });
+
+	this._screen = screen_overlay;
+
+	appendChildNodes(this._canvas,screen_overlay);
 }
 
 SugarBuilder.Pallette.prototype.canvas = function() {
 	return this._canvas;
+}
+
+SugarBuilder.Pallette.prototype.screenPallette = function() {
+	this._screen.style.display = 'block';
+}
+
+SugarBuilder.Pallette.prototype.unScreenPallette = function() {
+	this._screen.style.display = 'none';
 }
 
 SugarBuilder.Pallette.prototype._setupPallette = function() {
@@ -33,7 +48,7 @@ SugarBuilder.Pallette.prototype._accept_pallette = function(data) {
 		updateNodeAttributes(imported_pal, {'class' : 'pallette_element'});
 		imported_elements.push(imported_pal);
 	}
-	appendChildNodes(this._canvas,imported_elements);
+	insertSiblingNodesBefore(this._screen,imported_elements);
 };
 
 SugarBuilder.Slider = function() {
@@ -53,7 +68,7 @@ SugarBuilder.Slider.prototype._setupSlider = function() {
 	
 	this._element = YAHOO.widget.Slider.getVertSlider(sliderContainer, sliderBar, 100, 100);
 	this._element.setValue(0);
-  this._element.subscribe("change", this._onchange, this);
+ 	this._element.subscribe("change", this._onchange, this);
 	this._element.animate = false;
 	this._canvas = sliderContainer;
 };
