@@ -21,11 +21,11 @@ SugarBuilder.Pallette.prototype.canvas = function() {
 }
 
 SugarBuilder.Pallette.prototype.screenPallette = function() {
-	this._screen.style.display = 'block';
+	appear(this._screen, { 'from': 0, 'to': 1.0 });	
 }
 
 SugarBuilder.Pallette.prototype.unScreenPallette = function() {
-	this._screen.style.display = 'none';
+	fade(this._screen, { 'from': 0.9, 'to': 0 });
 }
 
 SugarBuilder.Pallette.prototype._setupPallette = function() {
@@ -44,7 +44,9 @@ SugarBuilder.Pallette.prototype._accept_pallette = function(data) {
 	imported_elements = [];
 	for (var i = 0; i < pallette.length; i++) {
 		imported_pal = document.importNode(pallette[i],true);
-		new Draggable(imported_pal, { revert : true, ghosting: false, zindex: -1 });
+			
+		a_drag = new Draggable(imported_pal, { revert : true, ghosting: false, zindex: 1 });
+		
 		updateNodeAttributes(imported_pal, {'class' : 'pallette_element'});
 		imported_elements.push(imported_pal);
 	}

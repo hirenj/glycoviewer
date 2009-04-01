@@ -357,9 +357,8 @@ SugarBuilder.prototype._dragEnd = function(draggable) {
 		this.build_structure(state['current_target'].getAttribute('linkid'));
 		this._restartParameterSetting();
 	}
-
-	draggable.element.style.top = '0px';
-	draggable.element.style.left = '0px';	
+//	draggable.element.style.top = '0px';
+//	draggable.element.style.left = '0px';	
 };
 
 SugarBuilder.prototype._svg_mouseclick = function(e) {

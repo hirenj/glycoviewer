@@ -129,6 +129,8 @@ function onloader() {
 	myPanel.render($('sugarbox'));
 	myPanel.center();
 	
+	$('sugarbox').onmousedown = function() { return false; }
+	
 	connect(document,'onkeydown',sb,partial(triggerPrune,true));
 	connect(document,'onkeyup',sb,partial(triggerPrune,false));
 
