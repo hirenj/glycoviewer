@@ -61,7 +61,7 @@ end
 class GlycodbsController < ApplicationController
   layout 'standard'
   caches_page :coverage_for_taxonomy
-  self.page_cache_extension = '.xml'
+  self.page_cache_extension = '.xhtml'
   
   module SummaryStats
 

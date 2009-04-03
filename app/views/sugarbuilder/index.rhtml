@@ -107,11 +107,8 @@ function onloader() {
 		draggable:true} );
 	myPanel.setHeader("Donors");
 	myPanel.setBody(pal.canvas());
-	//myPanel.render($('sugarbox'));
 	connect(Draggables,'start',partial(demotePanel,myPanel,pal));
 	connect(Draggables,'end',partial(promotePanel,myPanel,pal));
-	
-	//appendChildNodes($('sugarbox'),pal.canvas());
 	
 	sb = new SugarBuilder("<%= url_for :controller => 'sugarbuilder', :action => 'build_sugar', :format => 'xhtml' %>",$('sequence').textContent);
 	connect(sb,'sequencechange',updateSeqs);
@@ -122,10 +119,10 @@ function onloader() {
 	slider = new SugarBuilder.Slider();
 	slider.canvas().style.zIndex = 2;
 	appendChildNodes($('sugarbox'),slider.canvas());
-
-
+	
+	
 	connect(sb,'sequencechange',sb,partial(updateScale,slider));
-
+	
 	myPanel.render($('sugarbox'));
 	myPanel.center();
 	
@@ -133,18 +130,20 @@ function onloader() {
 	
 	connect(document,'onkeydown',sb,partial(triggerPrune,true));
 	connect(document,'onkeyup',sb,partial(triggerPrune,false));
-
+	
 	
 	connect(slider,'onchange',sb,partial(updateScale,slider));
 }
 
 function demotePanel(apanel) {
 	apanel.cfg.setProperty('zindex',-1);
+//	fade(apanel.element, { 'from': 1.0, 'to': 0 });	
 	pal.screenPallette();
 }
 
 function promotePanel(apanel) {
 	apanel.cfg.setProperty('zindex',2);
+//	appear(apanel.element, { 'from': 0, 'to' : 1.0 });
 	pal.unScreenPallette();
 }
 
