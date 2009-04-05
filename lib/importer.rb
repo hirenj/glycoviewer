@@ -253,11 +253,11 @@ def read_db_from_file(filename)
     next if test
 
     if reac.save()
-      @logger.debug("Stored EnzymeReaction #{reac.id}")
+      ActiveRecord::Base.logger.debug("Stored EnzymeReaction #{reac.id}")
     else
-      @logger.debug("Error storing EnzymeReaction")
+      ActiveRecord::Base.logger.debug("Error storing EnzymeReaction")
       reac.errors.each_full { |message| 
-        @logger.debug("With message: #{message}")
+        ActiveRecord::Base.logger.debug("With message: #{message}")
       }
     end
   }
@@ -267,11 +267,11 @@ def read_db_from_file(filename)
     next if test
 
     if reac.save()
-      @logger.debug("Stored Reaction #{reac.id}")
+      ActiveRecord::Base.logger.debug("Stored Reaction #{reac.id}")
     else
-      @logger.debug("Error storing Reaction")
+      ActiveRecord::Base.logger.debug("Error storing Reaction")
       reac.errors.each_full { |message| 
-        @logger.debug("With message: #{message}")
+        ActiveRecord::Base.logger.debug("With message: #{message}")
       }
     end    
   }
@@ -281,11 +281,11 @@ def read_db_from_file(filename)
     next if test
     
     if gene.save()
-      @logger.debug("Stored Geneinfo #{gene.id}")
+      ActiveRecord::Base.logger.debug("Stored Geneinfo #{gene.id}")
     else
-      @logger.debug("Error storing Geneinfo")
+      ActiveRecord::Base.logger.debug("Error storing Geneinfo")
       gene.errors.each_full { |message| 
-        @logger.debug("With message: #{message}")
+        ActiveRecord::Base.logger.debug("With message: #{message}")
       }
     end    
   }
@@ -296,11 +296,11 @@ def read_db_from_file(filename)
     next if test
     
     if enzyme.save()
-      @logger.debug("Stored Enzymeinfo #{enzyme.id}")
+      ActiveRecord::Base.logger.debug("Stored Enzymeinfo #{enzyme.id}")
     else
-      @logger.debug("Error storing Enzymeinfo")
+      ActiveRecord::Base.logger.debug("Error storing Enzymeinfo")
       enzyme.errors.each_full { |message| 
-        @logger.debug("With message: #{message}")
+        ActiveRecord::Base.logger.debug("With message: #{message}")
       }
     end    
   }
@@ -313,11 +313,11 @@ def read_db_from_file(filename)
     next if test
 
     if disac.save()
-      @logger.debug("Stored Disaccharide #{disac.id}")
+      ActiveRecord::Base.logger.debug("Stored Disaccharide #{disac.id}")
     else
-      @logger.debug("Error storing Disaccharide")
+      ActiveRecord::Base.logger.debug("Error storing Disaccharide")
       reac.errors.each_full { |message| 
-        @logger.debug("With message: #{message}")
+        ActiveRecord::Base.logger.debug("With message: #{message}")
       }
     end
   }
@@ -358,7 +358,7 @@ end
 # 
 # }
 # 
-# @logger.level = opts[:verbose]
+# ActiveRecord::Base.logger.level = opts[:verbose]
 # 
 # importer = Importer.new
 # 
