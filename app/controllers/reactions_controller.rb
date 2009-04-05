@@ -66,8 +66,8 @@ class ReactionsController < ApplicationController
   def show
     @reaction = Reaction.find(params[:id])
     respond_to do |wants|
-      wants.html { render :action => 'show' }
-      wants.xhtml { render :action => 'show' }
+      wants.html { render :action => 'show.rhtml' }
+      wants.xhtml { render :action => 'show.rhtml' }
       wants.xml { render :action => 'show', :layout => false }
       wants.svg { params[:compact] ? render_compact_svg(@reaction) : render_svg(@reaction) }
       wants.png { render_png(@reaction) }
