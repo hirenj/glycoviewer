@@ -7,16 +7,16 @@
 	</colgroup>
 	<tr><th></th>
 <% for donor in @donor_string_hash.keys.sort %>
-	<th><%= link_to @donor_string_hash[donor].name(:ic), :action => 'list_by_donor', :acceptor => @donor_string_hash[donor].name %></th>
+	<th><%= link_to @donor_string_hash[donor].name(:ic), :controller => 'reactions', :action => 'list_by_donor', :acceptor => @donor_string_hash[donor].name %></th>
 <% end %>
 	</tr>
 <% for donor in @donor_string_hash.keys.sort %>
 	<tr>
-	<td><%= link_to @donor_string_hash[donor].name(:ic), :action => 'list_by_donor', :donor => @donor_string_hash[donor].name %></td>
+	<td><%= link_to @donor_string_hash[donor].name(:ic), :controller => 'reactions', :action => 'list_by_donor', :donor => @donor_string_hash[donor].name %></td>
 	<% for substrate in @donor_string_hash.keys.sort %>
 	<td style="vertical-align: top;">
 		<% if @donor_hash[donor][substrate].length > 0 %>
-		<div style="width: 100%;" class="matrix_all_link"><%= link_to "All..", { :action => 'list_by_donor', :donor => @donor_string_hash[donor].name, :acceptor => @donor_string_hash[substrate].name } %>
+		<div style="width: 100%;" class="matrix_all_link"><%= link_to "All..", { :action => 'list_by_donor', :controller => 'reactions', :donor => @donor_string_hash[donor].name, :acceptor => @donor_string_hash[substrate].name } %>
 		</div>
 		<% end %>
 			<ul style="list-style-type: none; padding-left: 0px; margin-left: 40%;">
