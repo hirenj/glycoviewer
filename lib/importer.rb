@@ -107,6 +107,11 @@ end
 class Importer
 
 attr_accessor :test
+attr_accessor :logger
+
+def initialize(log=nil)
+  @logger = log
+end
 
 def build_db_connection
   return
@@ -123,15 +128,15 @@ def build_db_connection
 end
 
 def empty_database
-  ActiveRecord::Base.logger.info("\e[1F\e[KWiping EnzymeReactions")
+  @logger && @logger.info("\e[1F\e[KWiping EnzymeReactions")
   EnzymeReaction.find(:all).each { |er| er.destroy }
-  ActiveRecord::Base.logger.info("\e[1F\e[KWiping Disaccharides")
+  @logger && @logger.info("\e[1F\e[KWiping Disaccharides")
   Disaccharide.find(:all).each { |d| d.destroy }
-  ActiveRecord::Base.logger.info("\e[1F\e[KWiping Geneinfos")
+  @logger && @logger.info("\e[1F\e[KWiping Geneinfos")
   Geneinfo.find(:all).each { |g| g.destroy }
-  ActiveRecord::Base.logger.info("\e[1F\e[KWiping Enzymeinfos")
+  @logger && @logger.info("\e[1F\e[KWiping Enzymeinfos")
   Enzymeinfo.find(:all).each { |e| e.destroy }
-  ActiveRecord::Base.logger.info("\e[1F\e[KWiping Reactions")
+  @logger && @logger.info("\e[1F\e[KWiping Reactions")
   Reaction.find(:all).each { |r| r.destroy }
 end
 
@@ -186,7 +191,7 @@ def write_db_to_file(filename=nil)
 		reactxml.add_element( Document.new(enz_react.reaction.to_xml(:skip_instruct => true)).root )
 		reactxml.add_element( Document.new(enz_react.refs.to_xml(:skip_instruct => true)).root )
 		doc.root.add_element(reactxml)
-	  ActiveRecord::Base.logger.info("\e[1F\e[KWriting #{counter}/#{@reactions.size} step 1/5")
+	  @logger && @logger.info("\e[1F\e[KWriting #{counter}/#{@reactions.size} step 1/5")
 	  counter += 1
 	}
 
@@ -195,7 +200,7 @@ def write_db_to_file(filename=nil)
 	free_reacs = Reaction.find(:all).delete_if { |r| r.has_enzyme? }
 	free_reacs.each { |reac|
 	  free_reactions.add_element( Document.new(reac.to_xml(:skip_instruct => true)).root )
-	  ActiveRecord::Base.logger.info("\e[1F\e[KWriting #{counter}/#{free_reacs.size} step 2/5")
+	  @logger && @logger.info("\e[1F\e[KWriting #{counter}/#{free_reacs.size} step 2/5")
 	  counter += 1
 	}
 	
@@ -204,7 +209,7 @@ def write_db_to_file(filename=nil)
 	free_geneinfos = (Geneinfo.find(:all) - seen_genes)
 	free_geneinfos.each { |g|
 	  free_genes.add_element( Document.new(g.to_xml(:skip_instruct => true)).root )
-	  ActiveRecord::Base.logger.info("\e[1F\e[KWriting #{counter}/#{free_geneinfos.size} step 3/5")
+	  @logger && @logger.info("\e[1F\e[KWriting #{counter}/#{free_geneinfos.size} step 3/5")
 	  counter += 1
 	}
 
@@ -213,7 +218,7 @@ def write_db_to_file(filename=nil)
 	free_enzymeinfos = Enzymeinfo.find(:all).delete_if { |e| e.has_reaction? }
 	free_enzymeinfos.each { |enzyme|
 	  free_enzymes.add_element( Document.new(enzyme.to_xml(:skip_instruct => true)).root )	  
-	  ActiveRecord::Base.logger.info("\e[1F\e[KWriting #{counter}/#{free_enzymeinfos.size} step 4/5")
+	  @logger && @logger.info("\e[1F\e[KWriting #{counter}/#{free_enzymeinfos.size} step 4/5")
 	  counter += 1
   }
 	
@@ -224,7 +229,7 @@ def write_db_to_file(filename=nil)
 	@disacs.each { |disac|
     disac_xml = Document.new(disac.to_xml(:skip_instruct => true)).root
     disac_el.root.add_element(disac_xml)
-	  ActiveRecord::Base.logger.info("\e[1F\e[KWriting #{counter}/#{@disacs.size} step 5/5")    
+	  @logger && @logger.info("\e[1F\e[KWriting #{counter}/#{@disacs.size} step 5/5")    
 	  counter += 1
 	}
 	
@@ -259,11 +264,11 @@ def read_db_from_file(filename)
     next if test
 
     if reac.save()
-      ActiveRecord::Base.logger.info("\e[1F\e[KStored EnzymeReaction #{reac.id}")
+      @logger && @logger.info("\e[1F\e[KStored EnzymeReaction #{reac.id}")
     else
-      ActiveRecord::Base.logger.debug("Error storing EnzymeReaction")
+      @logger && @logger.debug("Error storing EnzymeReaction")
       reac.errors.each_full { |message| 
-        ActiveRecord::Base.logger.debug("With message: #{message}")
+        @logger && @logger.debug("With message: #{message}")
       }
     end
   }
@@ -273,11 +278,11 @@ def read_db_from_file(filename)
     next if test
 
     if reac.save()
-      ActiveRecord::Base.logger.info("\e[1F\e[KStored Reaction #{reac.id}")
+      @logger && @logger.info("\e[1F\e[KStored Reaction #{reac.id}")
     else
-      ActiveRecord::Base.logger.debug("Error storing Reaction")
+      @logger && @logger.debug("Error storing Reaction")
       reac.errors.each_full { |message| 
-        ActiveRecord::Base.logger.debug("With message: #{message}")
+        @logger && @logger.debug("With message: #{message}")
       }
     end    
   }
@@ -287,11 +292,11 @@ def read_db_from_file(filename)
     next if test
     
     if gene.save()
-      ActiveRecord::Base.logger.info("\e[1F\e[KStored Geneinfo #{gene.id}")
+      @logger && @logger.info("\e[1F\e[KStored Geneinfo #{gene.id}")
     else
-      ActiveRecord::Base.logger.debug("Error storing Geneinfo")
+      @logger && @logger.debug("Error storing Geneinfo")
       gene.errors.each_full { |message| 
-        ActiveRecord::Base.logger.debug("With message: #{message}")
+        @logger && @logger.debug("With message: #{message}")
       }
     end    
   }
@@ -302,11 +307,11 @@ def read_db_from_file(filename)
     next if test
     
     if enzyme.save()
-      ActiveRecord::Base.logger.info("\e[1F\e[KStored Enzymeinfo #{enzyme.id}")
+      @logger && @logger.info("\e[1F\e[KStored Enzymeinfo #{enzyme.id}")
     else
-      ActiveRecord::Base.logger.debug("Error storing Enzymeinfo")
+      @logger && @logger.debug("Error storing Enzymeinfo")
       enzyme.errors.each_full { |message| 
-        ActiveRecord::Base.logger.debug("With message: #{message}")
+        @logger && @logger.debug("With message: #{message}")
       }
     end    
   }
@@ -319,11 +324,11 @@ def read_db_from_file(filename)
     next if test
 
     if disac.save()
-      ActiveRecord::Base.logger.info("\e[1F\e[KStored Disaccharide #{disac.id}")
+      @logger && @logger.info("\e[1F\e[KStored Disaccharide #{disac.id}")
     else
-      ActiveRecord::Base.logger.debug("Error storing Disaccharide")
+      @logger && @logger.debug("Error storing Disaccharide")
       reac.errors.each_full { |message| 
-        ActiveRecord::Base.logger.debug("With message: #{message}")
+        @logger && @logger.debug("With message: #{message}")
       }
     end
   }
@@ -364,7 +369,7 @@ end
 # 
 # }
 # 
-# ActiveRecord::Base.logger.level = opts[:verbose]
+# @logger && @logger.level = opts[:verbose]
 # 
 # importer = Importer.new
 # 
