@@ -66,7 +66,7 @@ ActionController::Routing::Routes.draw do |map|
 
   map.connect ':controller/:action.:format'
 
-  map.connect ':controller/:action/', :format => 'html'
+  map.connect ':controller/:action/', :format => 'xhtml'
 
   #map.connect 'sviewer/:seq', :controller => 'sviewer', ':ns' => 'dkfz'
 
