@@ -48,6 +48,7 @@ Rails::Initializer.run do |config|
     :source => 'http://gems.github.com'
   config.gem 'packet'
   config.gem 'color-tools'
+  config.gem 'facets'
 #  config.gem 'rmagick', :lib => 'rmagick' 
 #   config.gem 'color-tools'
 end
