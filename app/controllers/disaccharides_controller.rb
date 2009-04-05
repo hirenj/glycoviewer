@@ -3,6 +3,8 @@ require 'SugarHelper'
 
 class DisaccharidesController < ApplicationController
   layout 'standard'
+  
+  caches_page :matrix
 
   class GlobalReaction < Reaction
   end
@@ -23,7 +25,7 @@ class DisaccharidesController < ApplicationController
       begin
         di.sugar = SugarHelper.CreateSugarFromDisaccharide(di)        
       rescue Exception => e
-        di.sugar = nil        
+        di.sugar = nil
       end
     }
   end
@@ -36,6 +38,7 @@ class DisaccharidesController < ApplicationController
     generate_matrix
     respond_to do |wants|
       wants.html { render }
+      wants.xhtml { render }
       wants.txt { render :layout => false }
     end    
   end

@@ -12,11 +12,17 @@ ActionController::Routing::Routes.draw do |map|
   
   map.connect 'glycodbs/tag/:id/:tag', :controller => 'glycodbs', :action => 'tag', :format => 'html'
 
-  map.connect 'glycodbs.:format/tag/:id/:tag', :controller => 'glycodbs', :action => 'tag'
-
   map.connect 'glycodbs/untag/:id/:tag', :controller => 'glycodbs', :action => 'untag', :format => 'html'
 
-  map.connect 'glycodbs.:format/untag/:id/:tag', :controller => 'glycodbs', :action => 'untag'
+  map.connect 'glycodbs/ws-tag', :controller => 'glycodbs', :action => 'tag', :format => 'txt'
+
+  map.connect 'glycodbs/ws-untag', :controller => 'glycodbs', :action => 'untag', :format => 'txt'
+
+  map.connect 'glycodbs/ws-tag/:id/:tag', :controller => 'glycodbs', :action => 'tag', :format => 'txt'
+  
+  map.connect 'glycodbs/ws-untag/:id/:tag', :controller => 'glycodbs', :action => 'untag', :format => 'txt'
+
+
 
   map.resources :glycodbs
 
