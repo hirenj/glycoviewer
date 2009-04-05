@@ -62,7 +62,9 @@ ActionController::Routing::Routes.draw do |map|
   
   map.connect 'tissue/:mesh_tissue', :controller => 'enzymeinfos', :action => 'show_tissue'
 
-  map.connect ':controller.:format/:action/:id/'
+  map.connect ':controller/:action/:id.:format'
+
+  map.connect ':controller/:action.:format'
 
   map.connect ':controller/:action/', :format => 'html'
 
