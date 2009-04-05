@@ -133,6 +133,14 @@ def build_db_connection
 	:password => curr_db["password"])
 end
 
+def empty_database
+  EnzymeReaction.find(:all).each { |er| er.destroy }
+  Disaccharide.find(:all).each { |d| d.destroy }
+  Geneinfo.find(:all).each { |g| g.destroy }
+  Enzymeinfo.find(:all).each { |e| e.destroy }
+  Reaction.find(:all).each { |r| r.destroy }
+end
+
 def close_db_connection
 	ActiveRecord::Base.remove_connection
 end
@@ -366,6 +374,8 @@ importer = Importer.new
 importer.test = opts[:test]
 
 case opts[:action]
+  when "resetdb" then
+    Importer.new.empty_database
 	when "dumpdb" then
 		Importer.new.write_db_to_file(opts[:outfile])
 		exit 0
