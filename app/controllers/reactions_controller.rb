@@ -48,7 +48,8 @@ class ReactionsController < ApplicationController
     @disaccharides = @disaccharides.delete_if { |d| @invalid_glycosciences.include? d.glycosciences }
     
     respond_to do |wants|
-      wants.html { render :action => 'list_by_donor' }
+      wants.html
+      wants.xhtml
       wants.xml { render :action => 'list.rxml', :layout => false }
     end
   end
@@ -56,7 +57,8 @@ class ReactionsController < ApplicationController
   def list
     @reactions = Reactions.paginate :page => params[:page], :order => 'id ASC'
     respond_to do |wants|
-      wants.html 
+      wants.html
+      wants.xhtml 
       wants.xml { render :action => 'list.rxml', :layout => false }
     end
   end
