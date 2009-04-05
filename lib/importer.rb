@@ -247,6 +247,7 @@ def read_db_from_file(filename)
 	build_db_connection()
   doc = Document.new(File.new(filename))
 
+  counter = 0
   doc.elements.each('//enzyme-reaction') { |child|
 
     reac = EnzymeReaction.from_xml(child)
@@ -307,7 +308,7 @@ def read_db_from_file(filename)
 
   doc = Document.new(File.new("disaccharides-#{filename}"))
 
-  doc.elements.each('//disaccharide') { |child|
+  doc.root.elements.each('disaccharide') { |child|
 
     disac = Disaccharide.from_xml(child)
     next if test
