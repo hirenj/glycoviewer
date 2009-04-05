@@ -109,8 +109,8 @@ class Importer
 attr_accessor :test
 attr_accessor :logger
 
-def initialize(log=nil)
-  @logger = log
+def initialize(args={})
+  @logger = args[:logger]
 end
 
 def build_db_connection
