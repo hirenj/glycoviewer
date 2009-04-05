@@ -10,9 +10,9 @@
 # correspond to. The deploy_to path must be the path on each machine that will
 # form the root of the application path.
 
-set :application, "enzymedb"
-set :base_repo, "http://luetteke/svn/"
-set :repository, "#{base_repo}#{application}"
+set :application, "glycoenzyme"
+#set :base_repo, ""
+set :repository, "http://glycoenzyme.googlecode.com/svn/trunk/"
 
 # =============================================================================
 # ROLES
@@ -23,14 +23,14 @@ set :repository, "#{base_repo}#{application}"
 # be used to single out a specific subset of boxes in a particular role, like
 # :primary => true.
 
-role :web, "luetteke"
-role :app, "luetteke"
-role :db,  "luetteke", :primary => true
+role :web, "192.168.204.128"
+role :app, "192.168.204.128"
+role :db,  "192.168.204.128", :primary => true
 
 # =============================================================================
 # OPTIONAL VARIABLES
 # =============================================================================
-set :deploy_to, "/srv/www/#{application}" # defaults to "/u/apps/#{application}"
+set :deploy_to, "/var/www/#{application}" # defaults to "/u/apps/#{application}"
 # set :user, "flippy"            # defaults to the currently logged in user
 # set :scm, :darcs               # defaults to :subversion
 # set :svn, "/path/to/svn"       # defaults to searching the PATH
