@@ -159,9 +159,9 @@ class EnzymeCoverageController < ApplicationController
         x4 = -1*(link.center[:x] + 20)
         y4 = -1*(link.center[:y] - 20)
         cross = Element.new('svg:line')
-        cross.add_attributes({'class' => 'bad_link', 'x1' => x1, 'x2' => x2, 'y1' => y1, 'y2' => y2, 'stroke'=>'#ff0000','stroke-width'=>'5.0'})
+        cross.add_attributes({'class' => 'bad_link', 'x1' => x1.to_s, 'x2' => x2.to_s, 'y1' => y1.to_s, 'y2' => y2.to_s, 'stroke'=>'#ff0000','stroke-width'=>'5.0'})
         cross_inv = Element.new('svg:line')
-        cross_inv.add_attributes({'class' => 'bad_link', 'x1' => x3, 'x2' => x4, 'y1' => y3, 'y2' => y4, 'stroke'=>'#ff0000','stroke-width'=>'5.0'})
+        cross_inv.add_attributes({'class' => 'bad_link', 'x1' => x3.to_s, 'x2' => x4.to_s, 'y1' => y3.to_s, 'y2' => y4.to_s, 'stroke'=>'#ff0000','stroke-width'=>'5.0'})
 
         x1 = -1*(link.center[:x] + 110)
         y1 = -1*(link.center[:y] - 10)
@@ -169,20 +169,21 @@ class EnzymeCoverageController < ApplicationController
         max_height = genes.size * 30 + 25
         
         back_el = Element.new('svg:rect')
-        back_el.add_attributes({'x' => x1, 'y' => y1, 'rx' => 10, 'ry' => 10, 'width' => 220, 'height' => max_height, 'stroke' => '#ff0000', 'stroke-width' => '5px', 'fill' => '#ffffff', 'fill-opacity' => 1, 'stroke-opacity' => 0.5 })
+        back_el.add_attributes({'x' => x1.to_s, 'y' => y1.to_s, 'rx' => '10', 'ry' => '10', 'width' => '220', 'height' => "#{max_height}", 'stroke' => '#ff0000', 'stroke-width' => '5px', 'fill' => '#ffffff', 'fill-opacity' => '1', 'stroke-opacity' => 0.5 })
         back_circle = Element.new('svg:svg')
         
         cross_mark_height = genes.size == 0 ? 90 : 58
         
-        back_circle.add_attributes('viewBox' =>"0 0 90 #{cross_mark_height}", 'height' => cross_mark_height, 'width' => '90', 'x' => -1*(link.center[:x]+45), 'y' => -1*(link.center[:y]+45))
+        back_circle.add_attributes('viewBox' =>"0 0 90 #{cross_mark_height}", 'height' => "#{cross_mark_height}", 'width' => '90', 'x' => "#{-1*(link.center[:x]+45)}", 'y' => "#{-1*(link.center[:y]+45)}")
+
         back_circle_shape = Element.new('svg:circle')
-        back_circle_shape.add_attributes({'cx' => 45, 'cy' => 45, 'r' => 40, 'stroke' => '#ff0000', 'stroke-width' => '5px', 'fill' => '#ffffff', 'fill-opacity' => 1, 'stroke-opacity' => 0.5 })
+        back_circle_shape.add_attributes({'cx' => '45', 'cy' => '45', 'r' => '40', 'stroke' => '#ff0000', 'stroke-width' => '5px', 'fill' => '#ffffff', 'fill-opacity' => '1', 'stroke-opacity' => '0.5' })
         back_circle.add_element(back_circle_shape)
         text = Element.new('svg:text')
-        text.add_attributes({ 'x' => x1, 'y' => y1+10, 'width' => 210, 'font-size' => 30, 'height' => max_height })
+        text.add_attributes({ 'x' => x1.to_s, 'y' => "#{y1+10}", 'width' => '210', 'font-size' => '30', 'height' => "#{max_height}" })
         genes.each { |gene|
           li = Element.new('svg:tspan')
-          li.add_attributes({'x' => x1+20, 'dy' => 30 })
+          li.add_attributes({'x' => "#{x1+20}", 'dy' => '30' })
           li.text = gene.genename
           text.add_element(li)
         }
