@@ -5,14 +5,14 @@ namespace :enzymedb do
   end
 end
 
-namesapce :enzymedb do
+namespace :enzymedb do
   desc "Import basic data into the database"
   task :loaddb, :infile, :needs => :environment do |t,args|
     Importer.new.read_db_from_file(args.infile)
   end
 end
 
-namesapce :enzymedb do
+namespace :enzymedb do
   desc "Wipe basic data from the database"
   task :cleandb, :needs => :environment do |t,args|
     Importer.new.empty_database
