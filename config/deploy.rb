@@ -44,6 +44,13 @@ set :user, "root"            # defaults to the currently logged in user
 # ssh_options[:keys] = %w(/path/to/my/key /path/to/another/key)
 # ssh_options[:port] = 25
 
+
+depend :remote, :gem, "rmagick", ">0"
+depend :remote, :gem, "facets", ">0"
+depend :remote, :gem, "color-tools", ">0"
+depend :remote, :gem, "packet", ">0"
+depend :remote, :gem, "builder", ">0"
+depend :remote, :gem, "xml-mapping", ">0"
 # =============================================================================
 # TASKS
 # =============================================================================
@@ -66,6 +73,12 @@ task :backup, :roles => :db, :only => { :primary => true } do
   end
 end
 
+desc <<DESC
+Load database. Populate the reactions, gene information and discaccharides into the database
+DESC
+task :populatedata, :roles => :web do
+  run "#{release_path}/bulktransfer --import-db --infile db-dump"
+end
 # Tasks may take advantage of several different helper methods to interact
 # with the remote server(s). These are:
 #

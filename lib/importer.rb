@@ -1,11 +1,3 @@
-#!/usr/bin/env ruby
-
-$:.push('SugarCoreRuby/lib')
-
-#RAILS_ENV = 'development'
-RAILS_ROOT = File.dirname(__FILE__) + '/..'
-require File.dirname(__FILE__) + '/../config/environment'
-
 require 'rubygems'
 require "logger"
 
@@ -15,7 +7,6 @@ gem 'xml-mapping'
 require "rexml/document"
 include REXML
 
-
 require 'app/models/enzyme_reaction.rb'
 require 'app/models/reaction.rb'
 require 'app/models/enzymeinfo.rb'
@@ -23,9 +14,6 @@ require 'app/models/geneinfo.rb'
 require 'app/models/disaccharide.rb'
 
 require 'SugarHelper'
-
-@logger = Logger.new(STDERR)
-ActiveRecord::Base.logger = @logger
 
 module ActiveRecord
 	class Base
@@ -121,6 +109,7 @@ class Importer
 attr_accessor :test
 
 def build_db_connection
+  return
 	# Read database config via YAML
 	@dbs = YAML::load(ERB.new(IO.read("config/database.yml")).result)
 	# connect to old db.
@@ -142,6 +131,7 @@ def empty_database
 end
 
 def close_db_connection
+  return
 	ActiveRecord::Base.remove_connection
 end
 
@@ -338,49 +328,49 @@ end
 
 end
 
-require 'optparse'
-
-opts = {
-	:verbose => 5,
-	:test => false
-}
-verbosity = 0
-
-ARGV.options {
-  |opt|
-
-  opt.banner = "Usage:\n\truby bulktransfer.rb [options] \n"
-
-  opt.on("Options:\n")
-  opt.on("-v", "--[no-]verbose", TrueClass, "Increase verbosity") { |verbose| opts[:verbose] = verbose ? (opts[:verbose] - 1) : (opts[:verbose] + 1) }
-  opt.on("-h", "--help", "This text") { puts opt; exit 0 }
-  opt.on("-O", "--outfile FILE", String, "Write output to this file") { |opts[:outfile]| }
-  opt.on("-I", "--infile FILE", String, "Import data into database") { |opts[:infile]| }
-  opt.on("-c", "--clean-db",String, "Clean out the database / remove all entries") { opts[:action] = "resetdb" }
-  opt.on("-d", "--dump-db", String, "Perform a dump of the database") { opts[:action] = "dumpdb" }
-  opt.on("-i", "--import-db", String, "Import data into database") { opts[:action] = "importdb" }
-  opt.on("-t", "--test",String, "Test only") { opts[:test] = true }
-  opt.on("-s", "--disaccharides", String, "Filename to read or write disaccharides to/from") { opts[:disaccharide_data] = "disaccharides.xml"}
-  #opt.on("-d", "--dump-geneinfo", String, "Dump the gene info") { |outfile| Importer.new.write_db_to_file(opts[:outfile]); exit 0 }
-  #opt.on("-i", "--import-geneinfo", String, "Import set of gene info data") { |infile| Importer.new.read_db_from_file(opts[:infile]); exit 0 }
-
-  opt.parse!
-
-}
-
-@logger.level = opts[:verbose]
-
-importer = Importer.new
-
-importer.test = opts[:test]
-
-case opts[:action]
-  when "resetdb" then
-    Importer.new.empty_database
-	when "dumpdb" then
-		Importer.new.write_db_to_file(opts[:outfile])
-		exit 0
-	when "importdb" then
-		Importer.new.read_db_from_file(opts[:infile])
-		exit 0
-end
+# require 'optparse'
+# 
+# opts = {
+#   :verbose => 5,
+#   :test => false
+# }
+# verbosity = 0
+# 
+# ARGV.options {
+#   |opt|
+# 
+#   opt.banner = "Usage:\n\truby bulktransfer.rb [options] \n"
+# 
+#   opt.on("Options:\n")
+#   opt.on("-v", "--[no-]verbose", TrueClass, "Increase verbosity") { |verbose| opts[:verbose] = verbose ? (opts[:verbose] - 1) : (opts[:verbose] + 1) }
+#   opt.on("-h", "--help", "This text") { puts opt; exit 0 }
+#   opt.on("-O", "--outfile FILE", String, "Write output to this file") { |opts[:outfile]| }
+#   opt.on("-I", "--infile FILE", String, "Import data into database") { |opts[:infile]| }
+#   opt.on("-c", "--clean-db",String, "Clean out the database / remove all entries") { opts[:action] = "resetdb" }
+#   opt.on("-d", "--dump-db", String, "Perform a dump of the database") { opts[:action] = "dumpdb" }
+#   opt.on("-i", "--import-db", String, "Import data into database") { opts[:action] = "importdb" }
+#   opt.on("-t", "--test",String, "Test only") { opts[:test] = true }
+#   opt.on("-s", "--disaccharides", String, "Filename to read or write disaccharides to/from") { opts[:disaccharide_data] = "disaccharides.xml"}
+#   #opt.on("-d", "--dump-geneinfo", String, "Dump the gene info") { |outfile| Importer.new.write_db_to_file(opts[:outfile]); exit 0 }
+#   #opt.on("-i", "--import-geneinfo", String, "Import set of gene info data") { |infile| Importer.new.read_db_from_file(opts[:infile]); exit 0 }
+# 
+#   opt.parse!
+# 
+# }
+# 
+# @logger.level = opts[:verbose]
+# 
+# importer = Importer.new
+# 
+# importer.test = opts[:test]
+# 
+# case opts[:action]
+#   when "resetdb" then
+#     Importer.new.empty_database
+#   when "dumpdb" then
+#     Importer.new.write_db_to_file(opts[:outfile])
+#     exit 0
+#   when "importdb" then
+#     Importer.new.read_db_from_file(opts[:infile])
+#     exit 0
+# end
