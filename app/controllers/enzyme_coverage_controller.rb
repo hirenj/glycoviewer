@@ -169,7 +169,7 @@ class EnzymeCoverageController < ApplicationController
         max_height = genes.size * 30 + 25
         
         back_el = Element.new('svg:rect')
-        back_el.add_attributes({'x' => x1.to_s, 'y' => y1.to_s, 'rx' => '10', 'ry' => '10', 'width' => '220', 'height' => "#{max_height}", 'stroke' => '#ff0000', 'stroke-width' => '5px', 'fill' => '#ffffff', 'fill-opacity' => '1', 'stroke-opacity' => 0.5 })
+        back_el.add_attributes({'x' => x1.to_s, 'y' => y1.to_s, 'rx' => '10', 'ry' => '10', 'width' => '220', 'height' => "#{max_height}", 'stroke' => '#ff0000', 'stroke-width' => '5px', 'fill' => '#ffffff', 'fill-opacity' => '1', 'stroke-opacity' => '0.5' })
         back_circle = Element.new('svg:svg')
         
         cross_mark_height = genes.size == 0 ? 90 : 58
