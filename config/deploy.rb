@@ -31,7 +31,7 @@ role :db,  "192.168.204.128", :primary => true
 # OPTIONAL VARIABLES
 # =============================================================================
 set :deploy_to, "/var/www/#{application}" # defaults to "/u/apps/#{application}"
-# set :user, "flippy"            # defaults to the currently logged in user
+set :user, "root"            # defaults to the currently logged in user
 # set :scm, :darcs               # defaults to :subversion
 # set :svn, "/path/to/svn"       # defaults to searching the PATH
 # set :darcs, "/path/to/darcs"   # defaults to searching the PATH

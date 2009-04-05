@@ -28,7 +28,7 @@ test:
 
 production:
   adapter: mysql
-  database: enzymedb 
-  username: enzymedb
-  password: enzymedb
+  database: enzymedb_production 
+  username: enzymedb_production
+  password: enzymedb_production
   host: localhost
