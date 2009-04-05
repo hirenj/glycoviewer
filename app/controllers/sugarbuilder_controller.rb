@@ -68,7 +68,7 @@ class SugarbuilderController < ApplicationController
         xcenter = -1*(res.center[:x]) 
         ycenter = -1*(res.center[:y])
         target = Element.new('svg:circle')
-        target.add_attributes({ 'cx' => xcenter, 'cy' => ycenter, 'r'=> 100, 'fill' => 'red', 'style' => 'opacity:0.01' })
+        target.add_attributes({ 'cx' => xcenter.to_s, 'cy' => ycenter.to_s, 'r'=> '100', 'fill' => 'red', 'style' => 'opacity:0.01' })
         target.add_attribute('linkid',@sugar.get_attachment_point_path_to_root(res).reverse.join(','))
         target.add_attribute('class','drop_target')
         targets.add_element(target)
