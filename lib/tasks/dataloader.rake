@@ -1,5 +1,3 @@
-require 'importer'
-
 namespace :enzymedb do
   desc "Export basic data from the database"
   task :dumpdb, :outfile, :needs => :environment do |t,args|
