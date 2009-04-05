@@ -3,17 +3,21 @@
 <p><%= SugarHelper.ConvertToIupac @reaction.endstructure %></p>
 <p><%= @reaction.evidence %></p>
 <p><%= @reaction.checked_evidence %></p>
-<h2>Encoded in</h2>
+<% if @reaction.genes.size > 0 %>
+<h2>Encoded in the following genes</h2>
 <ul>
 <% for gene in @reaction.genes %>
 	<li><%= link_to gene.genename, :controller => 'geneinfos', :action => "associate", :id => gene %></li>
 <% end %>
 </ul>
-<h2>Participating in</h2>
+<% end %>
+<% if @reaction.pathway %>
+<h2>Participating in the following pathways</h2>
 <ul>
 <% for pathway in (@reaction.pathway || '').split(',') %>
 <li><%= link_to pathway, :controller => "reactions", :action => 'pathway', :id => pathway %></li>
 <% end %>
 </ul>
+<% end %>
 <%= link_to 'Edit', :action => 'edit', :id => @reaction %> |
 <%= link_to 'Back', :action => 'list' %>
