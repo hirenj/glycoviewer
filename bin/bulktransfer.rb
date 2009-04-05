@@ -356,6 +356,7 @@ ARGV.options {
   opt.on("-h", "--help", "This text") { puts opt; exit 0 }
   opt.on("-O", "--outfile FILE", String, "Write output to this file") { |opts[:outfile]| }
   opt.on("-I", "--infile FILE", String, "Import data into database") { |opts[:infile]| }
+  opt.on("-c", "--clean-db",String, "Clean out the database / remove all entries") { opts[:action] = "resetdb" }
   opt.on("-d", "--dump-db", String, "Perform a dump of the database") { opts[:action] = "dumpdb" }
   opt.on("-i", "--import-db", String, "Import data into database") { opts[:action] = "importdb" }
   opt.on("-t", "--test",String, "Test only") { opts[:test] = true }
