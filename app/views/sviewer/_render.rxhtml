@@ -1,0 +1,20 @@
+<%#
+Scale can be nil, :auto, or a number < 1
+%>
+<%#
+Padding can be nil, or a number > 0
+%>
+
+<% 
+	options = {}
+	if defined? scale && scale != nil
+		options[:width] = scale
+	end
+	if defined? padding && padding != nil
+		options[:padding] = padding
+	end
+	if defined? scheme && scheme != nil
+		options[:sugarscheme] = scheme
+	end
+%>
+<%= write_sugar(@sugar, options) %>
