@@ -123,10 +123,15 @@ def build_db_connection
 end
 
 def empty_database
+  ActiveRecord::Base.logger.info("\e[1F\e[KWiping EnzymeReactions")
   EnzymeReaction.find(:all).each { |er| er.destroy }
+  ActiveRecord::Base.logger.info("\e[1F\e[KWiping Disaccharides")
   Disaccharide.find(:all).each { |d| d.destroy }
+  ActiveRecord::Base.logger.info("\e[1F\e[KWiping Geneinfos")
   Geneinfo.find(:all).each { |g| g.destroy }
+  ActiveRecord::Base.logger.info("\e[1F\e[KWiping Enzymeinfos")
   Enzymeinfo.find(:all).each { |e| e.destroy }
+  ActiveRecord::Base.logger.info("\e[1F\e[KWiping Reactions")
   Reaction.find(:all).each { |r| r.destroy }
 end
 
@@ -254,7 +259,7 @@ def read_db_from_file(filename)
     next if test
 
     if reac.save()
-      ActiveRecord::Base.logger.debug("Stored EnzymeReaction #{reac.id}")
+      ActiveRecord::Base.logger.info("\e[1F\e[KStored EnzymeReaction #{reac.id}")
     else
       ActiveRecord::Base.logger.debug("Error storing EnzymeReaction")
       reac.errors.each_full { |message| 
@@ -268,7 +273,7 @@ def read_db_from_file(filename)
     next if test
 
     if reac.save()
-      ActiveRecord::Base.logger.debug("Stored Reaction #{reac.id}")
+      ActiveRecord::Base.logger.info("\e[1F\e[KStored Reaction #{reac.id}")
     else
       ActiveRecord::Base.logger.debug("Error storing Reaction")
       reac.errors.each_full { |message| 
@@ -282,7 +287,7 @@ def read_db_from_file(filename)
     next if test
     
     if gene.save()
-      ActiveRecord::Base.logger.debug("Stored Geneinfo #{gene.id}")
+      ActiveRecord::Base.logger.info("\e[1F\e[KStored Geneinfo #{gene.id}")
     else
       ActiveRecord::Base.logger.debug("Error storing Geneinfo")
       gene.errors.each_full { |message| 
@@ -297,7 +302,7 @@ def read_db_from_file(filename)
     next if test
     
     if enzyme.save()
-      ActiveRecord::Base.logger.debug("Stored Enzymeinfo #{enzyme.id}")
+      ActiveRecord::Base.logger.info("\e[1F\e[KStored Enzymeinfo #{enzyme.id}")
     else
       ActiveRecord::Base.logger.debug("Error storing Enzymeinfo")
       enzyme.errors.each_full { |message| 
@@ -314,7 +319,7 @@ def read_db_from_file(filename)
     next if test
 
     if disac.save()
-      ActiveRecord::Base.logger.debug("Stored Disaccharide #{disac.id}")
+      ActiveRecord::Base.logger.info("\e[1F\e[KStored Disaccharide #{disac.id}")
     else
       ActiveRecord::Base.logger.debug("Error storing Disaccharide")
       reac.errors.each_full { |message| 
