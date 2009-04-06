@@ -23,9 +23,9 @@ set :repository, "http://glycoenzyme.googlecode.com/svn/trunk/"
 # be used to single out a specific subset of boxes in a particular role, like
 # :primary => true.
 
-role :web, "192.168.204.128"
-role :app, "192.168.204.128"
-role :db,  "192.168.204.128", :primary => true
+role :web, "192.168.166.129"
+role :app, "192.168.166.129"
+role :db,  "192.168.166.129", :primary => true
 
 # =============================================================================
 # OPTIONAL VARIABLES
@@ -73,11 +73,13 @@ task :backup, :roles => :db, :only => { :primary => true } do
   end
 end
 
+set :rakefile, nil
 desc <<DESC
 Load database. Populate the reactions, gene information and discaccharides into the database
 DESC
 task :populatedata, :roles => :web do
-  run "#{release_path}/bulktransfer --import-db --infile db-dump"
+  set :rakefile, "-f #{current_path}/lib/tasks/dataloader.rake"
+  run_remote_rake "enzymedb:loaddb"
 end
 # Tasks may take advantage of several different helper methods to interact
 # with the remote server(s). These are:
