@@ -223,6 +223,14 @@ class GlycodbsController < StructureSummaryController
     }
   end
 
+  def markup_sugarset(sugarset)
+    sugarset.each { |sugar|
+      markup_chains(sugar)
+      markup_branch_points(sugar)
+      markup_reference_counts(sugar)        
+    }
+  end
+
   def execute_coverage_for_sequence_set(sequences,prune_structure=true)
     seq_counter = 0
 
@@ -254,9 +262,11 @@ class GlycodbsController < StructureSummaryController
           end
           
           res.initialise_counter(:id)
+          res.get_counter(:id)
           res.increment_counter(glycodb.id,:id)
 
           res.initialise_counter(:ref)
+          res.get_counter(:ref)
           glycodb.references.split(',').each { |ref|
             res.increment_counter(ref,:ref)
           }

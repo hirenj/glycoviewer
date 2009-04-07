@@ -9,7 +9,7 @@ module HitCounter
   end
   
   def counter_keys
-    initialise_counter
+    initialise_counter unless @counters
     return @counters.keys
   end
 
@@ -27,18 +27,18 @@ module HitCounter
   end
   
   def get_counter(id_key=:id)
-    initialise_counter(id_key)
+    initialise_counter unless @counters
     @counters[id_key]
   end
   
   def merge_counter(other_residue,id_key=:id)
-    @counters[id_key] += other_residue.get_counter(id_key)
+    @counters[id_key].concat(other_residue.get_counter(id_key))
     @counters[id_key].uniq!
   end
   
   MATCH_BLOCK = lambda { |residue,other_res,matched_yet|
     if residue.equals?(other_res)
-      if ! matched_yet
+      if ! matched_yet && residue.is_a?(HitCounter)
         residue.counter_keys.each { |key|
           residue.merge_counter(other_res,key)
         }
@@ -181,7 +181,7 @@ module SummaryStatisticCollectors
   def fuc_collector
     rc = ResultCollector.new(:terminal_fucoses) { |sug,sugar|
       all_leaves = sug.leaves
-      fuc_leaves = all_leaves.select { |r| r.name(:ic) == 'Fuc' }
+      fuc_leaves = all_leaves.select { |r| r.name(:ic) == 'Fuc' && r != sug.root }
 
       fuc_leaves.select { |fuc| fuc.siblings.reject { |r| r.anomer == 'a' && ['Gal','GalNAc'].include?(r.name(:ic))}.size == 0 }.collect { |fuc|
         sugar.find_residue_by_unambiguous_path(sug.get_unambiguous_path_to_root(fuc).reverse)
@@ -255,13 +255,13 @@ class StructureSummaryController < ApplicationController
       
   end
   
-  def perform_pruning
+  def perform_pruning(sugar)
   end
 
   def execute_summary_for_sugars(individual_sugars,prune_structure=true)
     return unless individual_sugars
     
-    sugar_sets = individual_sugars.group_by { |s| s.root.name }.collect { |name,sugs| sugs }
+    sugar_sets = individual_sugars.sort_by{ |s| s.root.name }.group_by { |s| s.root.name }.collect { |name,sugs| sugs }
 
     return sugar_sets.collect { |sugar_set|
 
@@ -277,6 +277,9 @@ class StructureSummaryController < ApplicationController
         if sug != sugar
           sug.extend(CachingSugar)
           sugar.union!(sug,&HitCounter::MATCH_BLOCK)
+          sugar.residue_composition.each { |r|
+              r.get_counter(:genes)
+          }
         end
 
         (statistic_collectors || []).each { |collector|
@@ -304,7 +307,6 @@ class StructureSummaryController < ApplicationController
         
         collector.reset
       }
-
       sugar
     }.compact
   end
@@ -312,8 +314,6 @@ class StructureSummaryController < ApplicationController
   def markup_sugarset(sugarset)
     sugarset.each { |sugar|
       markup_chains(sugar)
-      markup_branch_points(sugar)
-      markup_reference_counts(sugar)        
     }
   end
 

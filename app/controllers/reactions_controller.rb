@@ -157,11 +157,46 @@ class ReactionsController < ApplicationController
     if params[:filter] && params[:filter][:downstreamgene]
       gene = Geneinfo.easyfind(:keywords => params[:filter][:downstreamgene], :fieldnames => ['genename']).first
       @reactions.delete_if { |r| ! r.genes.include?(gene) }
+      make_summary_sugar
     else
+      make_summary_sugar
       @reactions.delete_if { |r| r.parent != nil }
     end
-    
+
     @reactions
+  end
+  def make_summary_sugar
+    summary_maker = StructureSummaryController.new()
+    input_sugars = @reactions.collect { |r|
+      end_sug = SugarHelper.CreateMultiSugar(r.endstructure)
+      start_sug = SugarHelper.CreateSugar(r.substrate)
+      end_sug.residue_composition.each { |res|
+        res.extend(HitCounter)
+        res.initialise_counter
+        res.get_counter(:genes)
+      }
+      end_sug.subtract(start_sug).each { |donor|
+        r.genes.each { |gene|
+          donor.increment_counter(gene,:genes)
+        }
+      }
+      end_sug.root.anomer = 'u'
+      end_sug
+    }
+    @sugars = summary_maker.execute_summary_for_sugars(input_sugars,false)
+    summary_maker.markup_sugarset(@sugars)
+    @sugars.each { |sug|
+      sug.callbacks << lambda { |element,renderer|
+        container_element = Element.new('svg:g')
+        sug.overlays << container_element
+        sug.residue_composition.each { |res|
+          next unless res.parent
+          if res.get_counter(:genes).size > 0 && ! res.is_stub?
+            res.linkage_at_position.callbacks << renderer.callback_make_element_label(container_element,res.linkage_at_position,res.get_counter(:genes).collect { |g| g.genename },'#0000ff')
+          end
+        }
+      }
+    }
   end
 
   def pathway_index

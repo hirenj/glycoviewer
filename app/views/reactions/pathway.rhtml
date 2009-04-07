@@ -1,4 +1,14 @@
 <%= @reactions.size %>
+<% if @sugars %>
+<% for sugar in @sugars %>
+<% @sugar = sugar %>
+<div style="position: relative; overflow: auto; height: 400px; width: 100%;">
+<%= render :partial => "sviewer/render", :locals => { :sugar => @sugar, :padding => 200, :scheme => :composite } %>
+</div>
+<% end %>
+<% end %>
+<div>
 <% for reaction in @reactions %>
 <%= render :partial => "path_element", :locals => { :reaction => reaction } %>
 <% end %>
+</div>

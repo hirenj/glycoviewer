@@ -230,6 +230,10 @@ class EnzymeCoverageController < ApplicationController
 
     if res.name(:ic) == 'Fuc' # And parent is in chain
 
+      if ! res.parent # Root Fucose
+        return true
+      end
+
       if res.parent.name(:ic) == 'GlcNAc'
         if res.paired_residue_position == 3 || res.paired_residue_position == 4
           return true
@@ -440,9 +444,19 @@ class EnzymeCoverageController < ApplicationController
     end    
   end
 
+    
   def execute_genecoverage(tissue_name)
     @genes = Enzymeinfo.find(:all, :conditions => ['mesh_tissue = :mesh_tissue', { :mesh_tissue => tissue_name }]).collect { |e| e.geneinfo }.uniq
     @genes = @genes + ['ALG1','ALG2','ALG3','ALG12','ALG13','ALG14'].collect { |name| Geneinfo.find(:first, :conditions => { :genename => name } ) }
+    return execute_against_genelist()
+  end
+
+  def execute_reactioncoverage(reactions)
+    @genes = reactions.collect { |r| r.genes }.flatten.uniq
+    return execute_against_genelist()    
+  end
+
+  def execute_against_genelist()
     bad_linkages = []
     @disacs_cache ||= {}
     disac_seq_cache = {}
@@ -470,7 +484,7 @@ class EnzymeCoverageController < ApplicationController
       if (linkage_genes - @genes).size == linkage_genes.size
         bad_linkages += links
         bad_linkages.each { |link|
-          link.invalidate
+          link.is_a?(ValidityTest) && link.invalidate
         }
 
       end
