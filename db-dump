@@ -3639,7 +3639,7 @@ LIN
 </substrate>
 </reaction><refs type='array'>
   <ref>
-    <desc nil='true'/>
+    <desc/>
     <enzyme-reaction-id type='integer'>54</enzyme-reaction-id>
     <id type='integer'>7</id>
     <pmid type='integer'>14724282</pmid>
@@ -9113,182 +9113,6 @@ LIN
   <id type='integer'>82</id>
   <mimid>601774</mimid>
   <synonyms>GNT-V</synonyms>
-</geneinfo></enzymeinfo><reaction>
-  <checked-evidence nil='true'/>
-  <endstructure>RES
-1b:u-asn;
-2b:a-dmanp;
-3b:a-dmanp;
-4b:b-dglcp;
-5b:b-dglcp;
-6b:b-dglcp;
-7b:b-dglcp;
-8b:b-dglcp;
-9b:b-dglcp;
-10b:b-dmanp;
-11s:nac;
-LIN
-1:1(u-1)4;
-2:4(4-1)7;
-3:7(4-1)10;
-4:10(3-1)2;
-5:10(6-1)3;
-6:2(2-1)5;
-7:2(4-1)8;
-8:3(2-1)6;
-9:3(6-1)9;
-10:4o(2-1)11;
-11:5o(2-1)11;
-12:6o(2-1)11;
-13:7o(2-1)11;
-14:8o(2-1)11;
-15:9o(2-1)11;
-</endstructure>
-  <evidence/>
-  <id type='integer'>88</id>
-  <kegg-id nil='true'/>
-  <pathway nil='true'/>
-  <residuedelta>RES
-1b:u-dmanp;
-2b:b-dglcp;
-3s:nac;
-LIN
-1:1(6-1)2;
-2:2o(2-1)3;
-</residuedelta>
-  <substrate>RES
-1b:u-asn;
-2b:a-dmanp;
-3b:a-dmanp;
-4b:b-dglcp;
-5b:b-dglcp;
-6b:b-dglcp;
-7b:b-dglcp;
-8b:b-dglcp;
-9b:b-dmanp;
-10s:nac;
-LIN
-1:1(u-1)4;
-2:4(4-1)7;
-3:7(4-1)9;
-4:9(3-1)2;
-5:9(6-1)3;
-6:2(2-1)5;
-7:2(4-1)8;
-8:3(2-1)6;
-9:4o(2-1)10;
-10:5o(2-1)10;
-11:6o(2-1)10;
-12:7o(2-1)10;
-13:8o(2-1)10;
-</substrate>
-</reaction><nil-classes type='array'/></enzyme-reaction><enzyme-reaction>
-  <enzymeinfo-id type='integer'>83</enzymeinfo-id>
-  <id type='integer'>152</id>
-  <reaction-id type='integer'>87</reaction-id>
-<enzymeinfo>
-  <cazyid nil='true'/>
-  <ecid nil='true'/>
-  <geneinfo-id type='integer'>83</geneinfo-id>
-  <id type='integer'>83</id>
-  <mesh-tissue nil='true'/>
-  <ncbi-taxonomy nil='true'/>
-  <record-class>gene</record-class>
-  <uprot-description nil='true'/>
-  <uprot-name nil='true'/>
-  <uprot-organism nil='true'/>
-  <uprotid nil='true'/>
-<geneinfo>
-  <geneid type='integer' nil='true'/>
-  <genename>MGAT9</genename>
-  <id type='integer'>83</id>
-  <mimid nil='true'/>
-  <synonyms nil='true'/>
-</geneinfo></enzymeinfo><reaction>
-  <checked-evidence nil='true'/>
-  <endstructure>RES
-1b:u-asn;
-2b:a-dmanp;
-3b:a-dmanp;
-4b:b-dglcp;
-5b:b-dglcp;
-6b:b-dglcp;
-7b:b-dglcp;
-8b:b-dglcp;
-9b:b-dmanp;
-10s:nac;
-LIN
-1:1(u-1)4;
-2:4(4-1)7;
-3:7(4-1)9;
-4:9(3-1)2;
-5:9(6-1)3;
-6:2(2-1)5;
-7:2(4-1)8;
-8:3(2-1)6;
-9:4o(2-1)10;
-10:5o(2-1)10;
-11:6o(2-1)10;
-12:7o(2-1)10;
-13:8o(2-1)10;
-</endstructure>
-  <evidence/>
-  <id type='integer'>87</id>
-  <kegg-id nil='true'/>
-  <pathway nil='true'/>
-  <residuedelta>RES
-1b:u-dmanp;
-2b:b-dglcp;
-3s:nac;
-LIN
-1:1(4-1)2;
-2:2o(2-1)3;
-</residuedelta>
-  <substrate>RES
-1b:u-asn;
-2b:a-dmanp;
-3b:a-dmanp;
-4b:b-dglcp;
-5b:b-dglcp;
-6b:b-dglcp;
-7b:b-dglcp;
-8b:b-dmanp;
-9s:nac;
-LIN
-1:1(u-1)4;
-2:4(4-1)7;
-3:7(4-1)8;
-4:8(3-1)2;
-5:8(6-1)3;
-6:2(2-1)5;
-7:3(2-1)6;
-8:4o(2-1)9;
-9:5o(2-1)9;
-10:6o(2-1)9;
-11:7o(2-1)9;
-</substrate>
-</reaction><nil-classes type='array'/></enzyme-reaction><enzyme-reaction>
-  <enzymeinfo-id type='integer'>83</enzymeinfo-id>
-  <id type='integer'>153</id>
-  <reaction-id type='integer'>88</reaction-id>
-<enzymeinfo>
-  <cazyid nil='true'/>
-  <ecid nil='true'/>
-  <geneinfo-id type='integer'>83</geneinfo-id>
-  <id type='integer'>83</id>
-  <mesh-tissue nil='true'/>
-  <ncbi-taxonomy nil='true'/>
-  <record-class>gene</record-class>
-  <uprot-description nil='true'/>
-  <uprot-name nil='true'/>
-  <uprot-organism nil='true'/>
-  <uprotid nil='true'/>
-<geneinfo>
-  <geneid type='integer' nil='true'/>
-  <genename>MGAT9</genename>
-  <id type='integer'>83</id>
-  <mimid nil='true'/>
-  <synonyms nil='true'/>
 </geneinfo></enzymeinfo><reaction>
   <checked-evidence nil='true'/>
   <endstructure>RES
@@ -21831,7 +21655,7 @@ LIN
 </substrate>
 </reaction><refs type='array'>
   <ref>
-    <desc nil='true'/>
+    <desc/>
     <enzyme-reaction-id type='integer'>317</enzyme-reaction-id>
     <id type='integer'>1</id>
     <pmid type='integer'>11980897</pmid>
@@ -21918,7 +21742,7 @@ LIN
 </substrate>
 </reaction><refs type='array'>
   <ref>
-    <desc nil='true'/>
+    <desc/>
     <enzyme-reaction-id type='integer'>318</enzyme-reaction-id>
     <id type='integer'>2</id>
     <pmid type='integer'>11980897</pmid>
@@ -22029,7 +21853,7 @@ LIN
 </substrate>
 </reaction><refs type='array'>
   <ref>
-    <desc nil='true'/>
+    <desc/>
     <enzyme-reaction-id type='integer'>320</enzyme-reaction-id>
     <id type='integer'>3</id>
     <pmid type='integer'>16909395</pmid>
@@ -22123,7 +21947,7 @@ LIN
 </substrate>
 </reaction><refs type='array'>
   <ref>
-    <desc nil='true'/>
+    <desc/>
     <enzyme-reaction-id type='integer'>321</enzyme-reaction-id>
     <id type='integer'>5</id>
     <pmid type='integer'>12941944</pmid>
@@ -22197,7 +22021,7 @@ LIN
 </substrate>
 </reaction><refs type='array'>
   <ref>
-    <desc nil='true'/>
+    <desc/>
     <enzyme-reaction-id type='integer'>322</enzyme-reaction-id>
     <id type='integer'>6</id>
     <pmid type='integer'>12678917</pmid>
@@ -22270,7 +22094,7 @@ LIN
 </substrate>
 </reaction><refs type='array'>
   <ref>
-    <desc nil='true'/>
+    <desc/>
     <enzyme-reaction-id type='integer'>323</enzyme-reaction-id>
     <id type='integer'>8</id>
     <pmid type='integer'>14724282</pmid>
@@ -22339,7 +22163,7 @@ LIN
 </substrate>
 </reaction><refs type='array'>
   <ref>
-    <desc nil='true'/>
+    <desc/>
     <enzyme-reaction-id type='integer'>324</enzyme-reaction-id>
     <id type='integer'>9</id>
     <pmid type='integer'>14724282</pmid>
@@ -22462,7 +22286,7 @@ LIN
 </substrate>
 </reaction><refs type='array'>
   <ref>
-    <desc nil='true'/>
+    <desc/>
     <enzyme-reaction-id type='integer'>326</enzyme-reaction-id>
     <id type='integer'>10</id>
     <pmid type='integer'>10430883</pmid>
@@ -22534,7 +22358,7 @@ LIN
 </substrate>
 </reaction><refs type='array'>
   <ref>
-    <desc nil='true'/>
+    <desc/>
     <enzyme-reaction-id type='integer'>327</enzyme-reaction-id>
     <id type='integer'>11</id>
     <pmid type='integer'>10430883</pmid>
@@ -22600,7 +22424,7 @@ LIN
 </substrate>
 </reaction><refs type='array'>
   <ref>
-    <desc nil='true'/>
+    <desc/>
     <enzyme-reaction-id type='integer'>328</enzyme-reaction-id>
     <id type='integer'>12</id>
     <pmid type='integer'>10430883</pmid>
@@ -22666,7 +22490,7 @@ LIN
 </substrate>
 </reaction><refs type='array'>
   <ref>
-    <desc nil='true'/>
+    <desc/>
     <enzyme-reaction-id type='integer'>329</enzyme-reaction-id>
     <id type='integer'>13</id>
     <pmid type='integer'>10430883</pmid>
@@ -22729,7 +22553,7 @@ LIN
 </substrate>
 </reaction><refs type='array'>
   <ref>
-    <desc nil='true'/>
+    <desc/>
     <enzyme-reaction-id type='integer'>330</enzyme-reaction-id>
     <id type='integer'>14</id>
     <pmid type='integer'>10430883</pmid>
@@ -22792,7 +22616,7 @@ LIN
 </substrate>
 </reaction><refs type='array'>
   <ref>
-    <desc nil='true'/>
+    <desc/>
     <enzyme-reaction-id type='integer'>331</enzyme-reaction-id>
     <id type='integer'>15</id>
     <pmid type='integer'>11821425</pmid>
@@ -34876,87 +34700,6 @@ LIN
 10:6o(2-1)8;
 </substrate>
 </reaction><nil-classes type='array'/></enzyme-reaction><enzyme-reaction>
-  <enzymeinfo-id type='integer'>83</enzymeinfo-id>
-  <id type='integer'>498</id>
-  <reaction-id type='integer'>321</reaction-id>
-<enzymeinfo>
-  <cazyid nil='true'/>
-  <ecid nil='true'/>
-  <geneinfo-id type='integer'>83</geneinfo-id>
-  <id type='integer'>83</id>
-  <mesh-tissue nil='true'/>
-  <ncbi-taxonomy nil='true'/>
-  <record-class>gene</record-class>
-  <uprot-description nil='true'/>
-  <uprot-name nil='true'/>
-  <uprot-organism nil='true'/>
-  <uprotid nil='true'/>
-<geneinfo>
-  <geneid type='integer' nil='true'/>
-  <genename>MGAT9</genename>
-  <id type='integer'>83</id>
-  <mimid nil='true'/>
-  <synonyms nil='true'/>
-</geneinfo></enzymeinfo><reaction>
-  <checked-evidence nil='true'/>
-  <endstructure>RES
-1b:u-dglcp;
-2b:a-dmanp;
-3b:a-dmanp;
-4b:b-dglcp;
-5b:b-dglcp;
-6b:b-dglcp;
-7b:b-dglcp;
-8b:b-dmanp;
-9s:nac;
-LIN
-1:1(4-1)6;
-2:6(4-1)8;
-3:8(3-1)2;
-4:8(6-1)3;
-5:2(2-1)4;
-6:2(4-1)7;
-7:3(2-1)5;
-8:1o(2-1)9;
-9:4o(2-1)9;
-10:5o(2-1)9;
-11:6o(2-1)9;
-12:7o(2-1)9;
-</endstructure>
-  <evidence/>
-  <id type='integer'>321</id>
-  <kegg-id>rn:R05987</kegg-id>
-  <pathway>hsa00510</pathway>
-  <residuedelta>RES
-1b:u-dmanp;
-2b:b-dglcp;
-3s:nac;
-LIN
-1:1(4-1)2;
-2:2o(2-1)3;
-</residuedelta>
-  <substrate>RES
-1b:u-dglcp;
-2b:a-dmanp;
-3b:a-dmanp;
-4b:b-dglcp;
-5b:b-dglcp;
-6b:b-dglcp;
-7b:b-dmanp;
-8s:nac;
-LIN
-1:1(4-1)6;
-2:6(4-1)7;
-3:7(3-1)2;
-4:7(6-1)3;
-5:2(2-1)4;
-6:3(2-1)5;
-7:1o(2-1)8;
-8:4o(2-1)8;
-9:5o(2-1)8;
-10:6o(2-1)8;
-</substrate>
-</reaction><nil-classes type='array'/></enzyme-reaction><enzyme-reaction>
   <enzymeinfo-id type='integer'>82</enzymeinfo-id>
   <id type='integer'>499</id>
   <reaction-id type='integer'>322</reaction-id>
@@ -34978,93 +34721,6 @@ LIN
   <id type='integer'>82</id>
   <mimid>601774</mimid>
   <synonyms>GNT-V</synonyms>
-</geneinfo></enzymeinfo><reaction>
-  <checked-evidence nil='true'/>
-  <endstructure>RES
-1b:u-dglcp;
-2b:a-dmanp;
-3b:a-dmanp;
-4b:b-dglcp;
-5b:b-dglcp;
-6b:b-dglcp;
-7b:b-dglcp;
-8b:b-dglcp;
-9b:b-dmanp;
-10s:nac;
-LIN
-1:1(4-1)6;
-2:6(4-1)9;
-3:9(3-1)2;
-4:9(6-1)3;
-5:2(2-1)4;
-6:2(4-1)7;
-7:3(2-1)5;
-8:3(6-1)8;
-9:1o(2-1)10;
-10:4o(2-1)10;
-11:5o(2-1)10;
-12:6o(2-1)10;
-13:7o(2-1)10;
-14:8o(2-1)10;
-</endstructure>
-  <evidence/>
-  <id type='integer'>322</id>
-  <kegg-id>rn:R05991</kegg-id>
-  <pathway>hsa00510</pathway>
-  <residuedelta>RES
-1b:u-dmanp;
-2b:b-dglcp;
-3s:nac;
-LIN
-1:1(6-1)2;
-2:2o(2-1)3;
-</residuedelta>
-  <substrate>RES
-1b:u-dglcp;
-2b:a-dmanp;
-3b:a-dmanp;
-4b:b-dglcp;
-5b:b-dglcp;
-6b:b-dglcp;
-7b:b-dglcp;
-8b:b-dmanp;
-9s:nac;
-LIN
-1:1(4-1)6;
-2:6(4-1)8;
-3:8(3-1)2;
-4:8(6-1)3;
-5:2(2-1)4;
-6:2(4-1)7;
-7:3(2-1)5;
-8:1o(2-1)9;
-9:4o(2-1)9;
-10:5o(2-1)9;
-11:6o(2-1)9;
-12:7o(2-1)9;
-</substrate>
-</reaction><nil-classes type='array'/></enzyme-reaction><enzyme-reaction>
-  <enzymeinfo-id type='integer'>83</enzymeinfo-id>
-  <id type='integer'>500</id>
-  <reaction-id type='integer'>322</reaction-id>
-<enzymeinfo>
-  <cazyid nil='true'/>
-  <ecid nil='true'/>
-  <geneinfo-id type='integer'>83</geneinfo-id>
-  <id type='integer'>83</id>
-  <mesh-tissue nil='true'/>
-  <ncbi-taxonomy nil='true'/>
-  <record-class>gene</record-class>
-  <uprot-description nil='true'/>
-  <uprot-name nil='true'/>
-  <uprot-organism nil='true'/>
-  <uprotid nil='true'/>
-<geneinfo>
-  <geneid type='integer' nil='true'/>
-  <genename>MGAT9</genename>
-  <id type='integer'>83</id>
-  <mimid nil='true'/>
-  <synonyms nil='true'/>
 </geneinfo></enzymeinfo><reaction>
   <checked-evidence nil='true'/>
   <endstructure>RES
