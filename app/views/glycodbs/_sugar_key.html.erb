@@ -1,6 +1,6 @@
 <div id="sugar_key">
 	<div id="sugar_key_image" style="width: 50%; float: left;">
-		<% @sugar = @key_sugar %>
+		<% @sugar = generate_key_sugar() %>
 		<%= render :partial => "sviewer/render", :locals => { :sugar => @sugar, :padding => 30, :scheme => :composite } %>
 	</div>
 <div style="margin-left: 52%; width: 47%;">

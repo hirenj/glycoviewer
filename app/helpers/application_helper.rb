@@ -23,6 +23,60 @@ module ApplicationHelper
     SugarHelper.ConvertResidueName(:ecdb,res_string,:ic)
   end
 
+  def generate_key_sugar()
+      key_sug = SugarHelper.CreateMultiSugar('NeuAc(a2-6)[GalNAc(a1-3)]Gal(b1-3)[Fuc(a1-4)]GlcNAc(b1-3)[Fuc(a1-3)[Fuc(a1-2)[NeuAc(a2-3)][Gal(a1-3)]Gal(b1-4)GlcNAc(b1-3)Gal(b1-4)]GlcNAc(b1-6)]Gal(b1-3)[Fuc(a1-6)]GlcNAc',:ic)
+
+      SugarHelper.MakeRenderable(key_sug)        
+
+      all_gals = key_sug.residue_composition.select { |r| r.name(:ic) == 'Gal' && r.parent && r.parent.name(:ic) == 'GlcNAc' }
+      type_i = all_gals.select { |r| r.paired_residue_position == 3 }
+      type_ii = all_gals.select { |r| r.paired_residue_position == 4 }
+      all_glcnacs = key_sug.residue_composition.select { |r| r.name(:ic) == 'GlcNAc' && r.parent && r.parent.name(:ic) == 'Gal' }
+      type_i_glcnac = all_glcnacs.select { |r| (r.paired_residue_position == 3) && r.parent.paired_residue_position == 3 }
+      type_ii_glcnac = all_glcnacs.select { |r| (r.paired_residue_position == 3) && r.parent.paired_residue_position == 4 }
+      branching = all_glcnacs.select { |r| r.paired_residue_position == 6 }
+
+      labelled_stuff =
+      [ key_sug.find_residue_by_linkage_path([3,6,4,3,4]), # Neuac a2-3 sialylation and Fuc(a1-2)
+        key_sug.find_residue_by_linkage_path([3,3,3]), # Neuac a2-6 sialylation
+        key_sug.find_residue_by_linkage_path([3,3]).linkage_at_position, # Type 1 chain
+        key_sug.find_residue_by_linkage_path([3,6,4]).linkage_at_position, # Type 2 chain
+        key_sug.find_residue_by_linkage_path([3,6]).linkage_at_position, # 6-Branching
+        key_sug.find_residue_by_linkage_path([3,3]), # Fuc(a1-4)
+        key_sug.find_residue_by_linkage_path([3,6]), # Fuc(a1-3)
+        key_sug.find_residue_by_linkage_path([]) # Fuc(a1-6)
+      ]
+
+      labelled_stuff = labelled_stuff.zip(('a'..'z').to_a[0..(labelled_stuff.size-1)])
+
+
+      key_sug.callbacks << lambda { |sug_root,renderer|
+        renderer.chain_background_width = 20
+        renderer.chain_background_padding = 65
+        renderer.render_simplified_chains(key_sug,[type_i+type_i_glcnac],'sugar_chain sugar_chain_type_i','#FFEFD8')
+        renderer.render_simplified_chains(key_sug,[type_ii+type_ii_glcnac],'sugar_chain sugar_chain_type_ii','#C9F6C6')
+        renderer.render_simplified_chains(key_sug,[branching],'sugar_chain sugar_chain_branching','#C5D3EF')
+        labelled_stuff.each { |thing,lab|
+          next unless thing
+          position = :center
+          ratio = 0.2
+          if thing.kind_of?(Monosaccharide)
+            position = :bottom_right
+            ratio = 0.5
+          end
+          thing.callbacks << renderer.callback_make_object_badge(key_sug.overlays[-1],thing,lab,ratio,position,'#222222')
+        }
+      }
+
+
+      key_sug.residue_composition.each { |r|
+        def r.hits
+          1
+        end
+      }
+      key_sug
+  end
+
   def render_hash_as_bar_chart(labels,values,total_height,fills,neg_fills=[])
     return '' unless labels.size > 0
 

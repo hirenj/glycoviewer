@@ -1,20 +1,20 @@
 <%  
 	counts_keys = [] 
 	counts_values = []
- 	sugar.branch_points_count.each { |branch_count,value|
+ 	sugar.collected_statistics[:branch_points_count].each { |branch_count,value|
        counts_keys << branch_count.to_s
 	   counts_values << 100 * (value || 0).to_f / sugar.root.hits
  	}
 
- 	branch_points = sugar.branch_point_totals.keys.sort_by { |bp| bp.sort_key }
+ 	branch_points = sugar.collected_statistics[:branch_totals_by_point].keys.sort_by { |bp| bp.sort_key }
 %>
 <% for branch_point in branch_points %>
 <div class="single_branch_graph">
 	<div>Branch <%= branch_point.branch_label %></div>
 	<div class="branch_graph_svg">
-		<% self_value = sugar.branch_point_totals[branch_point][branch_point] %>
+		<% self_value = sugar.collected_statistics[:branch_totals_by_point][branch_point][branch_point] %>
 		<%= render_hash_as_bar_chart(branch_points.collect { |k| k.branch_label },branch_points.collect { |k|
-			100.0 * (sugar.branch_point_totals[branch_point][k] || 0).to_f / self_value
+			100.0 * (sugar.collected_statistics[:branch_totals_by_point][branch_point][k] || 0).to_f / self_value
 			},100,['#7C8FBB','#2D50A2'] ) %>
 	</div>
 </div>
@@ -28,7 +28,7 @@
 
 <% 
 	stat_type = ['Sialic','Fucose']
-	stat_data = [sugar.terminal_sialics, sugar.terminal_fucoses]
+	stat_data = [sugar.collected_statistics[:terminal_neuacs], sugar.collected_statistics[:terminal_fucoses]]
 	stat_data.zip(stat_type).each { |stat_array,label|
 %>
 <div class="single_branch_graph">
@@ -54,7 +54,7 @@
 <div class="single_branch_graph">
 <%
 	stat_type = ['NeuAc','Fuc']
-	stats = [sugar.sialic_capping_averages, sugar.fucose_capping_averages].collect { |values|
+	stats = [sugar.collected_statistics[:neuac_capping], sugar.collected_statistics[:fuc_capping]].collect { |values|
 		label = stat_type.shift
 		next unless values.size > 0
 		count = values.size

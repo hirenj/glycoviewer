@@ -94,7 +94,7 @@ data_for_label = {}
 <% 	for sugar in compared_sugars
 		next unless sugar
 	 	(0..@max_branch_point_size).each { |branch_count|
-			value = sugar.branch_points_count[branch_count]
+			value = sugar.collected_statistics[:branch_points_count][branch_count]
 	       	counts_keys << branch_count.to_s
 		   	counts_values << (100 * (value || 0.0001).to_f / sugar.root.hits)  * value_multiplier
 	 	}
@@ -110,18 +110,18 @@ data_for_label = {}
 		
 		for bp_label in all_labels.uniq
 			branch_point = branch_points_by_label[bp_label]
-			if ! sugar.branch_point_totals[branch_point]
+			if ! sugar.collected_statistics[:branch_totals_by_point][branch_point]
 				data_for_label[bp_label] ||= { :labels => [], :values => [] }
 				data_for_label[bp_label][:labels] += all_labels.uniq
 				data_for_label[bp_label][:values] += [0.0001 * value_multiplier]*all_labels.uniq.size
 				next
 			end
-			self_value = sugar.branch_point_totals[branch_point][branch_point]
+			self_value = sugar.collected_statistics[:branch_totals_by_point][branch_point][branch_point]
 			data_for_label[bp_label] ||= { :labels => [], :values => [] }
 			data_for_label[bp_label][:labels] += all_labels.uniq
 			data_for_label[bp_label][:values] += all_labels.uniq.collect { |lab|
 													other_bp = branch_points_by_label[lab]
-													((sugar.branch_point_totals[branch_point][other_bp] || 0.0001).to_f * 100 * value_multiplier / self_value)
+													((sugar.collected_statistics[:branch_totals_by_point][branch_point][other_bp] || 0.0001).to_f * 100 * value_multiplier / self_value)
 												 }
 		end
 		value_multiplier *= -1
