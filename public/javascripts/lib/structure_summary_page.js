@@ -104,7 +104,7 @@ function append_print_branch_graphs(target_document,graph_container) {
 	top_height = (2/3)*doc_height + 1 + 2;
 
 	if (target_document.key_printed) {
-		top_height = (2/3 + 1/6)*doc_height + 2;		
+		top_height = (2/3 + 1/6)*doc_height + 1;		
 	}
 	remaining_size = doc_height - top_height;
 
@@ -121,14 +121,36 @@ function append_print_branch_graphs(target_document,graph_container) {
 	
 	for ( var i in each_graph ) {
 		graph_svg = each_graph[i].getElementsByTagNameNS('http://www.w3.org/2000/svg','svg')[0];
+		if ( ! graph_svg ) {
+			continue;
+		}
+		
 		graph_svg.setAttribute('height',(remaining_size - 0.5)+'cm');
 		graph_svg.setAttribute('preserveAspectRatio','xMinYMid');
+
+		graph_canvas = XHtmlDOM.getElementsByClassName('graph_canvas',graph_svg)[0];
+
+		if (doc_width > doc_height) {
+			curr_viewbox = graph_svg.getAttribute('viewBox');
+			curr_constraints = curr_viewbox.split(' ');
+			curr_width =  parseInt(curr_constraints[2]);
+			curr_height =  parseInt(curr_constraints[3]);
+			center_x = (curr_width + 2*parseInt(curr_constraints[0])) / 2;
+			center_y = (curr_height + 2*parseInt(curr_constraints[1])) / 2;
+
+			new_viewbox = (center_x - (curr_height / 2)) + " " + (center_y - (curr_width / 2)) + " " + curr_constraints[3] + " " + curr_constraints[2]
+		
+			graph_svg.setAttribute('viewBox', new_viewbox);
+
+			graph_canvas.setAttribute('transform','rotate(90,'+center_x+','+center_y+')');
+		}
+		
 		each_graph[i].style.position = 'absolute';
-		each_graph[i].style.left = ((graph_width*i) + 1)+'cm';
+		each_graph[i].style.left = ((graph_width*i) + 0.25)+'cm';
 		each_graph[i].style.top = '0cm';
 		each_graph[i].style.overflow = 'hidden';
-		each_graph[i].style.width = (graph_width - 1)+'cm';
-		each_graph[i].style.height = (remaining_size - 0.5)+'cm';
+		each_graph[i].style.width = (graph_width - 0.25)+'cm';
+		each_graph[i].style.height = (remaining_size - 0.25)+'cm';
 	}
 }
 
@@ -143,7 +165,7 @@ function append_print_svgs(target_document,svgs) {
 		setup_print_single_svg_style(copied_svg,width,height);
 
 		copied_svg.style.left = i*width+'cm';
-		
+				
 		groups = copied_svg.getElementsByTagNameNS('http://www.w3.org/2000/svg','g');
 		
 		for (var i = 0; i < groups.length; i++) {
@@ -168,9 +190,9 @@ function do_printing(svg_element,result_structure_el) {
 
 	graph_container = XHtmlDOM.getElementsByClassName('branch_graphs',result_structure_el.parentNode)[0];
 
-	append_print_branch_graphs(a_window.document,graph_container);
-
 	append_print_document_key(a_window.document);
+
+	append_print_branch_graphs(a_window.document,graph_container);
 	
 }
 
@@ -179,7 +201,7 @@ function do_summary_printing(sugar_result) {
 	
 	report_title = XHtmlDOM.getElementsByClassName('report_title',sugar_result)[0];
 
-	setup_print_document_style(a_window.document,report_title,29,20);
+	setup_print_document_style(a_window.document,report_title,29,21);
 	
 	graph_container = XHtmlDOM.getElementsByClassName('summary_branch_graphs',sugar_result)[0];;
 	

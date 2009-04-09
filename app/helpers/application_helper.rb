@@ -109,6 +109,8 @@ module ApplicationHelper
     plot = Element.new('svg:svg')
   	plot.add_namespace('svg', SVG_ELEMENT_NS)
   	plot.add_attributes('preserveAspectRatio' => 'xMinYMin')
+  	plot_canvas = Element.new('svg:g')
+  	
     min_x = 10
     last_x = min_x - bar_width
 
@@ -132,7 +134,7 @@ module ApplicationHelper
       end
       box = Element.new('svg:rect')      
       box.add_attributes('x' => x_pos.round, 'y' => ((value > 0) ? (max_height - value) : max_height).round, 'height' => value.abs.to_i, 'width' => bar_width, 'fill' => my_fill, 'class' => "bar_#{lab}" )
-      plot.add_element(box)
+      plot_canvas.add_element(box)
       unless x_for_label[lab]
         label = Element.new('svg:text')
         label.add_attributes('x' => x_pos.round, 'y' => label_y_pos.round, 'font-size' => bar_width.round, 'fill' => text_colour)
@@ -141,7 +143,7 @@ module ApplicationHelper
       end
       x_for_label[lab] = x_pos
     }
-    labels.each { |label| plot.add_element(label) }
+    labels.each { |label| plot_canvas.add_element(label) }
     
     label_min = 20 * (-1*(total_height.to_i) / 20)
     if values.min < label_min
@@ -158,15 +160,15 @@ module ApplicationHelper
       tick = Element.new('svg:line')
       tick_end = (y == 0) ? bar_width*labels.size + 15 : 5
       tick.add_attributes('x1' => 0, 'x2' => tick_end, 'y1' => ((total_height - y)).round, 'y2' => ((total_height - y)).round, 'stroke' => '#000000', 'stroke-weight' => '1' ) 
-      plot.add_element(tick)
+      plot_canvas.add_element(tick)
       if true || y == 0 || y > total_height || ((total_height - y) < 20)
         tick_label = Element.new('svg:text')
         tick_label.add_attributes('x' => '-30', 'y' => ((total_height - y) + (bar_width / 3)).round.to_s, 'font-size' => (bar_width / 2).round.to_s )
         tick_label.text = (y < 0 ? -1*y : y).to_s + '% '
-        plot.add_element(tick_label)        
+        plot_canvas.add_element(tick_label)        
       end
     }
-    plot_height = has_negatives ? 2*max_height+bar_width+50 : max_height+bar_width+60
+    plot_height = has_negatives ? 2*max_height+bar_width+50 : max_height+bar_width+70
 
     plot_min_x = -30
     
@@ -175,13 +177,14 @@ module ApplicationHelper
       title = Element.new('svg:text')
       title.add_attributes('x' => '-40', 'y' => "#{y_axis_label_y}", 'transform' => "rotate(-90,-40,#{y_axis_label_y})", 'font-size' => (bar_width / 2).round.to_s, 'text-anchor' => 'middle' )
       title.text = options[:y_axis_label]
-      plot.add_element(title)
+      plot_canvas.add_element(title)
       plot_min_x = -40 -  (bar_width / 2).round
     end
     
     plot_width = ((bar_width * labels.size+10)-1*plot_min_x).to_i    
     
-    
+    plot.add_element(plot_canvas)
+    plot_canvas.add_attributes('class' => 'graph_canvas')
     plot.add_attributes('width' => '100%', 'height' => '100%', 'viewBox' => "#{plot_min_x} #{has_negatives ? -40 : -20} #{plot_width} #{plot_height.to_i}" )
     return plot.to_s
   end
