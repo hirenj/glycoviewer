@@ -137,7 +137,7 @@ module ApplicationHelper
       plot_canvas.add_element(box)
       unless x_for_label[lab]
         label = Element.new('svg:text')
-        label.add_attributes('x' => x_pos.round, 'y' => label_y_pos.round, 'font-size' => bar_width.round, 'fill' => text_colour)
+        label.add_attributes('x' => (x_pos + (bar_width/2)).round, 'text-anchor' => 'middle','y' => label_y_pos.round, 'font-size' => bar_width.round, 'fill' => text_colour)
         label.text = lab
         labels << label
       end
@@ -178,10 +178,23 @@ module ApplicationHelper
       title.add_attributes('x' => '-40', 'y' => "#{y_axis_label_y}", 'transform' => "rotate(-90,-40,#{y_axis_label_y})", 'font-size' => (bar_width / 2).round.to_s, 'text-anchor' => 'middle' )
       title.text = options[:y_axis_label]
       plot_canvas.add_element(title)
-      plot_min_x = -40 -  (bar_width / 2).round
+      plot_min_x = -40 - (bar_width / 2).round
+    end
+
+    plot_width = ((bar_width * labels.size+10)-1*plot_min_x).to_i
+    
+    if options[:label_groups] && has_negatives
+      y_axis_label_y = total_height / 2 
+      for group_label in options[:label_groups]
+        title = Element.new('svg:text')
+        title.add_attributes('x' => "#{plot_width-30}", 'y' => "#{y_axis_label_y}", 'transform' => "rotate(-90,#{plot_width-30},#{y_axis_label_y})", 'font-size' => (bar_width / 2).round.to_s, 'text-anchor' => 'middle' )
+        title.text = group_label
+        plot_canvas.add_element(title)
+        y_axis_label_y += total_height
+      end
+      plot_width += 80
     end
     
-    plot_width = ((bar_width * labels.size+10)-1*plot_min_x).to_i    
     
     plot.add_element(plot_canvas)
     plot_canvas.add_attributes('class' => 'graph_canvas')

@@ -125,7 +125,7 @@ function append_print_branch_graphs(target_document,graph_container) {
 			continue;
 		}
 		
-		graph_svg.setAttribute('height',(remaining_size - 0.5)+'cm');
+//		graph_svg.setAttribute('height',(remaining_size - 0.3)+'cm');
 		graph_svg.setAttribute('preserveAspectRatio','xMinYMid');
 
 		graph_canvas = XHtmlDOM.getElementsByClassName('graph_canvas',graph_svg)[0];
