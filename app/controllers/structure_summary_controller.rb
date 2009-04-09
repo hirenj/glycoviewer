@@ -204,7 +204,7 @@ module SummaryStatisticCollectors
   def neuac_collector
     rc = ResultCollector.new(:terminal_neuacs) { |sug,sugar|
       all_leaves = sug.leaves
-      neuac_leaves = all_leaves.select { |r| r.name(:ic) == 'NeuAc' }
+      neuac_leaves = all_leaves.select { |r| r.name(:ic) == 'NeuAc' && r.parent != nil }
 
       neuac_leaves.select { |neuac| neuac.siblings.reject { |r| ['GalNAc'].include?(r.name(:ic)) }.size == 0 }.collect { |neuac|
         sugar.find_residue_by_unambiguous_path(sug.get_unambiguous_path_to_root(neuac).reverse)

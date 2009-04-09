@@ -8,8 +8,10 @@
 <%= javascript_include_tag 'http://yui.yahooapis.com/2.7.0/build/container/container-min.js' %>
 <%= javascript_include_tag 'http://yui.yahooapis.com/2.7.0/build/tabview/tabview-min.js' %>
 <%= javascript_include_tag 'http://yui.yahooapis.com/2.7.0/build/slider/slider-min.js' %>
+<%= javascript_include_tag 'http://yui.yahooapis.com/2.7.0/build/resize/resize-min.js' %>
 <%= javascript_include_tag 'lib/structure_summary_page.js' %>
 <%= stylesheet_link_tag 'glycodbs/structure_summary.css' %>
+<%= stylesheet_link_tag 'http://yui.yahooapis.com/2.7.0/build/resize/assets/skins/sam/resize.css' %>
 <script type="text/javascript">
 //<![CDATA[
 
@@ -25,6 +27,13 @@
 			connect_buttons(sugar_canvas);		
 
 		}
+
+		sugar_graphs = XHtmlDOM.getElementsByClassName('branch_graphs',document);
+
+		for (a_graph in sugar_graphs) {
+			new YAHOO.util.Resize(sugar_graphs[a_graph], { handles: ['l','bl','b'], autoRatio: true});
+		}
+
 		build_tabs();
 	}
 		
@@ -52,8 +61,10 @@
 <div class="branch_points_data" style="position: relative;">
 
 <div class="branch_graphs">
+<div class="data">
 	<%= render :partial => "summary_branch_graphs", :locals => { :sugar => sugar } %>
 	<div style="clear:both; height: 0px; float: none;"></div>
+</div>
 </div>
 <!-- end branch_points_data -->
 </div>

@@ -64,6 +64,7 @@ function init_print_window() {
 function setup_print_document_style(target_document,title_element,width,height) {
 	report_title = target_document.importNode(title_element,true);
 	target_document.getElementsByTagName('body')[0].appendChild(report_title);
+	report_title.style.height = '2cm';
 	target_document.getElementsByTagName('body')[0].style.position = 'relative';
 	target_document.getElementsByTagName('body')[0].style.width = width+'cm';
 	target_document.getElementsByTagName('body')[0].style.height = height+'cm';
@@ -100,10 +101,10 @@ function append_print_branch_graphs(target_document,graph_container) {
 
 	a_window.document.getElementsByTagName('body')[0].appendChild(copied_graph);
 	
-	top_height = (2/3)*doc_height + 1;
+	top_height = (2/3)*doc_height + 1 + 2;
 
 	if (target_document.key_printed) {
-		top_height = (2/3 + 1/6)*doc_height;		
+		top_height = (2/3 + 1/6)*doc_height + 2;		
 	}
 	remaining_size = doc_height - top_height;
 
@@ -153,7 +154,8 @@ function append_print_svgs(target_document,svgs) {
 
 function setup_print_single_svg_style(new_svg,width,height) {
 	new_svg.setAttribute('width',width+'cm');
-	new_svg.setAttribute('height',height+'cm');	
+	new_svg.setAttribute('height',height+'cm');
+	new_svg.setAttribute('preserveAspectRatio','xMinYMin');
 	new_svg.style.position = 'absolute';
 }
 

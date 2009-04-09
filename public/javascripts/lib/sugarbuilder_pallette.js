@@ -45,7 +45,7 @@ SugarBuilder.Pallette.prototype._accept_pallette = function(data) {
 	for (var i = 0; i < pallette.length; i++) {
 		imported_pal = document.importNode(pallette[i],true);
 			
-		a_drag = new Draggable(imported_pal, { revert : true, ghosting: false, zindex: 1 });
+		a_drag = new Draggable(imported_pal, { revert : true, ghosting: false, zindex: 1, selectclass: 'draggable' });
 		
 		updateNodeAttributes(imported_pal, {'class' : 'pallette_element'});
 		imported_elements.push(imported_pal);

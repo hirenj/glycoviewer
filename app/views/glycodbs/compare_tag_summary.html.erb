@@ -8,6 +8,7 @@
 <%= javascript_include_tag 'http://yui.yahooapis.com/2.7.0/build/container/container-min.js' %>
 <%= javascript_include_tag 'http://yui.yahooapis.com/2.7.0/build/tabview/tabview-min.js' %>
 <%= javascript_include_tag 'http://yui.yahooapis.com/2.7.0/build/slider/slider-min.js' %>
+<%= javascript_include_tag 'http://yui.yahooapis.com/2.7.0/build/resize/resize-min.js' %>
 <%= stylesheet_link_tag 'glycodbs/structure_summary.css' %>
 <%= javascript_include_tag 'lib/structure_summary_page.js' %>
 <script type="text/javascript">
@@ -38,7 +39,6 @@
 			a_printer = XHtmlDOM.getElementsByClassName('print_button',sugar_results[a_result])[0];
 			connect(a_printer,'onclick',partial(do_summary_printing,sugar_results[a_result]));
 		}
-		
 		build_tabs();
 	}
 	
@@ -133,15 +133,15 @@ data_for_label = {}
 	<div class="single_branch_graph">
 		<div>Branch <%= label %></div>
 		<div class="branch_graph_svg">
-			<%= render_hash_as_bar_chart(data_for_label[label][:labels],data_for_label[label][:values],-100,['#7C8FBB','#2D50A2'],['#ff0000','#ffbbbb'] ) %>
+			<%= render_hash_as_bar_chart(data_for_label[label][:labels],data_for_label[label][:values],{ :total_height => -100, :fills => ['#999999','#666666'], :y_axis_label => 'Normalised branch reports', :colour_for_label => { label => '#333333' } } ) %>
 		</div>
 	</div>
 	<% end %>
 	
-	<div class="single_branch_graph">
+	<div class="single_branch_graph single_branch_graph_wide">
 	<div class="branch_graph_svg branch_graph_svg_wide">
 		<div>Branching</div>
-		<%= render_hash_as_bar_chart(counts_keys,counts_values,[counts_values.min.abs,counts_values.max].max,['#7C8FBB','#2D50A2'],['#ff0000','#ffbbbb'])%>
+		<%= render_hash_as_bar_chart(counts_keys,counts_values,{ :total_height => [counts_values.min.abs,counts_values.max].max,:fills => ['#999999','#666666'], :y_axis_label => 'Total structures'} )%>
 		</div>
 	</div>
 	</div>

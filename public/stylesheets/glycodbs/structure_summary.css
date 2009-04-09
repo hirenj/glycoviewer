@@ -38,10 +38,15 @@
 .branch_points_data table {
 	display: none;
 }
+
+/* This is not selected for being printed, and is a screen only element */
 div.branch_graphs {
-	position: absolute;
+	position: relative;
+	float: right;
 	right: 50px;
+	top: 0px;
 	width: 35%;
+	height: 50%;
 	z-index: 100;
 	border: solid #9999ff 3px;
 	-moz-border-radius: 3px;
@@ -49,26 +54,44 @@ div.branch_graphs {
 	background-color: #ffffff;
 }
 
-div.branch_graph_svg {
-	height: 100px;
-	width: 100px;
-	margin-bottom: 5px;
+div.branch_graphs .data {
+	overflow: auto;
+	height: 100%;
+	width: 100%;
 }
 
-div.summary_branch_graphs div.single_branch_graph {
-	float: left;
-	padding-left: 10px;
-}
-
-div.summary_branch_graphs div.branch_graph_svg {
-	height: 200px;
-}
-div.summary_branch_graphs div.branch_graph_svg_wide {
-	width: 200px;
-	height: 200px;
-}
+/* These element are printed */
 
 div.branch_graphs div.single_branch_graph {
 	float: left;
 	padding-left: 10px;
+	width: 30%;
+	height: 30%;
+	max-height: 50%;
+}
+
+div.branch_graph_svg {
+	height: 100%;
+	width: 90%;
+	margin-bottom: 5px;
+}
+
+div.summary_branch_graphs {
+	position: relative;
+}
+
+div.summary_branch_graphs div.single_branch_graph {
+	float: left;
+	width: 15%;
+	padding-left: 10px;
+	height: 75%;
+}
+
+div.summary_branch_graphs div.single_branch_graph_wide {
+	width: 30%;
+}
+
+div.summary_branch_graphs div.branch_graph_svg {
+	height: 100%;
+	width: 100%;
 }

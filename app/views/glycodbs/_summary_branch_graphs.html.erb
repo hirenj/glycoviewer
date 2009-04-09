@@ -15,19 +15,19 @@
 		<% self_value = sugar.collected_statistics[:branch_totals_by_point][branch_point][branch_point] %>
 		<%= render_hash_as_bar_chart(branch_points.collect { |k| k.branch_label },branch_points.collect { |k|
 			100.0 * (sugar.collected_statistics[:branch_totals_by_point][branch_point][k] || 0).to_f / self_value
-			},100,['#7C8FBB','#2D50A2'] ) %>
+			},{ :total_height => 100, :fills => ['#999999','#666666'], :y_axis_label => 'Norm. branch obsv.', :colour_for_label => { branch_point.branch_label => '#333333' } } ) %>
 	</div>
 </div>
 <% end %>
 <div class="single_branch_graph">
 <div class="branch_graph_svg">
 	<div>Branching</div>
-	<%= render_hash_as_bar_chart(counts_keys,counts_values,counts_values.max,['#7C8FBB','#2D50A2'])%>
+	<%= render_hash_as_bar_chart(counts_keys,counts_values,{ :total_height => counts_values.max, :fills => ['#999999','#666666'], :y_axis_label => 'Total structs.' } )%>
 </div>
 </div>
 
 <% 
-	stat_type = ['Sialic','Fucose']
+	stat_type = ['NeuAc','Fucose']
 	stat_data = [sugar.collected_statistics[:terminal_neuacs], sugar.collected_statistics[:terminal_fucoses]]
 	stat_data.zip(stat_type).each { |stat_array,label|
 %>
@@ -47,7 +47,7 @@
 			100 * depths[k].to_f / max_val
 		}
 	%>
-	<%= render_hash_as_bar_chart(all_depths,all_values,100,['#7C8FBB','#2D50A2']) %>
+	<%= render_hash_as_bar_chart(all_depths,all_values,{ :total_height => 100, :fills => ['#999999','#666666'], :y_axis_label => "Residues w/deco." } ) %>
 </div>
 </div>
 <%	} %>

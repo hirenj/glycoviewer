@@ -26,6 +26,13 @@ test:
   adapter: sqlite3
   database: db/test-db.db
 
+staging:
+  adapter: mysql
+  database: enzymedb
+  username: enzymedb
+  password: enzymedb
+  host: localhost
+
 production:
   adapter: mysql
   database: enzymedb_production 
