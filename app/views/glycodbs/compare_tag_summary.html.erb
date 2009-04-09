@@ -131,7 +131,6 @@ data_for_label = {}
 	<div class="summary_branch_graphs">
 	<% for label in data_for_label.keys %>
 	<div class="single_branch_graph">
-		<div>Branch <%= label %></div>
 		<div class="branch_graph_svg">
 			<%= render_hash_as_bar_chart(data_for_label[label][:labels],data_for_label[label][:values],{ :total_height => -100, :fills => ['#999999','#666666'], :y_axis_label => 'Normalised branch reports', :colour_for_label => { label => '#333333' }, :label_groups => ['Right structure','Left structure'] } ) %>
 		</div>
@@ -140,8 +139,7 @@ data_for_label = {}
 	
 	<div class="single_branch_graph single_branch_graph_wide">
 	<div class="branch_graph_svg branch_graph_svg_wide">
-		<div>Branching</div>
-		<%= render_hash_as_bar_chart(counts_keys,counts_values,{ :total_height => [counts_values.min.abs,counts_values.max].max,:fills => ['#999999','#666666'], :y_axis_label => 'Total structures',:label_groups => ['Right structure','Left structure']} )%>
+		<%= render_hash_as_bar_chart(counts_keys,counts_values,{ :total_height => [counts_values.min.abs,counts_values.max].max,:fills => ['#999999','#666666'], :y_axis_label => 'Proportion of structures with n branches',:label_groups => ['Right structure','Left structure']} )%>
 		</div>
 	</div>
 	</div>

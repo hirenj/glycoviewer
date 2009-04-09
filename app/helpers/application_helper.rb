@@ -138,6 +138,9 @@ module ApplicationHelper
       unless x_for_label[lab]
         label = Element.new('svg:text')
         label.add_attributes('x' => (x_pos + (bar_width/2)).round, 'text-anchor' => 'middle','y' => label_y_pos.round, 'font-size' => bar_width.round, 'fill' => text_colour)
+        if options[:colour_for_label] && my_fill = options[:colour_for_label][lab]
+          label.add_attributes('font-weight' => 'bolder', 'fill' => my_fill )
+        end
         label.text = lab
         labels << label
       end

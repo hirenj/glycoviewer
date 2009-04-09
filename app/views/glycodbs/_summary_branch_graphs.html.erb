@@ -10,7 +10,6 @@
 %>
 <% for branch_point in branch_points %>
 <div class="single_branch_graph">
-	<div>Branch <%= branch_point.branch_label %></div>
 	<div class="branch_graph_svg">
 		<% self_value = sugar.collected_statistics[:branch_totals_by_point][branch_point][branch_point] %>
 		<%= render_hash_as_bar_chart(branch_points.collect { |k| k.branch_label },branch_points.collect { |k|
@@ -21,7 +20,6 @@
 <% end %>
 <div class="single_branch_graph">
 <div class="branch_graph_svg">
-	<div>Branching</div>
 	<%= render_hash_as_bar_chart(counts_keys,counts_values,{ :total_height => counts_values.max, :fills => ['#999999','#666666'], :y_axis_label => 'Total structs.' } )%>
 </div>
 </div>
