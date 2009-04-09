@@ -331,7 +331,7 @@ class StructureSummaryController < ApplicationController
       renderer.chain_background_padding = 65
       renderer.render_simplified_chains(sugar,[type_i+type_i_glcnac],'sugar_chain sugar_chain_type_i','#FFEFD8')
       renderer.render_simplified_chains(sugar,[type_ii+type_ii_glcnac],'sugar_chain sugar_chain_type_ii','#C9F6C6')
-      renderer.render_simplified_chains(sugar,[branching],'sugar_chain sugar_chain_branching','#C5D3EF')
+      renderer.render_simplified_chains(sugar,[branching],'sugar_chain sugar_chain_branching','#cc99ff')
     }
   end
 
