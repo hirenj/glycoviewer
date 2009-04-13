@@ -72,7 +72,7 @@
 <div style="position: relative; overflow: auto; height: 100%; width: 100%;">
 	<% if sugar != nil %>
 	<% @sugar = sugar %>
-	<%= render :partial => "sviewer/render", :locals => { :sugar => sugar, :scale => 0.5, :padding => 200, :scheme => :composite } %>
+	<%= render :partial => "sviewer/render", :locals => { :sugar => sugar, :scale => 0.5, :padding => 100, :scheme => :composite } %>
 	<% end %>
 </div>
 </div>
@@ -132,7 +132,7 @@ data_for_label = {}
 	<% for label in data_for_label.keys %>
 	<div class="single_branch_graph">
 		<div class="branch_graph_svg">
-			<%= render_hash_as_bar_chart(data_for_label[label][:labels],data_for_label[label][:values],{ :total_height => -100, :fills => ['#999999','#666666'], :y_axis_label => 'Normalised branch reports', :colour_for_label => { label => '#333333' }, :label_groups => ['Right structure','Left structure'] } ) %>
+			<%= render_hash_as_bar_chart(data_for_label[label][:labels],data_for_label[label][:values],{ :total_height => -100, :fills => ['#999999','#666666'], :y_axis_label => 'Normalised branch observations', :colour_for_label => { label => '#333333' }, :label_groups => ['Right structure','Left structure'] } ) %>
 		</div>
 	</div>
 	<% end %>
@@ -150,3 +150,4 @@ data_for_label = {}
 <% end %>
 </div>
 </div>
+<%= render :partial => "sugar_intensity_key" %>

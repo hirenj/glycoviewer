@@ -63,6 +63,7 @@ function init_print_window() {
 
 function setup_print_document_style(target_document,title_element,width,height) {
 	report_title = target_document.importNode(title_element,true);
+	report_title.style.width = '75%';
 	target_document.getElementsByTagName('body')[0].appendChild(report_title);
 	report_title.style.height = '2cm';
 	target_document.getElementsByTagName('body')[0].style.position = 'relative';
@@ -239,4 +240,6 @@ function do_summary_printing(sugar_result) {
 	append_print_branch_graphs(a_window.document,graph_container);
 	
 	append_print_document_key(a_window.document);	
+
+	append_print_intensity_key(a_window.document);
 }
