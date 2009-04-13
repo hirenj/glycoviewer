@@ -32,7 +32,7 @@
 div.branch_graphs {
 	position: relative;
 	float: right;
-	right: 50px;
+	right: 30px;
 	top: 0px;
 	width: 35%;
 	height: 200px;
@@ -99,4 +99,11 @@ div.result_structure div > svg {
 div.summary_branch_graphs div.branch_graph_svg {
 	height: 100%;
 	width: 100%;
+}
+
+div.sugarbuilder_slider_container {
+	left: 0%;
+	margin-left: 10px;
+	top: 0px;
+	margin-top: 50px;
 }
