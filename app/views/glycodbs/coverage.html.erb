@@ -74,6 +74,7 @@
 <input type="button" class="gene_toggle" value="Toggle gene display"/>
 <input type="button" class="hits_toggle" value="Toggle hits display"/>
 <input type="button" class="print_button" value="Print"/>
+<h1 class="report_title">Coverage for tags: <%= (human_tags || []).join(',') %> <%= sugar.root.hits %> structures</h1>
 <div style="position: relative; overflow: auto; height: 600px; width: 100%;">
 	<%= render :partial => "sviewer/render", :locals => { :sugar => sugar, :scale => 0.5, :padding => 100, :scheme => :composite } %>
 </div>

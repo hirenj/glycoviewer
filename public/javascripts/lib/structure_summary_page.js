@@ -109,7 +109,7 @@ function append_print_intensity_key(target_document) {
 	copied_key.style.top = '0.1cm';
 	copied_key.style.left = (target_document.print_width - 5)+'cm';
 	copied_key.style.width = '5cm';
-	copied_key.style.height = '3cm';
+	copied_key.style.height = '2cm';
 	copied_key.style.display = 'block';
 }
 
@@ -203,8 +203,10 @@ function setup_print_single_svg_style(new_svg,width,height) {
 
 function do_printing(svg_element,result_structure_el) {
 	a_window = init_print_window();
-	
-	setup_print_document_style(a_window.document,$('report_title'),20,29);
+
+	report_title = XHtmlDOM.getElementsByClassName('report_title',result_structure_el)[0];
+
+	setup_print_document_style(a_window.document,report_title,20,29);
 	
 	append_print_svgs(a_window.document,[svg_element]);
 

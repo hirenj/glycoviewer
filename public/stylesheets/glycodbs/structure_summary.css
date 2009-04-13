@@ -28,6 +28,10 @@
 	display: none;
 }
 
+.result_structure .report_title {
+	display: none;
+}
+
 /* This is not selected for being printed, and is a screen only element */
 div.branch_graphs {
 	position: relative;

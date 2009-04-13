@@ -322,7 +322,7 @@ class StructureSummaryController < ApplicationController
     type_i = all_gals.select { |r| r.paired_residue_position == 3 }
     type_ii = all_gals.select { |r| r.paired_residue_position == 4 }
     all_glcnacs = sugar.residue_composition.select { |r| r.name(:ic) == 'GlcNAc' && r.parent && r.parent.name(:ic) == 'Gal' }
-    type_i_glcnac = all_glcnacs.select { |r| (r.paired_residue_position == 3) && r.parent.paired_residue_position == 3 }
+    type_i_glcnac = all_glcnacs.select { |r| (r.paired_residue_position == 3) && r.parent.paired_residue_position == 3 && (! r.parent.parent || r.parent.parent != sugar.root) }
     type_ii_glcnac = all_glcnacs.select { |r| (r.paired_residue_position == 3) && r.parent.paired_residue_position == 4 }
     branching = all_glcnacs.select { |r| r.paired_residue_position == 6 }
 
