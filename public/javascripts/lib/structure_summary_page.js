@@ -86,10 +86,16 @@ function append_print_document_key(target_document) {
 	copied_key = a_window.document.importNode($('sugar_key'),true);
 	target_document.getElementsByTagName('body')[0].appendChild(copied_key);		
 	copied_key.style.position = 'absolute';
-	copied_key.style.top = ((2/3) * doc_height)+'cm';
+	copied_key.style.top = (((2/3) * doc_height) + 2)+'cm';
 	copied_key.style.width = '100%';
 	copied_key.style.height = (key_height-0.5)+'cm';
 	target_document.key_printed = true;
+
+	key_svg = copied_key.getElementsByTagNameNS('http://www.w3.org/2000/svg','svg')[0];
+	key_svg.style.position = 'absolute';
+	key_svg.style.top = '0px';
+	key_svg.style.left = '0px';
+
 }
 
 function append_print_branch_graphs(target_document,graph_container) {
@@ -104,7 +110,7 @@ function append_print_branch_graphs(target_document,graph_container) {
 	top_height = (2/3)*doc_height + 1 + 2;
 
 	if (target_document.key_printed) {
-		top_height = (2/3 + 1/6)*doc_height + 1;		
+		top_height = (2/3 + 1/6)*doc_height + 2;		
 	}
 	remaining_size = doc_height - top_height;
 
@@ -125,7 +131,6 @@ function append_print_branch_graphs(target_document,graph_container) {
 			continue;
 		}
 		
-//		graph_svg.setAttribute('height',(remaining_size - 0.3)+'cm');
 		graph_svg.setAttribute('preserveAspectRatio','xMinYMid');
 
 		graph_canvas = XHtmlDOM.getElementsByClassName('graph_canvas',graph_svg)[0];

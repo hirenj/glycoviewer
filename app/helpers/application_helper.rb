@@ -55,7 +55,7 @@ module ApplicationHelper
         renderer.chain_background_padding = 65
         renderer.render_simplified_chains(key_sug,[type_i+type_i_glcnac],'sugar_chain sugar_chain_type_i','#FFEFD8')
         renderer.render_simplified_chains(key_sug,[type_ii+type_ii_glcnac],'sugar_chain sugar_chain_type_ii','#C9F6C6')
-        renderer.render_simplified_chains(key_sug,[branching],'sugar_chain sugar_chain_branching','#C5D3EF')
+        renderer.render_simplified_chains(key_sug,[branching],'sugar_chain sugar_chain_branching','#cc99ff')
         labelled_stuff.each { |thing,lab|
           next unless thing
           position = :center
@@ -68,12 +68,12 @@ module ApplicationHelper
         }
       }
 
-
       key_sug.residue_composition.each { |r|
         def r.hits
           1
         end
       }
+      
       key_sug
   end
 
@@ -139,7 +139,9 @@ module ApplicationHelper
         label = Element.new('svg:text')
         label.add_attributes('x' => (x_pos + (bar_width/2)).round, 'text-anchor' => 'middle','y' => label_y_pos.round, 'font-size' => bar_width.round, 'fill' => text_colour)
         if options[:colour_for_label] && my_fill = options[:colour_for_label][lab]
-          label.add_attributes('font-weight' => 'bolder', 'fill' => my_fill )
+          label.add_attributes('font-weight' => 'bolder', 'fill' => '#000000' )
+        else
+          label.add_attributes('font-weight' => 'lighter', 'fill' => '#555555')
         end
         label.text = lab
         labels << label

@@ -6,7 +6,7 @@
 	   counts_values << 100 * (value || 0).to_f / sugar.root.hits
  	}
 
- 	branch_points = sugar.collected_statistics[:branch_totals_by_point].keys.sort_by { |bp| bp.sort_key }
+ 	branch_points = sugar.collected_statistics[:branch_totals_by_point].keys.sort_by { |bp| bp.sort_key }.reverse
 %>
 <% for branch_point in branch_points %>
 <div class="single_branch_graph">
@@ -14,20 +14,22 @@
 		<% self_value = sugar.collected_statistics[:branch_totals_by_point][branch_point][branch_point] %>
 		<%= render_hash_as_bar_chart(branch_points.collect { |k| k.branch_label },branch_points.collect { |k|
 			100.0 * (sugar.collected_statistics[:branch_totals_by_point][branch_point][k] || 0).to_f / self_value
-			},{ :total_height => 100, :fills => ['#999999','#666666'], :y_axis_label => 'Norm. branch obsv.', :colour_for_label => { branch_point.branch_label => '#333333' } } ) %>
+			},{ :total_height => 100, :fills => ['#999999','#666666'], :y_axis_label => 'Normalised branch obsv.', :colour_for_label => { branch_point.branch_label => '#333333' } } ) %>
 	</div>
 </div>
 <% end %>
+<% if counts_keys.size > 1 %>
 <div class="single_branch_graph">
 <div class="branch_graph_svg">
 	<%= render_hash_as_bar_chart(counts_keys,counts_values,{ :total_height => counts_values.max, :fills => ['#999999','#666666'], :y_axis_label => 'Total structs.' } )%>
 </div>
 </div>
-
+<% end %>
 <% 
 	stat_type = ['NeuAc','Fucose']
 	stat_data = [sugar.collected_statistics[:terminal_neuacs], sugar.collected_statistics[:terminal_fucoses]]
 	stat_data.zip(stat_type).each { |stat_array,label|
+		next unless stat_array.size > 0
 %>
 <div class="single_branch_graph">
 <div class="branch_graph_svg">

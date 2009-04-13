@@ -35,7 +35,7 @@ div.branch_graphs {
 	right: 50px;
 	top: 0px;
 	width: 35%;
-	height: 50%;
+	height: 200px;
 	z-index: 100;
 	border: solid #9999ff 3px;
 	-moz-border-radius: 3px;
@@ -55,8 +55,8 @@ div.branch_graphs div.single_branch_graph {
 	float: left;
 	padding-left: 10px;
 	width: 30%;
-	height: 30%;
-	max-height: 50%;
+	height: 60%;
+	max-height: 60%;
 }
 
 div.branch_graph_svg {
@@ -78,6 +78,22 @@ div.summary_branch_graphs div.single_branch_graph {
 
 div.summary_branch_graphs div.single_branch_graph_wide {
 	width: 30%;
+}
+
+div.result_structure div > svg {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+}
+
+#sugar_key {
+	position: relative;
+}
+
+#sugar_key_image > svg {
+	position: absolute;
+	top: 0px;
+	left: 0px;
 }
 
 div.summary_branch_graphs div.branch_graph_svg {
