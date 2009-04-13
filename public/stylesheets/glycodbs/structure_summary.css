@@ -96,6 +96,12 @@ div.result_structure div > svg {
 	left: 0px;
 }
 
+@media screen {
+	#intensity_key {
+		display: none;
+	}
+}
+
 div.summary_branch_graphs div.branch_graph_svg {
 	height: 100%;
 	width: 100%;

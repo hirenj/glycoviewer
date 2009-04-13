@@ -23,6 +23,12 @@ module ApplicationHelper
     SugarHelper.ConvertResidueName(:ecdb,res_string,:ic)
   end
 
+  def make_sugar(sug_string,ns=:ic)
+    a_sug = SugarHelper.CreateSugar(sug_string,ns)
+    SugarHelper.MakeRenderable(a_sug)
+    return a_sug
+  end
+
   def generate_key_sugar()
       key_sug = SugarHelper.CreateMultiSugar('NeuAc(a2-6)[GalNAc(a1-3)]Gal(b1-3)[Fuc(a1-4)]GlcNAc(b1-3)[Fuc(a1-3)[Fuc(a1-2)[NeuAc(a2-3)][Gal(a1-3)]Gal(b1-4)GlcNAc(b1-3)Gal(b1-4)]GlcNAc(b1-6)]Gal(b1-3)[Fuc(a1-6)]GlcNAc',:ic)
 
@@ -75,6 +81,18 @@ module ApplicationHelper
       }
       
       key_sug
+  end
+
+  def make_intensity_scale(rgb)
+    (1..10).to_a.reverse.collect { |increment|
+      res_saturation = 0.3 + ((10*increment.to_f / 100.0)*0.7)
+      hsl = Color::RGB.from_html(rgb).to_hsl
+      hsl.s = res_saturation
+      brightness = hsl.l
+      brightness += (1 - brightness)*(1-res_saturation)
+      hsl.l = brightness
+      hsl.html
+    }
   end
 
   def render_hash_as_bar_chart(labels,values,options={})

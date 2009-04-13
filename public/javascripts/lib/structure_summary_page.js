@@ -98,6 +98,20 @@ function append_print_document_key(target_document) {
 
 }
 
+function append_print_intensity_key(target_document) {
+	if ($('intensity_key') == null) {
+		return;
+	}
+	copied_key = a_window.document.importNode($('intensity_key'),true);
+	target_document.getElementsByTagName('body')[0].appendChild(copied_key);
+	copied_key.style.position = 'absolute';
+	copied_key.style.top = '0.1cm';
+	copied_key.style.left = (target_document.print_width - 5)+'cm';
+	copied_key.style.width = '5cm';
+	copied_key.style.height = '3cm';
+	copied_key.style.display = 'block';
+}
+
 function append_print_branch_graphs(target_document,graph_container) {
 
 	doc_width = target_document.print_width;
@@ -199,6 +213,7 @@ function do_printing(svg_element,result_structure_el) {
 
 	append_print_branch_graphs(a_window.document,graph_container);
 	
+	append_print_intensity_key(a_window.document);
 }
 
 function do_summary_printing(sugar_result) {
