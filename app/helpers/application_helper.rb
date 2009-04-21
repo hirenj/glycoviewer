@@ -29,6 +29,84 @@ module ApplicationHelper
     return a_sug
   end
 
+  def generate_neuac_key_sugar()
+    sugar = SugarHelper.CreateSugar('NeuAc(a2-3)Gal(b1-4)[NeuAc(a2-3)]Gal(b1-4)[NeuAc(a2-3)]Gal',:ic)
+    SugarHelper.MakeRenderable(sugar)
+    sugar.residue_composition.each { |r|
+      def r.hits
+        @hits
+      end
+      def r.hits=(newhits)
+        @hits = newhits
+      end
+      r.hits = 10
+      if r.parent
+        sugar.callbacks << lambda { |element,renderer|
+          r.linkage_at_position.label_callbacks.push(renderer.callback_hide_element)
+          r.linkage_at_position.callbacks.push(renderer.callback_hide_element)
+        }
+      end
+    }
+    sugar.residue_composition.select { |r| r.name(:ic) == 'NeuAc' }.each { |neuac|
+      sug_depth = sugar.depth(neuac) 
+      label = ''
+      case sug_depth
+      when 2
+        label = '100%'
+        neuac.hits = 10
+      when 3
+        label = '50%'
+        neuac.hits = 5
+      when 4
+        label = '1%'
+        neuac.hits = 1
+      end
+      sugar.callbacks << lambda { |element,renderer|
+        renderer.render_text_residue_label(sugar,neuac.parent,label,:top_left)
+      }
+    }
+    sugar
+  end
+
+  def generate_fuc_key_sugar()
+    sugar = SugarHelper.CreateSugar('Fuc(a1-3)Gal(b1-4)[Fuc(a1-3)]Gal(b1-4)[Fuc(a1-3)]Gal',:ic)
+    SugarHelper.MakeRenderable(sugar)
+    sugar.residue_composition.each { |r|
+      def r.hits
+        @hits
+      end
+      def r.hits=(newhits)
+        @hits = newhits
+      end
+      r.hits = 10
+      if r.parent
+        sugar.callbacks << lambda { |element,renderer|
+          r.linkage_at_position.label_callbacks.push(renderer.callback_hide_element)
+          r.linkage_at_position.callbacks.push(renderer.callback_hide_element)
+        }
+      end
+    }
+    sugar.residue_composition.select { |r| r.name(:ic) == 'Fuc' }.each { |fuc|
+      sug_depth = sugar.depth(fuc) 
+      label = ''
+      case sug_depth
+      when 2
+        label = '100%'
+        fuc.hits = 9
+      when 3
+        label = '50%'
+        fuc.hits = 5
+      when 4
+        label = '1%'
+        fuc.hits = 1
+      end
+      sugar.callbacks << lambda { |element,renderer|
+        renderer.render_text_residue_label(sugar,fuc.parent,label,:top_right)
+      }
+    }
+    sugar
+  end
+
   def generate_key_sugar()
       key_sug = SugarHelper.CreateMultiSugar('NeuAc(a2-6)[GalNAc(a1-3)]Gal(b1-3)[Fuc(a1-4)]GlcNAc(b1-3)[Fuc(a1-3)[Fuc(a1-2)[NeuAc(a2-3)][Gal(a1-3)]Gal(b1-4)GlcNAc(b1-3)Gal(b1-4)]GlcNAc(b1-6)]Gal(b1-3)[Fuc(a1-6)]GlcNAc',:ic)
 
@@ -59,8 +137,8 @@ module ApplicationHelper
       key_sug.callbacks << lambda { |sug_root,renderer|
         renderer.chain_background_width = 20
         renderer.chain_background_padding = 65
-        renderer.render_simplified_chains(key_sug,[type_i+type_i_glcnac],'sugar_chain sugar_chain_type_i','#FFEFD8')
-        renderer.render_simplified_chains(key_sug,[type_ii+type_ii_glcnac],'sugar_chain sugar_chain_type_ii','#C9F6C6')
+        renderer.render_simplified_chains(key_sug,[type_i+type_i_glcnac],'sugar_chain sugar_chain_type_i','#EFDFC8')
+        renderer.render_simplified_chains(key_sug,[type_ii+type_ii_glcnac],'sugar_chain sugar_chain_type_ii','#B9E6B6')
         renderer.render_simplified_chains(key_sug,[branching],'sugar_chain sugar_chain_branching','#cc99ff')
         labelled_stuff.each { |thing,lab|
           next unless thing

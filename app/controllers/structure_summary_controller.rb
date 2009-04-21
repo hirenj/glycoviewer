@@ -1,6 +1,4 @@
-module HitCounter
-  attr_accessor :hits
-  
+module HitCounter  
   def hits
     get_counter(:id).size
   end 
@@ -329,8 +327,8 @@ class StructureSummaryController < ApplicationController
     sugar.callbacks << lambda { |sug_root,renderer|
       renderer.chain_background_width = 20
       renderer.chain_background_padding = 65
-      renderer.render_simplified_chains(sugar,[type_i+type_i_glcnac],'sugar_chain sugar_chain_type_i','#FFEFD8')
-      renderer.render_simplified_chains(sugar,[type_ii+type_ii_glcnac],'sugar_chain sugar_chain_type_ii','#C9F6C6')
+      renderer.render_simplified_chains(sugar,[type_i+type_i_glcnac],'sugar_chain sugar_chain_type_i','#EFDFC8')
+      renderer.render_simplified_chains(sugar,[type_ii+type_ii_glcnac],'sugar_chain sugar_chain_type_ii','#B9E6B6')
       renderer.render_simplified_chains(sugar,[branching],'sugar_chain sugar_chain_branching','#cc99ff')
     }
   end
