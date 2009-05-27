@@ -165,9 +165,15 @@ function updateScale(slider) {
 }
 
 function updateSeqs() {
-	$('sequence_disp').textContent = sb.get_sequence();
-	$('sequence_disp_ic').textContent = sb.get_ic_sequence();
-	$('seq').value = sb.get_sequence();
+	if ( $('sequence_disp') != null ) {
+		$('sequence_disp').textContent = sb.get_sequence();
+	}
+	if ( $('sequence_disp_ic') != null ) {
+		$('sequence_disp_ic').textContent = sb.get_ic_sequence();
+	}
+	if ( $('seq') != null ) {
+		$('seq').value = sb.get_sequence();
+	}
 	$('seqpng').value = sb.get_sequence();
 	$('seqsvg').value = sb.get_sequence();
 }
@@ -176,11 +182,13 @@ connect(window, 'onload', onloader);
 
 //]]>
 </script>
+<% if ENV['RAILS_ENV'] == 'development' %>
 <form style="float: left;" action="<%= url_for :controller => 'enzyme_coverage', :action => 'pathways', :format => 'xhtml'%>" method="POST">
 <input type="hidden" name="seq" id="seq"/>
 <input type="text" name="mesh_tissue" id="mesh_tissue"/>
 <input type="submit" value="Validate"/>
 </form>
+<% end %>
 <form style="float: left;" action="<%= url_for :controller => 'sviewer', :format => 'png'%>" method="POST" target="structwin">
 <input type="hidden" name="seq" id="seqpng"/>
 <input type="submit" value="Get image"/>
@@ -195,5 +203,7 @@ connect(window, 'onload', onloader);
 </div>
 <h3>IUPAC condensed</h3>
 <div id="sequence_disp_ic" class="sequence_display"></div>
+<% if ENV['RAILS_ENV'] == 'development' %>
 <h3>GlycoCT</h3>
 <div id="sequence_disp" class="sequence_display"></div>
+<% end %>

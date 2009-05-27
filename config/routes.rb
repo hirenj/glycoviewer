@@ -1,30 +1,40 @@
 ActionController::Routing::Routes.draw do |map|
 
-  map.connect 'glycodbs', :controller => 'glycodbs', :action => 'index', :format => 'html'
+  if ENV['RAILS_ENV'] == 'development'
+    map.connect 'glycodbs', :controller => 'glycodbs', :action => 'index', :format => 'html'
+    map.connect 'glycodbs/tags', :controller => 'glycodbs', :action => 'tags', :format => 'html'
+  end
 
-  map.connect 'glycodbs/tags', :controller => 'glycodbs', :action => 'tags', :format => 'html'
+  map.connect 'structures', :controller => 'glycodbs', :action => 'tags', :format => 'html'
 
-  map.connect 'glycodbs/proteins', :controller => 'glycodbs', :action => 'proteins', :format => 'html'
+  if ENV['RAILS_ENV'] == 'development'
+    map.connect 'glycodbs/proteins', :controller => 'glycodbs', :action => 'proteins', :format => 'html'
+  end
 
-  map.connect 'glycodbs/compare_tags/:tags1/:tags2', :controller => 'glycodbs', :action => 'compare_tag_summary'
+  map.connect 'structures/coverage_for_tag/:id', :controller => 'glycodbs', :action => 'coverage_for_tag'
 
-  map.connect 'glycodbs/:id', :controller => 'glycodbs', :action => 'show', :format => 'html'
-  
-  map.connect 'glycodbs/tag/:id/:tag', :controller => 'glycodbs', :action => 'tag', :format => 'html'
+  map.connect 'structures/compare_tags/:tags1/:tags2', :controller => 'glycodbs', :action => 'compare_tag_summary'
 
-  map.connect 'glycodbs/untag/:id/:tag', :controller => 'glycodbs', :action => 'untag', :format => 'html'
+  if ENV['RAILS_ENV'] == 'development'
+    map.connect 'glycodbs/:id', :controller => 'glycodbs', :action => 'show', :format => 'html'
 
-  map.connect 'glycodbs/ws-tag', :controller => 'glycodbs', :action => 'tag', :format => 'txt'
+    map.connect 'glycodbs/tag/:id/:tag', :controller => 'glycodbs', :action => 'tag', :format => 'html'
 
-  map.connect 'glycodbs/ws-untag', :controller => 'glycodbs', :action => 'untag', :format => 'txt'
+    map.connect 'glycodbs/untag/:id/:tag', :controller => 'glycodbs', :action => 'untag', :format => 'html'
 
-  map.connect 'glycodbs/ws-tag/:id/:tag', :controller => 'glycodbs', :action => 'tag', :format => 'txt'
-  
-  map.connect 'glycodbs/ws-untag/:id/:tag', :controller => 'glycodbs', :action => 'untag', :format => 'txt'
+    map.connect 'glycodbs/ws-tag', :controller => 'glycodbs', :action => 'tag', :format => 'txt'
+
+    map.connect 'glycodbs/ws-untag', :controller => 'glycodbs', :action => 'untag', :format => 'txt'
+
+    map.connect 'glycodbs/ws-tag/:id/:tag', :controller => 'glycodbs', :action => 'tag', :format => 'txt'
+
+    map.connect 'glycodbs/ws-untag/:id/:tag', :controller => 'glycodbs', :action => 'untag', :format => 'txt'
+
+    map.resources :glycodbs
+
+  end
 
 
-
-  map.resources :glycodbs
 
   # The priority is based upon order of creation: first created -> highest priority.
   
@@ -42,11 +52,15 @@ ActionController::Routing::Routes.draw do |map|
 
   # Allow downloading Web Service WSDL as a file with an extension
   # instead of a file named 'wsdl'
-  map.connect ':controller/service.wsdl', :action => 'wsdl'
-
+  if ENV['RAILS_ENV'] == 'development'  
+    map.connect ':controller/service.wsdl', :action => 'wsdl'
+  end
+  
   map.connect 'sugarviewer', :controller => 'sviewer', :action => 'show', :format => 'html'
 
-  map.connect 'sugarlist', :controller => 'sviewer', :action => 'show_list', :format => 'html'
+  if ENV['RAILS_ENV'] == 'development'
+    map.connect 'sugarlist', :controller => 'sviewer', :action => 'show_list', :format => 'html'
+  end
 
   map.connect 'sviewer_thumbs/:width/:height/:schema/:ns/:seq.png', :format => 'png', :controller => 'sviewer', :action => 'index'
 
@@ -66,23 +80,47 @@ ActionController::Routing::Routes.draw do |map|
 
   map.connect 'sviewer/:seq', :controller => 'sviewer', :action => 'index', :ns => 'dkfz', :format => 'svg'
 
-  map.connect 'tissue', :controller => 'enzymeinfos', :action => 'list_tissues'
+
+
+  if ENV['RAILS_ENV'] == 'development'
+    map.connect 'tissue', :controller => 'enzymeinfos', :action => 'list_tissues'
   
-  map.connect 'tissue/:mesh_tissue', :controller => 'enzymeinfos', :action => 'show_tissue'
+    map.connect 'tissue/:mesh_tissue', :controller => 'enzymeinfos', :action => 'show_tissue'
+  end
+  
+  if ENV['RAILS_ENV'] == 'development'
+    map.connect ':controller/:action/:id.:format'
 
-  map.connect ':controller/:action/:id.:format'
+    map.connect ':controller/:action.:format'
 
-  map.connect ':controller/:action.:format'
+    map.connect ':controller/:action/', :format => 'xhtml'
 
-  map.connect ':controller/:action/', :format => 'xhtml'
+    #map.connect 'sviewer/:seq', :controller => 'sviewer', ':ns' => 'dkfz'
 
-  #map.connect 'sviewer/:seq', :controller => 'sviewer', ':ns' => 'dkfz'
+    map.connect ':controller/:action/:id', :format => 'html'
 
-  map.connect ':controller/:action/:id', :format => 'html'
+  else
+    
+    map.connect 'config/:action', :controller => 'config'
+
+    map.connect 'sugarbuilder', :controller => 'sugarbuilder'
+    
+    map.connect 'sugarbuilder/:action', :controller => 'sugarbuilder'
+    
+    map.connect ':controller/:action/:id.:format', :disabled_action => true
+
+    map.connect ':controller/:action.:format', :disabled_action => true
+
+    map.connect ':controller/:action/', :format => 'xhtml', :disabled_action => true
+
+    map.connect ':controller/:action/:id', :format => 'html', :disabled_action => true
+
+  end
+
+  map.connect '/', :controller => 'sugarbuilder'
 
   # Install the default route as the lowest priority.
   map.connect ':controller/:action/:id'
-
 
 
 end

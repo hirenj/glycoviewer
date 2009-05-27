@@ -5,6 +5,6 @@
 		has_expression = @defined_tissues.include? anat_name
 	end
 %>
-<li><%= link_to anat_name || tag, :controller => "glycodbs", :action => "coverage_for_tag", :id => tag %> <%= has_expression ? 'Expression data' : 'No expression data'%></li>
+<li><%= link_to anat_name || tag, :controller => "glycodbs", :action => "coverage_for_tag", :id => tag %></li>
 <% end %>
 </ul>

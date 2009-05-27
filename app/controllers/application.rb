@@ -2,6 +2,7 @@
 # Likewise, all the methods added will be available for all controllers.
 class ApplicationController < ActionController::Base
   before_filter :set_db_schema
+  before_filter :redirect_disabled
 
   #This really should not be harcoded in here...
   @@valid_tissues = ['ovary']
@@ -18,4 +19,11 @@ class ApplicationController < ActionController::Base
       logger.info "Setting schema to #{ActiveRecord::Base::connection.schema_search_path} for searches. If queries are failing, make sure that the schema exists, and that permissions are given for the current database user."
     end
   end
+  
+  def redirect_disabled
+    if params[:disabled_action] == true
+      redirect_to '/disabled.html'
+    end
+  end
+  
 end
