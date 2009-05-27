@@ -79,7 +79,7 @@ Load database. Populate the reactions, gene information and discaccharides into 
 DESC
 task :populatedata, :roles => :web do
   set :rakefile, "-f #{current_path}/lib/tasks/dataloader.rake"
-  run_remote_rake "enzymedb:loaddb"
+  run_remote_rake "enzymedb:loaddb[db-dump]"
 end
 # Tasks may take advantage of several different helper methods to interact
 # with the remote server(s). These are:
