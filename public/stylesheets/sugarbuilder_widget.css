@@ -69,3 +69,22 @@
 .pie_slice_anomer {
 	fill: rgb(204,204,255) !important;
 }
+
+.sugarbuilder_slider_container {
+	position: absolute;
+	top: 0px;
+	margin-left: -60px;
+	left: 100%;
+	width: 30px;
+	height: 200px;
+	background: url('bg-fader.gif');
+}
+
+.sugarbuilder_slider_controller {
+	position: relative;
+	left: 0px;
+	top: 100px;
+	width: 30px;
+	height: 17px;
+	background: url('thumb-n.gif') 5px 0px no-repeat;
+}
