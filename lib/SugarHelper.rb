@@ -161,7 +161,7 @@ class SugarHelper
     if use_multi
       sugar.extend(Sugar::MultiSugar)
     end
-    sugar.sequence = sequence
+    sugar.sequence = sequence if (sequence != '')
     sugar.target_namespace = :ecdb
     return sugar    
   end
@@ -242,26 +242,26 @@ class SugarHelper
     
     if renderscheme == :boston
       renderer.scheme = 'boston'
-      CondensedLayout.new().layout(sugar)
+      CondensedLayout.new().layout(sugar) if sugar
     elsif renderscheme == :oxford
       renderer.scheme = 'oxford'
-      GridLayout.new().layout(sugar)    
+      GridLayout.new().layout(sugar) if sugar
     elsif renderscheme == :composite
       renderer.extend(CollapsedStubs)
       renderer.scheme = 'boston'
       renderer.sugar = sugar
-      renderer.initialise_prototypes()
+      renderer.initialise_prototypes() if sugar
       layout_engine = CondensedScalableLayout.new()
       layout_engine.node_spacing = { :x => 150, :y => 150 }
-      layout_engine.layout(sugar)
+      layout_engine.layout(sugar) if sugar
       
     else
       renderer.scheme = 'text:ic'
-      CondensedLayout.new().layout(sugar)    
+      CondensedLayout.new().layout(sugar) if sugar   
     end
     if (renderscheme != :composite)
       renderer.sugar = sugar
-      renderer.initialise_prototypes()
+      renderer.initialise_prototypes() if sugar
     end
     return renderer.render(sugar)    
   end

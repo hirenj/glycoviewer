@@ -160,8 +160,10 @@ function triggerPrune(start,e) {
 
 function updateScale(slider) {
 	state = this._state;
-	state['svgdocument'].setAttribute('width', state['originalwidth']*slider.value);
-	state['svgdocument'].setAttribute('height', state['originalheight']*slider.value);	
+	if (state['svgdocument']) {
+		state['svgdocument'].setAttribute('width', state['originalwidth']*slider.value);
+		state['svgdocument'].setAttribute('height', state['originalheight']*slider.value);	
+	}
 }
 
 function updateSeqs() {
@@ -198,7 +200,7 @@ connect(window, 'onload', onloader);
 <input type="submit" value="Get SVG"/>
 </form>
 <div class="spacer" style="clear:both;"></div>
-<div id="sequence"><%= @sugar.sequence %></div>
+<div id="sequence"><%= @sugar? @sugar.sequence : '' %></div>
 <div style="width: 95%; min-height: 500px; max-height: 500px; height: 500px; overflow: hidden; position: relative;" id="sugarbox">
 </div>
 <h3>IUPAC condensed</h3>

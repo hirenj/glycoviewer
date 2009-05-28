@@ -1,6 +1,6 @@
 <div>
 <div id="svg_box" class="svg_box">
 <%= render :partial => "sviewer/render.xhtml", :locals => { :sugar => @sugar, :scale => @scale, :padding => 100 } %>
-</div><div id="sequence" class="sequence_box"><%= @sugar.sequence %></div>
-<div id="sequence_ic" class="sequence_box"><%= print_sugar(@sugar.sequence,:ecdb)%></div>
+</div><div id="sequence" class="sequence_box"><%= @sugar ? @sugar.sequence : '' %></div>
+<div id="sequence_ic" class="sequence_box"><%= @sugar ? print_sugar(@sugar.sequence,:ecdb) : ''%></div>
 </div>

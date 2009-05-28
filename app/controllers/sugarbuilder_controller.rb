@@ -8,7 +8,8 @@ class SugarbuilderController < ApplicationController
       get_sugar
       draw_sugar
     else
-      render :action => 'build_sugar_index'
+      draw_sugar
+#      render :action => 'build_sugar_index'
     end
   end
 
@@ -18,20 +19,35 @@ class SugarbuilderController < ApplicationController
   end
 
   def build_sugar
-    get_sugar    
+    get_sugar 
     if params[:identifier] != 'null'
       if params[:newresidue] == 'prune'
         prune_sugar
       else
         grow_sugar
       end
+    else
+      if params[:newresidue] == 'prune'
+        @sugar = nil
+      else
+        get_sugar_from_residue
+      end
     end
     draw_sugar
     render :action => 'build_sugar', :layout => false, :content_type => Mime::XHTML
   end
 
+  def get_sugar_from_residue
+    if params[:newresidue] != nil && params[:newresidue] != ''
+      @sugar = SugarHelper.CreateSugar('',params[:ns])
+      @sugar.root = @sugar.monosaccharide_factory(params[:newresidue])
+      SugarHelper.MakeRenderable(@sugar)
+    end
+  end
+  
+
   def get_sugar
-    if params[:seq] != nil
+    if params[:seq] != nil && params[:seq] != ''
       @sugar = SugarHelper.CreateRenderableSugar(params[:seq],params[:ns])
     end
   end
@@ -48,7 +64,9 @@ class SugarbuilderController < ApplicationController
     target_residue = @sugar.find_residue_by_linkage_path(linkagepath)
     if target_residue.parent != nil
       target_residue.parent.remove_child(target_residue)
-    end    
+    else
+      @sugar = nil
+    end
   end
 
   def grow_sugar
@@ -61,6 +79,7 @@ class SugarbuilderController < ApplicationController
   end
 
   def draw_sugar
+    return unless @sugar
     targets = Element.new('svg:g')
     @sugar.overlays << targets
     @sugar.residue_composition.each { |res|
