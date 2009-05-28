@@ -1,0 +1,71 @@
+.builder_parameters {
+	background: #dddddd;
+}
+.sugarbuilder_anomers {
+	position: absolute;
+}
+.sugarbuilder_anomer_a {
+	position: absolute;
+	width: 50px;
+	height: 75px;
+	left: 0px;
+	background: #aaaaaa;
+}
+.sugarbuilder_anomer_b {
+	position: absolute;
+	width: 50px;
+	height: 75px;
+	left: 50px;
+	background: #999999;
+}
+.sugarbuilder_anomer_u {
+	position: absolute;
+	width: 100px;
+	height: 25px;
+	left: 0px;
+	top: 75px;
+	background: #dddddd;
+}
+.sugarbuilder_linkages div {
+	width: 100px;
+	height: 10px;
+	background: #dddddd;
+	border: solid #000000 1px;
+	font-size: 8px;
+	padding: 0px;
+}
+.sugarbuilder_canvas {
+	top: 0px;
+	left: 0px;
+	height: 100%;
+}
+
+.yui-panel-container {
+	width: 410px;
+}
+#mono-palette {
+	border: solid black 1px;
+}
+#mono-palette .hd {
+	background: rgb(0,0,128);
+	font-family: Helvetica, Arial, Sans-serif;
+	font-size: 11pt;
+	padding-left: 10px;
+	color: #ffffff;
+}
+#mono-palette .bd * {
+	padding: 0px;
+	margin: 0px;
+}
+#mono-palette .bd {
+	padding-top: 5px;
+	background: #ffffff;
+}
+
+.pallette_element:hover {
+	cursor: pointer;
+}
+
+.pie_slice_anomer {
+	fill: rgb(204,204,255) !important;
+}
