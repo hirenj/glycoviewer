@@ -1,5 +1,5 @@
 <div xmlns="http://www.w3.org/1999/xhtml">
 <% @prototypes.each do |proto| %>
-	<img class="pallette_element" src="<%= url_for :controller => 'sviewer', :format => 'png', :seq => proto.root.name(:ic), :ns => 'ic', :width => 30, :height => 30, :schema => session[:sugarscheme] || 'text:ic' %>" alt="<%= proto.root.name %>" type="image/png"/>
+	<img class="pallette_element" src="<%= url_for :controller => 'sviewer', :format => 'png', :seq => proto.root.name(:ic), :ns => 'ic', :width => 30, :height => 30, :schema => session[:sugarscheme] || 'text:ic' %>" alt="<%= proto.root.name(params[:ns]) %>" type="image/png"/>
 <% end %>
 </div>

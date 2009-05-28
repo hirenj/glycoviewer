@@ -274,6 +274,10 @@ SugarBuilder.prototype.get_scale = function() {
 	return this._state['scale'];
 }
 
+SugarBuilder.prototype.set_namespace = function(ns) {
+	this._state['ns'] = ns;
+}
+
 SugarBuilder.prototype.canvas = function() {
 	return this.build_elements['svg_canvas'];
 }
@@ -296,15 +300,19 @@ SugarBuilder.prototype.build_structure = function(linkagepath) {
 
 SugarBuilder.prototype.refresh_structure = function(linkagepath) {
 	state = this._state;
-	querystring = queryString(
-		["identifier","seq",
-		"newresidue","anomer","firstposn",
-		"secondposn","scale"],
-		
-		[linkagepath,state['sequence'],
-		state['newres'], state['anomer'], state['firstposition'],
-		state['secondposition'], state['scale']]
-	);
+	var queryopts = {
+		"identifier": linkagepath,
+		"seq": state['sequence'],
+		"newresidue": state['newres'],
+		"anomer": state['anomer'],
+		"firstposn": state['firstposition'],
+		"secondposn": state['secondposition'],
+		"scale": state['scale'],
+		};
+	if (state['ns']) {
+		queryopts['ns'] = state['ns'];
+	}
+	querystring = queryString(queryopts);
 	state['refreshing'] = true;
 	doXHR(this.builderURL,
 		{ 	method: 'POST',
@@ -318,7 +326,7 @@ SugarBuilder.prototype._replace_structure = function(data) {
 	
 	mysvg = data.responseXML.childNodes[0].getElementsByTagName('div')[0].getElementsByTagName('div')[0];
 	mysvg = mysvg.getElementsByTagNameNS('http://www.w3.org/2000/svg','svg')[0];
-  svgdoc = document.importNode(mysvg,true);
+  	svgdoc = document.importNode(mysvg,true);
 	replaceChildNodes(this.build_elements['svg_canvas'],svgdoc);
 	state['originalwidth'] = svgdoc.getAttribute('width');
 	state['originalheight'] = svgdoc.getAttribute('height');

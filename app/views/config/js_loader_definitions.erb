@@ -2,7 +2,11 @@ if ( typeof(YAHOO) != 'undefined' )
 (function()
 {
 var loader = new YAHOO.util.YUILoader({
-	onSuccess: function() { signal(ECDB,'sugarbuilder_ready'); }
+	onSuccess: function() {
+		ECDB.SugarBuilderWidget.PALETTE_URL = "<%= url_for :controller => 'sugarbuilder', :action => 'pallette', :format => 'xhtml' %>";
+		ECDB.SugarBuilderWidget.BUILDER_URL = "<%= url_for :controller => 'sugarbuilder', :action => 'build_sugar', :format => 'xhtml' %>";
+		signal(ECDB,'sugarbuilder_ready');	
+	}
 });
 loader.addModule(
 {

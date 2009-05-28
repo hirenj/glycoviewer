@@ -8,7 +8,7 @@ if ( typeof(ECDB.SugarBuilderWidget) == 'undefined' ) {
 }
 
 ECDB.SugarBuilderWidget = function(target_element) {
-	var pal = new SugarBuilder.Pallette(ECDB.SugarBuilderWidget.PALETTE_URL);
+	var pal = new SugarBuilder.Pallette(ECDB.SugarBuilderWidget.PALETTE_URL,{ 'namespace': 'ic' });
 	var palette_element = new YAHOO.widget.Panel('mono-palette', {
 		width:"400px",
 		close:false, 
@@ -22,6 +22,7 @@ ECDB.SugarBuilderWidget = function(target_element) {
 	connect(Draggables,'end',partial(ECDB.SugarBuilderWidget._promotePanel,palette_element,pal));
 
 	var sb = new SugarBuilder(ECDB.SugarBuilderWidget.BUILDER_URL,target_element.value);
+	sb.set_namespace('ic');
 	connect(sb,'sequencechange',partial(ECDB.SugarBuilderWidget._updateSeqs,target_element,sb));
 	sb.refresh_structure('null');
 	

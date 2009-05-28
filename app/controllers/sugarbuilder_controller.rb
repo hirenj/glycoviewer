@@ -14,11 +14,13 @@ class SugarbuilderController < ApplicationController
   end
 
   def pallette
+    params[:ns] = params[:ns] ? params[:ns].to_sym : nil
     generate_prototypes
     render :action => 'pallette', :layout => false, :content_type => Mime::XML
   end
 
   def build_sugar
+    params[:ns] = params[:ns] ? params[:ns].to_sym : nil
     get_sugar 
     if params[:identifier] != 'null'
       if params[:newresidue] == 'prune'
@@ -42,6 +44,7 @@ class SugarbuilderController < ApplicationController
       @sugar = SugarHelper.CreateSugar('',params[:ns])
       @sugar.root = @sugar.monosaccharide_factory(params[:newresidue])
       SugarHelper.MakeRenderable(@sugar)
+      SugarHelper.SetWriterType(@sugar,params[:ns])
     end
   end
   
@@ -49,14 +52,15 @@ class SugarbuilderController < ApplicationController
   def get_sugar
     if params[:seq] != nil && params[:seq] != ''
       @sugar = SugarHelper.CreateRenderableSugar(params[:seq],params[:ns])
+      SugarHelper.SetWriterType(@sugar,params[:ns])
     end
   end
 
   def generate_prototypes
     @prototypes = NamespacedMonosaccharide.Supported_Residues.collect { |res|
       new_res = Monosaccharide.Factory(NamespacedMonosaccharide,res)
-      SugarHelper.CreateRenderableSugar(new_res.name(:ic),:ic)
-    }
+      (! params[:ns]) || new_res.alternate_name?(params[:ns]) ? SugarHelper.CreateRenderableSugar(new_res.name(:ic),:ic) : nil
+    }.compact
   end
 
   def prune_sugar
@@ -73,7 +77,10 @@ class SugarbuilderController < ApplicationController
     linkagepath = params[:identifier] ? params[:identifier].split(',').collect { |s| s.to_i } : nil
     target_residue = @sugar.find_residue_by_linkage_path(linkagepath)
     new_residue = @sugar.monosaccharide_factory(params[:newresidue])
-    target_residue.add_child(new_residue,@sugar.linkage_factory({:from => params[:firstposn].to_i, :to => params[:secondposn].to_i}))
+    link = @sugar.linkage_factory()
+    link.second_position = params[:firstposn].to_i
+    link.first_position = params[:secondposn].to_i
+    target_residue.add_child(new_residue,link)
     new_residue.anomer = params[:anomer]
     Renderable::Sugar.extend_object(@sugar)
   end

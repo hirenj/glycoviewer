@@ -2,7 +2,12 @@ if ( typeof(SugarBuilder.Pallette) == undefined ) {
 	SugarBuilder.Pallette = {};
 }
 
-SugarBuilder.Pallette = function(builderURL) {
+SugarBuilder.Pallette = function(builderURL,opts) {
+	if (opts) {
+		if (opts['namespace']) {
+			this._ns = opts['namespace'];
+		}
+	}
 	this.builderURL = builderURL;
 	this._canvas = XHtmlDOM.makeElement('div');
 	appendChildNodes(this._canvas, XHtmlDOM.makeElement('div'));		
@@ -33,8 +38,14 @@ SugarBuilder.Pallette.prototype._setupPallette = function() {
 }
 
 SugarBuilder.Pallette.prototype._get_pallette = function() {
+	var queryopts = {};
+	if (this._ns) {
+		queryopts['ns'] = this._ns;
+	}
+	querystring = queryString(queryopts);
 	doXHR(this.builderURL,
 		{ 	method: 'POST',
+			sendContent: querystring,
 			headers: {"Content-Type":"application/x-www-form-urlencoded"}
 		}).addCallback(bind(this._accept_pallette,this));
 };
