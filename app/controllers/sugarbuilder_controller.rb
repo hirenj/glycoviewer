@@ -80,6 +80,9 @@ class SugarbuilderController < ApplicationController
     link = @sugar.linkage_factory()
     link.second_position = params[:firstposn].to_i
     link.first_position = params[:secondposn].to_i
+    if (new_residue.name(:ic) == 'NeuAc' || new_residue.name(:ic) == 'NeuGc' )
+      link.first_position = 2
+    end
     target_residue.add_child(new_residue,link)
     new_residue.anomer = params[:anomer]
     Renderable::Sugar.extend_object(@sugar)

@@ -41,7 +41,7 @@
 	connect(window,'onload',onloader);
 //]]>	
 </script>
-<% human_tags = params[:id].split(',').collect { |tag| tag.gsub!(/^.*:/,''); tag.capitalize }%>
+<% human_tags = (params[:id] || '').split(',').collect { |tag| tag.gsub!(/^.*:/,''); tag.capitalize }%>
 <h1 id="report_title">Coverage for tags: <%= (human_tags || []).join(',') %></h1>
 <% if @aa_sites %>
 <h2>Glycosylation sites <%= @aa_sites.is_a?(Array) ? @aa_sites.join(',') : ''%></h2>
@@ -63,7 +63,7 @@
 
 <div class="branch_graphs">
 <div class="data">
-	<%= render :partial => "summary_branch_graphs", :locals => { :sugar => sugar } %>
+	<%= render :partial => "glycodbs/summary_branch_graphs", :locals => { :sugar => sugar } %>
 	<div style="clear:both; height: 0px; float: none;"></div>
 </div>
 </div>
@@ -88,5 +88,5 @@
 </div>
 <!-- end coverage_tabs -->
 </div>
-<%= render :partial => "sugar_key" %>
-<%= render :partial => "sugar_intensity_key" %>
+<%= render :partial => "glycodbs/sugar_key" %>
+<%= render :partial => "glycodbs/sugar_intensity_key" %>
