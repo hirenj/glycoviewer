@@ -6,6 +6,10 @@ class ConfigController < ApplicationController
     render :text => text, :content_type => 'text/javascript'
   end
   
+  def js_loader_definitions
+    render :action => 'js_loader_definitions', :content_type => 'text/javascript', :layout => false
+  end
+  
   def rendering
     session[:sugarscheme] = params[:schema].to_sym
   end

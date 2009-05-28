@@ -9,7 +9,7 @@ SugarBuilder.Pallette = function(builderURL) {
 	this._setupPallette();
 
 	screen_overlay = XHtmlDOM.makeElement('div');
-	updateNodeAttributes(screen_overlay, { 'style' : 'position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; background: #ffffff; opacity: 0.85; display: none;', });
+	updateNodeAttributes(screen_overlay, { 'style' : 'position: absolute; top: -1px; left: -1px; width: 100%; height: 100%; background: #ffffff; border: solid #ffffff 1px; opacity: 0.85; display: none;', });
 
 	this._screen = screen_overlay;
 

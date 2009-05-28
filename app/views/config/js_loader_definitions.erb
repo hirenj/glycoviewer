@@ -1,0 +1,52 @@
+if ( typeof(YAHOO) != 'undefined' )
+(function()
+{
+var loader = new YAHOO.util.YUILoader({
+	onSuccess: function() { signal(ECDB,'sugarbuilder_ready'); }
+});
+loader.addModule(
+{
+	name: "ecdb.xhtmldom", 	//module name; must be unique
+	type: "js",				//can be "js" or "css"
+    fullpath: '<%= url_for(:controller => javascript_path("lib/XHtmlDOM"),:only_path => false)%>', //can use a path instead, extending base path
+});
+loader.addModule(
+{
+	name: "ecdb.sugarbuilder",
+	type: "js",
+    fullpath: '<%= url_for(:controller => javascript_path("lib/sugarbuilder"),:only_path => false)%>',
+    varName: "ECDBSugarBuilderLoaded",
+	requires: ['ecdb.xhtmldom']
+});
+loader.addModule(
+{
+	name: "ecdb.sugarbuilder_palette",
+	type: "js",
+    fullpath: '<%= url_for(:controller => javascript_path("lib/sugarbuilder_pallette"),:only_path => false)%>',
+	requires: ['ecdb.sugarbuilder','ecdb.xhtmldom','container','dragdrop','slider']
+});
+loader.addModule(
+{
+	name: "ecdb.sugarbuilder_style",
+	type: "css",
+    fullpath: '<%= url_for(:controller => stylesheet_path("sugarbuilder_widget.css"),:only_path => false)%>',
+	requires: ['ecdb.sugarbuilder']
+});
+loader.addModule(
+{
+	name: "ecdb.sugarbuilder_widget",
+	type: "js",
+    fullpath: '<%= url_for(:controller => javascript_path("lib/full_sugarbuilder"),:only_path => false)%>',
+	requires: ['ecdb.sugarbuilder','ecdb.sugarbuilder_palette','ecdb.sugarbuilder_style']
+});
+loader.require('ecdb.sugarbuilder_widget');
+loader.insert();
+})();
+
+if (typeof(YAHOO) == 'undefined' || typeof(YAHOO.util.YUILoader) == 'undefined') {
+	log("Required YUI::Loader library not available, aborting load");
+}
+
+if (typeof(ECDB) == 'undefined' || typeof(ECDB.SugarBuilderWidget) == 'undefined' ) {
+	log("Error loading SugarBuilder widget");
+}
