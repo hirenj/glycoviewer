@@ -1,0 +1,35 @@
+<%= javascript_include_tag 'MochiKit/packed/MochiKit/MochiKit.js' %>
+<%= javascript_include_tag 'http://yui.yahooapis.com/2.7.0/build/yuiloader/yuiloader-min.js' %>
+
+<%= javascript_include_tag '/config/js_loader_definitions' %>
+
+<form method="POST">
+<input type="text" id="id" name="id" value="<%= params[:id] %>"/>
+<input type="submit" value="Add sequence"/>
+</form>
+<pre>
+<% for seq in @sequences.reverse %>
+	<%= seq %>
+<% end %>
+</pre>
+<script type="text/javascript">
+//<![CDATA[
+
+if (typeof(ECDB) == 'undefined') {
+	ECDB = {};
+}
+
+function onloader()
+{
+	var a_div = ECDB.SugarBuilderWidget($('id'));
+	$('id').parentNode.appendChild(a_div);
+	a_div.style.position = 'relative';
+	a_div.style.minHeight = '300px';
+	a_div.style.border = 'solid black 1px';
+	$('id').style.display = 'none';
+}
+
+connect(window, 'onload', function() { connect(ECDB,'sugarbuilder_ready',onloader)});
+
+//]]>
+</script>
