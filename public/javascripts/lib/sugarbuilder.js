@@ -356,6 +356,11 @@ SugarBuilder.prototype._dragEnd = function(draggable) {
 		state['newres'] = draggable.element.getAttribute('alt');
 		this.build_structure(state['current_target'].getAttribute('linkid'));
 		this._restartParameterSetting();
+	} else {
+		if (this.get_sequence() == '') {
+			state['newres'] = draggable.element.getAttribute('alt');
+			this.refresh_structure('null');
+		}
 	}
 //	draggable.element.style.top = '0px';
 //	draggable.element.style.left = '0px';	
