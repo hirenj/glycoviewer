@@ -40,6 +40,9 @@ set :user, "root"            # defaults to the currently logged in user
 
 set :mongrel_conf, "#{deploy_to}/current/config/mongrel_cluster.yml"
 
+set :public_dir, "#{deploy_to}/current/public"
+
+
 # =============================================================================
 # SSH OPTIONS
 # =============================================================================
@@ -83,6 +86,13 @@ task :populatedata, :roles => :web do
   set :rakefile, "-f #{current_path}/lib/tasks/dataloader.rake"
   run_remote_rake "enzymedb:loaddb[db-dump]"
 end
+
+after "deploy", "setpermissions"
+
+task :setpermissions, :roles => :web do
+  run "chown -R www-data:www-data #{public_dir}"
+end
+
 # Tasks may take advantage of several different helper methods to interact
 # with the remote server(s). These are:
 #
