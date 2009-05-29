@@ -1,0 +1,50 @@
+load 'deploy' if respond_to?(:namespace) # cap2 differentiator
+Dir['vendor/plugins/*/recipes/*.rb'].each { |plugin| load(plugin) }
+load 'config/deploy'
+
+namespace :deploy do
+  namespace :mongrel do
+    [ :stop, :start, :restart ].each do |t|
+      desc "#{t.to_s.capitalize} the mongrel appserver"
+      task t, :roles => :app do
+        run "mongrel_rails cluster::#{t.to_s} --clean -C #{mongrel_conf}"
+      end
+    end
+  end
+  
+  namespace :apache do
+    desc "Start Apache"
+    task :start, :roles => :web do
+      sudo "/etc/init.d/apache2 start > /dev/null"
+    end
+
+    desc "Stop Apache"
+    task :stop, :roles => :web do
+      sudo "/etc/init.d/apache2 stop > /dev/null"
+    end
+
+    desc "Restart Apache"
+    task :restart, :roles => :web do
+      sudo "/etc/init.d/apache2 restart > /dev/null"
+    end
+  end
+
+  desc "Custom restart task for mongrel cluster"
+  task :restart do
+    deploy.mongrel.restart
+    deploy.apache.restart
+  end
+
+  desc "Custom start task for mongrel cluster"
+  task :start, :roles => :app do
+    deploy.mongrel.start
+    deploy.apache.start
+  end
+
+  desc "Custom stop task for mongrel cluster"
+  task :stop, :roles => :app do
+    deploy.apache.stop
+    deploy.mongrel.stop
+  end
+
+end
