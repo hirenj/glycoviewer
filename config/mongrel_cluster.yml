@@ -1,10 +1,4 @@
 --- 
-log_file: log/mongrel.log
-port: "8000"
-environment: development
-pid_file: tmp/pids/mongrel.pid
-servers: 5
---- 
 user: www-data
 cwd: /var/www/railsapp
 log_file: log/mongrel.log

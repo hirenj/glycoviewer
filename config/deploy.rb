@@ -23,9 +23,9 @@ set :repository, "http://glycoenzyme.googlecode.com/svn/trunk/"
 # be used to single out a specific subset of boxes in a particular role, like
 # :primary => true.
 
-role :web, "192.168.166.129"
-role :app, "192.168.166.129"
-role :db,  "192.168.166.129", :primary => true
+role :web, "192.168.166.130"
+role :app, "192.168.166.130"
+role :db,  "192.168.166.130", :primary => true
 
 # =============================================================================
 # OPTIONAL VARIABLES
@@ -37,6 +37,8 @@ set :user, "root"            # defaults to the currently logged in user
 # set :darcs, "/path/to/darcs"   # defaults to searching the PATH
 # set :cvs, "/path/to/cvs"       # defaults to searching the PATH
 # set :gateway, "gate.host.com"  # default to no gateway
+
+set :mongrel_conf, "#{deploy_to}/current/config/mongrel_cluster.yml"
 
 # =============================================================================
 # SSH OPTIONS
