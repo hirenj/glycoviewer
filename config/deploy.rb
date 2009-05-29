@@ -87,6 +87,14 @@ task :populatedata, :roles => :web do
   run_remote_rake "enzymedb:loaddb[db-dump]"
 end
 
+after "populatedata", "loadglycodbs"
+
+task :loadglycodbs, :roles => :web do
+  run "mysql -u enzymedb_prod -p enzymedb_production < #{current_path}/glycodbs_dump" do |ch, stream, out|
+    ch.send_data "enzymedb_prod\n" if out =~ /^Enter password:/
+  end  
+end
+
 after "deploy", "setpermissions"
 
 task :setpermissions, :roles => :web do
