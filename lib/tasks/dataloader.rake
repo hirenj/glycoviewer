@@ -43,7 +43,7 @@ namespace :enzymedb do
   desc "Apply tags for production data"
   task :production_tags, :needs => :environment do |t,args|
     Rake::Task['enzymedb:cleantags']
-    Rake::Task['enzymedb:applytag']['healthy_human']["species = 'HOMO SAPIENS' and RECOMBINANT = 'NONE' and (disease = '' or disease is null)"]
+    Rake::Task['enzymedb:applytag'].invoke('healthy_human',"species = 'HOMO SAPIENS' and RECOMBINANT = 'NONE' and (disease = '' or disease is null)")
   end
 end
 
