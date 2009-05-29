@@ -39,7 +39,7 @@ namespace :enzymedb do
   end
 end
 
-namesapce :enzymedb do
+namespace :enzymedb do
   desc "Apply tags for production data"
   task :production_tags, :needs => :environment do |t,args|
     Rake::Task['cleantags']
