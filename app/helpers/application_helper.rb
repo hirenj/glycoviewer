@@ -229,11 +229,11 @@ module ApplicationHelper
         my_fill = value > 0 ? cycle(*(fills + [:name => 'positives'])) : cycle(*(neg_fills + [:name => 'negatives']))
       end
       box = Element.new('svg:rect')      
-      box.add_attributes('x' => x_pos.round, 'y' => ((value > 0) ? (max_height - value) : max_height).round, 'height' => value.abs.to_i, 'width' => bar_width, 'fill' => my_fill, 'class' => "bar_#{lab}" )
+      box.add_attributes('x' => x_pos.round.to_s, 'y' => ((value > 0) ? (max_height - value) : max_height).round.to_s, 'height' => value.abs.to_i.to_s, 'width' => bar_width.to_s, 'fill' => my_fill, 'class' => "bar_#{lab}" )
       plot_canvas.add_element(box)
       unless x_for_label[lab]
         label = Element.new('svg:text')
-        label.add_attributes('x' => (x_pos + (bar_width/2)).round, 'text-anchor' => 'middle','y' => label_y_pos.round, 'font-size' => bar_width.round, 'fill' => text_colour)
+        label.add_attributes('x' => (x_pos + (bar_width/2)).round.to_s, 'text-anchor' => 'middle','y' => label_y_pos.round.to_s, 'font-size' => bar_width.round.to_s, 'fill' => text_colour)
         if options[:colour_for_label] && my_fill = options[:colour_for_label][lab]
           label.add_attributes('font-weight' => 'bolder', 'fill' => '#000000' )
         else
@@ -260,7 +260,7 @@ module ApplicationHelper
     (label_min..label_max).step(20) { |y|
       tick = Element.new('svg:line')
       tick_end = (y == 0) ? bar_width*labels.size + 15 : 5
-      tick.add_attributes('x1' => 0, 'x2' => tick_end, 'y1' => ((total_height - y)).round, 'y2' => ((total_height - y)).round, 'stroke' => '#000000', 'stroke-weight' => '1' ) 
+      tick.add_attributes('x1' => '0', 'x2' => tick_end.to_s, 'y1' => ((total_height - y)).round.to_s, 'y2' => ((total_height - y)).round.to_s, 'stroke' => '#000000', 'stroke-weight' => '1' ) 
       plot_canvas.add_element(tick)
       if true || y == 0 || y > total_height || ((total_height - y) < 20)
         tick_label = Element.new('svg:text')
