@@ -3,7 +3,7 @@
 <% @reactions_url_png = url_for :action => 'show', :controller => 'reactions', :format => 'png' %>
 <head>
 	<script type="text/javascript" src="<%= javascript_path 'MochiKit/packed/MochiKit/MochiKit.js' %>"></script>
-	<script type="text/javascript" src="<%= javascript_path 'lib/XHtmlDOM.js' %>"></script>
+	<script type="text/javascript" src="<%= javascript_path 'lib/xhtmldom.js' %>"></script>
 	<script type="text/javascript">
 //<![CDATA[
 		gene_reactions = <%= @genereaction_mapping.to_json %>;
