@@ -259,7 +259,7 @@ class StructureSummaryController < ApplicationController
   def execute_summary_for_sugars(individual_sugars,prune_structure=true)
     return unless individual_sugars
     
-    sugar_sets = individual_sugars.sort_by{ |s| s.root.name }.group_by { |s| s.root.name }.collect { |name,sugs| sugs }
+    sugar_sets = individual_sugars.sort_by{ |s| s.root.name(:ecdb) }.group_by { |s| s.root.name(:ecdb) }.collect { |name,sugs| sugs }
 
     return sugar_sets.collect { |sugar_set|
 
