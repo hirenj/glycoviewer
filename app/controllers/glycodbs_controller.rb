@@ -2,7 +2,7 @@ require 'lax_residue_names'
 
 class GlycodbsController < StructureSummaryController
   layout 'standard'
-  caches_page :coverage_for_taxonomy
+  caches_page :coverage_for_taxonomy, :coverage_for_tag
   self.page_cache_extension = '.xhtml'
   
   
@@ -150,6 +150,11 @@ class GlycodbsController < StructureSummaryController
     tagged_sugars = Glycodb.easyfind(:keywords => all_tags, :fieldnames => ['tags'])
     aa_sites = tagged_sugars.collect { |g| (g.GLYCO_AA_SITE || '').split(/\s*,\s*/) }.flatten.uniq
     @sugars = execute_coverage_for_sequence_set(tagged_sugars,params[:dont_prune] ? false : true)
+
+    if ENV['RAILS_ENV'] == 'production'
+      @sugars = @sugars.select{ |sug| ['GlcNAc','GalNAc','Gal','Glc'].include?(sug.root.name(:ic)) }
+    end
+
     @sugars.each { |sugar| 
       coverage_finder = EnzymeCoverageController.new()
       coverage_finder.sugar = sugar
@@ -157,6 +162,8 @@ class GlycodbsController < StructureSummaryController
       gene_tissue = (all_tags.collect { |tag| tag.gsub!(/anat\:/,'') }.compact.first || 'nil').humanize
       coverage_finder.markup_linkages(coverage_finder.execute_genecoverage(gene_tissue))
     }
+    
+    
     if params[:id] =~ /prot:(.+),?/
       @aa_sites = aa_sites
     else
