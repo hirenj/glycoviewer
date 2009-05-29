@@ -81,6 +81,7 @@ class SequenceSetsController < StructureSummaryController
   
   def add
     current_sequence_set << params[:id] if params[:id]
+    current_sequence_set.concat(params[:seqs].split("\n")) if (params[:seqs] || '').size > 0
     @sequences = current_sequence_set
     respond_to do |format|
         format.txt { render :text => @sequences.join("\n") }

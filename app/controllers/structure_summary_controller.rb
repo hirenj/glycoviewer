@@ -374,9 +374,11 @@ class StructureSummaryController < ApplicationController
           renderer.render_text_residue_label(sugar,bp,bp.hits,:bottom_right)
         end
       }
-      bp.callbacks << lambda { |element|
-        render_text_residue_label(sugar,bp,bp.get_counter(:ref).uniq.size,:bottom_left)
-      }
+      if bp.get_counter(:ref).uniq.size > 0
+        bp.callbacks << lambda { |element|
+          render_text_residue_label(sugar,bp,bp.get_counter(:ref).uniq.size,:bottom_left)
+        }
+      end
     }      
   end
 end

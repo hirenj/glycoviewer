@@ -2,16 +2,17 @@
 <%= javascript_include_tag 'http://yui.yahooapis.com/2.7.0/build/yuiloader/yuiloader-min.js' %>
 
 <%= javascript_include_tag '/config/js_loader_definitions' %>
-
+<h1>Create a list of sequences to build a <%= link_to "summary", :action => 'summary' %> for</h1>
+<h2>Build a structure and add to the list (<%= @sequences.size%> sequences - <%= link_to "List", :action => 'list'%>)</h2>
 <form method="POST">
 <input type="text" id="id" name="id" value="<%= params[:id] %>"/>
 <input type="submit" value="Add sequence"/>
 </form>
-<pre>
-<% for seq in @sequences.reverse %>
-	<%= seq %>
-<% end %>
-</pre>
+<h2>Paste in a list of sequences in IUPAC condensed (GlycoSuite) format, seperating each line with a newline</h2>
+<form method="POST">
+	<input type="submit" value="Add sequences"/><br/>
+	<textarea name="seqs"/>
+</form>
 <script type="text/javascript">
 //<![CDATA[
 
