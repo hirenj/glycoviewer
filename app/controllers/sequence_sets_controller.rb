@@ -2,7 +2,7 @@ class SequenceSetsController < StructureSummaryController
   layout 'standard'
   
   def sequence_sets
-    session[:sequence_sets] ||= Hash.new() { |h,k| h[k] = Array.new() }    
+    session[:sequence_sets] ||= {}
     session[:sequence_sets]
   end
   
@@ -11,6 +11,9 @@ class SequenceSetsController < StructureSummaryController
   end
   
   def current_sequence_set
+    if sequence_sets[set_id] == nil
+      sequence_sets[set_id] = []
+    end
     sequence_sets[set_id]
   end
   
