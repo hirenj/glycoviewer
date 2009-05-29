@@ -42,10 +42,18 @@ end
 namespace :enzymedb do
   desc "Apply tags for production data"
   task :production_tags, :needs => :environment do |t,args|
-    Rake::Task['enzymedb:cleantags'].invoke()
-    Rake::Task['enzymedb:applytag'].invoke('healthy_human',"select * from glycodbs where species = 'HOMO SAPIENS' and RECOMBINANT = 'NONE' and (disease = '' or disease is null)")
-    Rake::Task['enzymedb:applytag'].invoke('human_cancer_cell_line',"select * from glycodbs where species = 'HOMO SAPIENS' and recombinant = 'none' and cell_line is not null and cell_line != '' and (disease like '%cancer%' or disease like '%carcin%')")
-    Rake::Task['enzymedb:applytag'].invoke('human_cancer_tissue',"select * from glycodbs where species = 'HOMO SAPIENS' and recombinant = 'none' and (cell_line is null or cell_line = '') and (disease like '%cancer%' or disease like '%carcin%')")
+    tags = [
+      'healthy_human' => "select * from glycodbs where species = 'HOMO SAPIENS' and RECOMBINANT = 'NONE' and (disease = '' or disease is null)",
+      'human_cancer_cell_line' => "select * from glycodbs where species = 'HOMO SAPIENS' and recombinant = 'none' and cell_line is not null and cell_line != '' and (disease like '%cancer%' or disease like '%carcin%')",
+      'human_cancer_tissue' => "select * from glycodbs where species = 'HOMO SAPIENS' and recombinant = 'none' and (cell_line is null or cell_line = '') and (disease like '%cancer%' or disease like '%carcin%')"
+    ]
+    tags.each { |tagname,sql|
+      Glycodb.find_by_sql(sql).each { |g|
+        g.add_tag(tagname)
+        g.save()
+      }    
+    }
+
   end
 end
 
