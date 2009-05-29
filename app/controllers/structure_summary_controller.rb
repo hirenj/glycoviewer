@@ -36,7 +36,7 @@ module HitCounter
   
   MATCH_BLOCK = lambda { |residue,other_res,matched_yet|
     if residue.equals?(other_res)
-      if ! matched_yet && residue.is_a?(HitCounter)
+      if ! matched_yet && residue.is_a?(HitCounter) && other_res.is_a?(HitCounter)
         residue.counter_keys.each { |key|
           residue.merge_counter(other_res,key)
         }
