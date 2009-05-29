@@ -13,7 +13,7 @@ SugarBuilder.Pallette = function(builderURL,opts) {
 	appendChildNodes(this._canvas, XHtmlDOM.makeElement('div'));		
 	this._setupPallette();
 
-	screen_overlay = XHtmlDOM.makeElement('div');
+	var screen_overlay = XHtmlDOM.makeElement('div');
 	updateNodeAttributes(screen_overlay, { 'style' : 'position: absolute; top: -1px; left: -1px; width: 100%; height: 100%; background: #ffffff; border: solid #ffffff 1px; opacity: 0.85; display: none;', });
 
 	this._screen = screen_overlay;
@@ -42,7 +42,7 @@ SugarBuilder.Pallette.prototype._get_pallette = function() {
 	if (this._ns) {
 		queryopts['ns'] = this._ns;
 	}
-	querystring = queryString(queryopts);
+	var querystring = queryString(queryopts);
 	doXHR(this.builderURL,
 		{ 	method: 'POST',
 			sendContent: querystring,
@@ -51,12 +51,12 @@ SugarBuilder.Pallette.prototype._get_pallette = function() {
 };
 
 SugarBuilder.Pallette.prototype._accept_pallette = function(data) {
-	pallette = data.responseXML.childNodes[0].getElementsByTagName('img');
-	imported_elements = [];
+	var pallette = data.responseXML.childNodes[0].getElementsByTagName('img');
+	var imported_elements = [];
 	for (var i = 0; i < pallette.length; i++) {
-		imported_pal = document.importNode(pallette[i],true);
+		var imported_pal = document.importNode(pallette[i],true);
 			
-		a_drag = new Draggable(imported_pal, { revert : true, ghosting: false, zindex: 1, selectclass: 'draggable' });
+		var a_drag = new Draggable(imported_pal, { revert : true, ghosting: false, zindex: 1, selectclass: 'draggable' });
 		
 		updateNodeAttributes(imported_pal, {'class' : 'pallette_element'});
 		imported_elements.push(imported_pal);
@@ -73,8 +73,8 @@ SugarBuilder.Slider.prototype.canvas = function() {
 };
 
 SugarBuilder.Slider.prototype._setupSlider = function() {
-	sliderContainer = XHtmlDOM.makeElement('div');
-	sliderBar = XHtmlDOM.makeElement('div');
+	var sliderContainer = XHtmlDOM.makeElement('div');
+	var sliderBar = XHtmlDOM.makeElement('div');
 	appendChildNodes(sliderContainer, [ sliderBar ]);
 	updateNodeAttributes(sliderBar,{ 'class' : 'sugarbuilder_slider_controller' });
 	updateNodeAttributes(sliderContainer,{ 'class' : 'sugarbuilder_slider_container' });	

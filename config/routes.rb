@@ -2,20 +2,21 @@ ActionController::Routing::Routes.draw do |map|
 
   if ENV['RAILS_ENV'] == 'development'
     map.connect 'glycodbs', :controller => 'glycodbs', :action => 'index', :format => 'html'
+
     map.connect 'glycodbs/tags', :controller => 'glycodbs', :action => 'tags', :format => 'html'
+
+    map.connect 'glycodbs/proteins', :controller => 'glycodbs', :action => 'proteins', :format => 'html'
+
   end
 
   map.connect 'structures', :controller => 'glycodbs', :action => 'tags', :format => 'html'
-
-  if ENV['RAILS_ENV'] == 'development'
-    map.connect 'glycodbs/proteins', :controller => 'glycodbs', :action => 'proteins', :format => 'html'
-  end
 
   map.connect 'structures/coverage_for_tag/:id', :controller => 'glycodbs', :action => 'coverage_for_tag'
 
   map.connect 'structures/compare_tags/:tags1/:tags2', :controller => 'glycodbs', :action => 'compare_tag_summary'
 
   if ENV['RAILS_ENV'] == 'development'
+    
     map.connect 'glycodbs/:id', :controller => 'glycodbs', :action => 'show', :format => 'html'
 
     map.connect 'glycodbs/tag/:id/:tag', :controller => 'glycodbs', :action => 'tag', :format => 'html'
@@ -53,14 +54,14 @@ ActionController::Routing::Routes.draw do |map|
   # Allow downloading Web Service WSDL as a file with an extension
   # instead of a file named 'wsdl'
   if ENV['RAILS_ENV'] == 'development'  
-    map.connect ':controller/service.wsdl', :action => 'wsdl'
-  end
-  
-  map.connect 'sugarviewer', :controller => 'sviewer', :action => 'show', :format => 'html'
 
-  if ENV['RAILS_ENV'] == 'development'
+    map.connect ':controller/service.wsdl', :action => 'wsdl'
+
     map.connect 'sugarlist', :controller => 'sviewer', :action => 'show_list', :format => 'html'
+
   end
+
+  map.connect 'sugarviewer', :controller => 'sviewer', :action => 'show', :format => 'html'
 
   map.connect 'sviewer_thumbs/:width/:height/:schema/:ns/:seq.png', :format => 'png', :controller => 'sviewer', :action => 'index'
 
@@ -100,12 +101,15 @@ ActionController::Routing::Routes.draw do |map|
     map.connect ':controller/:action/:id', :format => 'html'
 
   else
-    
-    map.connect 'config/:action', :controller => 'config'
 
-    map.connect 'sugarbuilder', :controller => 'sugarbuilder'
+    ['config','sugarbuilder','sequence_sets'].each { |action|
+
+      map.connect "#{action}/:action.:format", :controller => action
     
-    map.connect 'sugarbuilder/:action', :controller => 'sugarbuilder'
+      map.connect "#{action}/:action", :controller => action
+
+      map.connect "#{action}", :controller => action
+    }
     
     map.connect ':controller/:action/:id.:format', :disabled_action => true
 

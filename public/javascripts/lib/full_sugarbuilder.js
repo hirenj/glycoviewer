@@ -26,6 +26,8 @@ ECDB.SugarBuilderWidget = function(target_element) {
 	connect(sb,'sequencechange',partial(ECDB.SugarBuilderWidget._updateSeqs,target_element,sb));
 	sb.refresh_structure('null');
 	
+	connect(target_element,"onblur",function() { sb.set_sequence(target_element.value); sb.refresh_structure('null'); });
+	
 	var widget = DIV();
 	appendChildNodes(widget,sb.canvas());
 	
@@ -34,10 +36,12 @@ ECDB.SugarBuilderWidget = function(target_element) {
 	appendChildNodes(widget,slider.canvas());
 		
 	connect(sb,'sequencechange',sb,partial(ECDB.SugarBuilderWidget._updateScale,slider));
-	
+
 	palette_element.render(widget);
-	palette_element.center();
 	palette_element.element.style.position = 'absolute';
+	palette_element.element.style.top = '0px';
+	palette_element.element.style.left = '50%';
+	
 
 	widget.onmousedown = function() { return false; }
 	
@@ -71,7 +75,7 @@ ECDB.SugarBuilderWidget._triggerPrune = function(start,e) {
 };
 
 ECDB.SugarBuilderWidget._updateScale = function(slider) {
-	state = this._state;
+	var state = this._state;
 	if (state['svgdocument']) {
 		state['svgdocument'].setAttribute('width', state['originalwidth']*slider.value);
 		state['svgdocument'].setAttribute('height', state['originalheight']*slider.value);
@@ -80,4 +84,5 @@ ECDB.SugarBuilderWidget._updateScale = function(slider) {
 
 ECDB.SugarBuilderWidget._updateSeqs = function(target,sb) {
 	target.value = sb.get_sequence();
+	signal(target,"onchange");
 };

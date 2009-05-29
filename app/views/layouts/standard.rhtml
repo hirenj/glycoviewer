@@ -97,7 +97,9 @@
 <div class="navigation">
 	<ul>
 		<li><%= link_to "Sugarbuilder", :controller => "sugarbuilder", :action => "index" %></li>
-		<li><%= link_to "Structures", :controller => "glycodbs", :action => "tags", :format => 'html' %></li>
+		<li><%= link_to "User sequences", :controller => "sequence_sets", :action => "add" %></li>
+		<li><%= link_to "Summary diagrams", :controller => "glycodbs", :action => "tags", :format => 'html' %></li>
+		
 <% if ENV['RAILS_ENV'] == 'development' %>
 		<li><%= link_to "Disaccharide matrix", :controller => "disaccharides", :action => "matrix", :threshold => 6 %></li>
 <!--		<li><%= link_to "Reactions matrix", :controller => "reactions", :action => "matrix" %></li>-->
