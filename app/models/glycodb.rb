@@ -9,6 +9,10 @@ class Glycodb < ActiveRecord::Base
     self.tags = (current_tags.push(new_tag)).uniq.join(',')
   end
   
+  def clear_tags
+    self.tags = ''
+  end
+  
   def add_reference(ref_id)
     current_references = (self.references || '').split(',') || []
     self.references = (current_references.push(ref_id)).uniq.join(',')    

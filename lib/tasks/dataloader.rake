@@ -19,6 +19,36 @@ namespace :enzymedb do
   end
 end
 
+namespace :enzymedb do
+  desc "Clean tags"
+  task :cleantags, :needs => :environment do |t,args|
+    
+  end
+end
+
+namespace :enzymedb do
+  desc "Clean tags"
+  task :cleantags, :needs => :environment do |t,args|
+    Glycodb.find(:all).each { |g|
+      g.clear_tags
+      g.save()
+    }    
+  end
+end
+
+namespace :enzymedb do
+  desc "Apply tag"
+  task :applytag, :tagname, :sql, :needs => :environment do |t,args|
+    Glycodb.find(:all, :conditions => [:sql]).each { |g|
+      g.add_tag(:tagname)
+      g.save()
+    }    
+  end
+end
+
+
+
+
 def logger
   @@logger ||= Logger.new("log/rake.log")
 end
