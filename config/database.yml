@@ -35,7 +35,7 @@ staging:
 
 production:
   adapter: mysql
-  database: enzymedb 
-  username: enzymedb
-  password: enzymedb
+  database: enzymedb_prod 
+  username: enzymedb_prod
+  password: enzymedb_prod
   host: localhost
