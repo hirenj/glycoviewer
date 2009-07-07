@@ -23,15 +23,45 @@ set :repository, "http://glycoenzyme.googlecode.com/svn/trunk/"
 # be used to single out a specific subset of boxes in a particular role, like
 # :primary => true.
 
-role :web, "192.168.166.130"
-role :app, "192.168.166.130"
-role :db,  "192.168.166.130", :primary => true
 
 # =============================================================================
 # OPTIONAL VARIABLES
 # =============================================================================
 set :deploy_to, "/var/www/#{application}" # defaults to "/u/apps/#{application}"
-set :user, "root"            # defaults to the currently logged in user
+
+task :askvars do
+
+  set(:remote_server) do
+    Capistrano::CLI.ui.ask("Give me a hostname: "){ |q| q.default = 'localhost' }
+  end
+
+  set(:user) do
+     Capistrano::CLI.ui.ask("Give me a ssh user: "){ |q| q.default = 'root' }
+  end
+
+  set(:wwwuser) do
+    Capistrano::CLI.ui.ask("Give me a www-user for permissions: "){ |q| q.default = 'www-user' }
+  end
+  
+  set(:production_database_username) do
+    Capistrano::CLI.ui.ask("Give me a production database username: "){ |q| q.default = 'enzymedb_prodction'}
+  end
+  
+  set(:production_database_password) do
+    Capistrano::CLI.password_prompt("Production database remote Password : "){ |q| q.default = 'enzymedb_production' }
+  end
+  
+  role :web, "#{remote_server}"
+  role :app, "#{remote_server}"
+  role :db,  "#{remote_server}", :primary => true
+
+end
+
+before "deploy", "askvars"
+before "deploy:setup", "askvars"
+before "db:deploy", "askvars"
+before "app:dependencies", "askvars"
+
 # set :scm, :darcs               # defaults to :subversion
 # set :svn, "/path/to/svn"       # defaults to searching the PATH
 # set :darcs, "/path/to/darcs"   # defaults to searching the PATH
@@ -41,7 +71,6 @@ set :user, "root"            # defaults to the currently logged in user
 set :mongrel_conf, "#{deploy_to}/current/config/mongrel_cluster.yml"
 
 set :public_dir, "#{deploy_to}/current/public"
-
 
 # =============================================================================
 # SSH OPTIONS
@@ -78,28 +107,76 @@ task :backup, :roles => :db, :only => { :primary => true } do
   end
 end
 
-set :rakefile, nil
-desc <<DESC
-Load database. Populate the reactions, gene information and discaccharides into the database
-DESC
-task :populatedata, :roles => :web do
-  set :rakefile, "-f #{current_path}/lib/tasks/dataloader.rake"
-  run_remote_rake "enzymedb:loaddb[db-dump]"
-end
-
-after "populatedata", "loadglycodbs"
-
-task :loadglycodbs, :roles => :web do
-  run "mysql -u enzymedb_prod -p enzymedb_production < #{current_path}/glycodbs_dump" do |ch, stream, out|
-    ch.send_data "enzymedb_prod\n" if out =~ /^Enter password:/
-  end  
-end
 
 after "deploy", "setpermissions"
 
 task :setpermissions, :roles => :web do
-  run "chown -R www-data:www-data #{public_dir}"
+  run "chown -R #{wwwuser}:#{wwwuser} #{public_dir}"
 end
+
+namespace :db do
+  task :buildyaml, :roles => :app do
+    require "yaml"
+    puts "Configuring database.yml"
+    buffer = YAML::load_file('config/database.yml')
+    # get ride of uneeded configurations
+    buffer.delete('test')
+    buffer.delete('development')
+    buffer.delete('staging')
+    
+    # Populate production element
+    buffer['production']['username'] = production_database_username
+    buffer['production']['password'] = production_database_password
+    buffer['production']['host'] = "localhost"
+
+    run "mkdir -p #{shared_path}/db"
+    run "mkdir -p #{shared_path}/config"
+    put YAML::dump(buffer), "#{shared_path}/config/database.yml", :mode => 0664  
+  end
+
+  desc <<DESC
+  [internal] Updates the symlink for database.yml file to the just deployed release.
+DESC
+  task :symlink, :except => { :no_release => true } do
+    run "ln -nfs #{shared_path}/config/database.yml #{release_path}/config/database.yml"
+  end
+  
+  set :rakefile, nil
+  desc <<DESC
+  [internal] Load database. Populate the reactions, gene information and discaccharides into the database
+DESC
+  task :populatedata, :roles => :web do
+    set :rakefile, "-f #{current_path}/lib/tasks/dataloader.rake"
+    run "cd #{current_path}; RAILS_ENV=production rake #{rakefile} enzymedb:loaddb[db-dump]"
+  end
+
+  after "populatedata", "loadglycodbs"
+
+  task :loadglycodbs, :roles => :web do
+    dbconf = YAML::load_file("#{release_path}/config/database.yml")
+    run "mysql -u #{dbconf['production']['username']} -p #{dbconf['production']['password']} #{dbconf['produciton']['database']} < #{current_path}/glycodbs_dump" do |ch, stream, out|
+      ch.send_data "#{dbconf['production']['password']}\n" if out =~ /^Enter password:/
+    end  
+  end
+  
+  desc <<DESC
+  Deploy the database running the remote migrate task
+DESC
+  task :deploy, :roles => :web do
+    run "cd #{current_path}; RAILS_ENV=production rake db:migrate"
+  end
+    
+end
+
+namespace :app do
+  task :dependencies do
+    run "cd #{current_path}; RAILS_ENV=production rake #{rakefile} gems:install"    
+  end
+end
+
+after "deploy:setup", "db:buildyaml" unless fetch(:skip_db_setup, false)
+after "deploy:finalize_update", "db:symlink"
+
 
 # Tasks may take advantage of several different helper methods to interact
 # with the remote server(s). These are:
