@@ -27,7 +27,7 @@ set :repository, "http://glycoenzyme.googlecode.com/svn/trunk/"
 # =============================================================================
 # OPTIONAL VARIABLES
 # =============================================================================
-set :deploy_to, "/var/www/#{application}" # defaults to "/u/apps/#{application}"
+set :deploy_to, "/srv/www/vhosts/glycolwebtooltest.babs.unsw.edu.au" # defaults to "/u/apps/#{application}"
 
 task :askvars do
 
@@ -56,6 +56,8 @@ task :askvars do
   role :db,  "#{remote_server}", :primary => true
 
 end
+
+set :use_sudo, false
 
 before "deploy", "askvars"
 before "deploy:setup", "askvars"

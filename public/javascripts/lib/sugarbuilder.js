@@ -67,8 +67,8 @@ SugarBuilder.prototype._setupAnomerOverlay = function() {
 
 	var anomer_overlay = new YAHOO.widget.Overlay(anomers);
 	anomer_overlay.cfg.setProperty("visible",false);
-	anomer_overlay.cfg.setProperty("width", '100px');
-	anomer_overlay.cfg.setProperty("height",'100px');
+	anomer_overlay.cfg.setProperty("width", '105px');
+	anomer_overlay.cfg.setProperty("height",'105px');
 	anomer_overlay.cfg.setProperty('zindex', '2');
 	this.build_elements['anomer_overlay'] = anomer_overlay;
 		
@@ -183,8 +183,8 @@ SugarBuilder.prototype._setupLinkageOverlay = function() {
 
 	var link_overlay = new YAHOO.widget.Overlay(links);
 	link_overlay.cfg.setProperty("visible",false);
-	link_overlay.cfg.setProperty("width", '50px');
-	link_overlay.cfg.setProperty("height",'50px');
+	link_overlay.cfg.setProperty("width", '105px');
+	link_overlay.cfg.setProperty("height",'105px');
 	link_overlay.cfg.setProperty('zindex', '2');
 
 	this.build_elements['linkage_overlay'] = link_overlay;
