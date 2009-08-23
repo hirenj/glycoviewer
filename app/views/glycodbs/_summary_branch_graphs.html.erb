@@ -25,6 +25,7 @@
 </div>
 </div>
 <% end %>
+<% if ENV['RAILS_ENV'] == 'development' %>
 <% 
 	stat_type = ['NeuAc','Fucose']
 	stat_data = [sugar.collected_statistics[:terminal_neuacs], sugar.collected_statistics[:terminal_fucoses]]
@@ -51,6 +52,7 @@
 </div>
 </div>
 <%	} %>
+<% end %>
 <div class="single_branch_graph">
 <%
 	stat_type = ['NeuAc','Fuc']
