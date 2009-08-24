@@ -16,7 +16,7 @@ ECDB.SugarBuilderWidget = function(target_element) {
 		zindex: 2,
 		underlay:'none',
 		draggable:true} );
-	palette_element.setHeader("Donors");
+	palette_element.setHeader("Donors (drag and drop to add)");
 	palette_element.setBody(pal.canvas());
 	connect(Draggables,'start',partial(ECDB.SugarBuilderWidget._demotePanel,palette_element,pal));
 	connect(Draggables,'end',partial(ECDB.SugarBuilderWidget._promotePanel,palette_element,pal));
