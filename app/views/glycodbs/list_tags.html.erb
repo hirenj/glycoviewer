@@ -1,7 +1,17 @@
-<h1>Summary graphs available in the database</h1>
+<h1>Glycan Visualisation tool</h1>
+<h2>Important compatibility information</h2>
+<p>Unfortunately, this prototype application supports only browsers such as <a href="http://getfirefox.com">Firefox</a> or <a href="http://www.apple.com/safari">Safari</a> for presentation of results. If you are using Internet explorer, please download an alternative browser, and use the prototype there.</p>
+<h2>Introduction</h2>
+<p>This tool is a prototype visualisation designed to present in a concise form, an overview of a set of glycan structures, without presenting an overwhelming amount of information.</p>
+<p>The tool takes advantage of the nature of the biosynthetic pathways used to synthesise the structures, and focusses on presenting information where there are unique features in the structure. By de-emphasising a lot of the conserved structural features, it becomes easier to see the features that are unique.
+</p>
+<p>The data used here is from <a href="http://glycosuitedb.expasy.org">GlycoSuiteDB</a>, and several sets of data have been chosen to show how this tool works.
+</p>
+<p>All code for this project is publically available at <a href="http://code.google.com/p/glycoenzyme/">Google Code</a>, and was developed as part of <a href="http://www.eurocarbdb.org">EuroCarbDB</a> as part of the doctoral thesis of Hiren Joshi. The tool was first developed at the <a href="http://www.dkfz.de">German Cancer Research Centre (DKFZ)</a> in the group of Dr Claus-Wilhelm von der Lieth, and then further developed at UNSW at the <a href="http://www.systemsbiology.org.au">New South Wales Systems Biology Initiative</a>. EuroCarbDB is a Research Infrastructure Design Study Funded by the 6th Research Framework Program of the European Union (Contract: RIDS Contract number 011952).</p> 
+
 <h2>User defined</h2>
-<%= link_to "Show summary",:controller => 'sequence_sets', :action => 'summary'%><br/>
-<h2>Predefined</h2>
+<p>To show the structure defined from the <a href="/sequence_sets/add">User sequences</a>, display the <%= link_to "summary",:controller => 'sequence_sets', :action => 'summary'%>.</p>
+<h2>The following diagrams have been selected to illustrate the tool</h2>
 <ul>
 <% for tag in @tags %>
 <%
@@ -11,4 +21,6 @@
 %>
 <li><%= link_to anat_name || tag, :controller => "glycodbs", :action => "coverage_for_tag", :id => tag %></li>
 <% end %>
+<li><a href="/structures/compare_tags/human_cancer_cell_line/human_cancer_tissue/">Compare human cancer cell line to tissue data</a></li>
 </ul>
+
