@@ -121,7 +121,7 @@ ActionController::Routing::Routes.draw do |map|
 
   end
 
-  map.connect '/', :controller => 'sugarbuilder'
+  map.connect '/', :controller => 'glycodbs', :action => 'tags', :format => 'html'
 
   # Install the default route as the lowest priority.
   map.connect ':controller/:action/:id'
