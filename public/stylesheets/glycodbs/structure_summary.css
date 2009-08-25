@@ -42,7 +42,7 @@ div.branch_graphs {
 	float: right;
 	right: 30px;
 	top: 0px;
-	width: 35%;
+	width: 100%;
 	height: 200px;
 	z-index: 100;
 	border: solid #9999ff 3px;
