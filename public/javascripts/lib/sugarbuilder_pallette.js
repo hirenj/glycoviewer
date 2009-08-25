@@ -75,10 +75,14 @@ SugarBuilder.Slider.prototype.canvas = function() {
 SugarBuilder.Slider.prototype._setupSlider = function() {
 	var sliderContainer = XHtmlDOM.makeElement('div');
 	var sliderBar = XHtmlDOM.makeElement('div');
-	appendChildNodes(sliderContainer, [ sliderBar ]);
+
+        var sliderLabel = XHtmlDOM.makeElement('div');
+        sliderLabel.textContent = "+/-";
+
+	appendChildNodes(sliderContainer, [ sliderLabel, sliderBar ]);
 	updateNodeAttributes(sliderBar,{ 'class' : 'sugarbuilder_slider_controller' });
 	updateNodeAttributes(sliderContainer,{ 'class' : 'sugarbuilder_slider_container' });	
-	
+	updateNodeAttributes(sliderLabel,{'class' : 'sugarbuilder_slider_label'});
 	this._element = YAHOO.widget.Slider.getVertSlider(sliderContainer, sliderBar, 100, 100);
 	this._element.setValue(0);
  	this._element.subscribe("change", this._onchange, this);

@@ -80,6 +80,14 @@
 	background: url('bg-fader.gif');
 }
 
+.sugarbuilder_slider_label {
+        position: absolute;
+        top: -20px;
+        left: 0px;
+        height: 20px;
+        font-size: 20px;
+}
+
 .sugarbuilder_slider_controller {
 	position: relative;
 	left: 0px;
