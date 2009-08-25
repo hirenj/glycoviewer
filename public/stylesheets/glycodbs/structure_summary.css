@@ -32,6 +32,10 @@
 	display: none;
 }
 
+.gene_toggle {
+        display: none;
+}
+
 /* This is not selected for being printed, and is a screen only element */
 div.branch_graphs {
 	position: relative;
