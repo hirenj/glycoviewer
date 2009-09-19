@@ -2,17 +2,29 @@
 <%= javascript_include_tag 'http://yui.yahooapis.com/2.7.0/build/yuiloader/yuiloader-min.js' %>
 
 <%= javascript_include_tag '/config/js_loader_definitions' %>
-<h1>Create a list of sequences to build a <%= link_to "summary", :action => 'summary' %> for</h1>
-<h2>Build a structure and add to the list (<%= @sequences.size%> sequences - <%= link_to "List", :action => 'list'%>)</h2>
+<h1>Use the tool</h1>
+
+<p>The tool produces a diagram that summarises a user-specified set of glycan structures.</p>
+
+<p>Sets of structures can be specified via the Sugar Builder. This is handy if you don’t know the IUPAC nomenclature.</p>
+<p>Alternatively, sets of structures in IUPAC format can be provided as a list.</p>
+
+<p>Once the set of structures has been entered, press the ‘Build Summary’ button.</p>
+
+<h1>Create a list of sequences to build a  for</h1>
+<h2>Sugar Builder</h2>
+<input type="button" onclick="window.open('<%= %>')" value="Help"/>
 <form method="POST">
 <input type="text" id="id" name="id" value="<%= params[:id] %>"/>
-<input type="submit" value="Add sequence"/>
+<input type="submit" value="Add sequence"/><input type="button" value="New structure" onclick="window.open('<%= %>')"/>
 </form>
-<h2>Paste in a list of sequences in IUPAC condensed (GlycoSuite) format, seperating each line with a newline</h2>
+<h2>Paste in a list of sequences in IUPAC structures, one per line</h2>
 <form method="POST">
-	<input type="submit" value="Add sequences"/><br/>
-	<textarea name="seqs"/>
+	<textarea name="seqs"/><br/>
+	<input type="submit" value="Add sequences"/>
 </form>
+<h2>List currently contains <%= @sequences.size%> sequences. Click <%= link_to "here", :action => 'list'%> to view the list.</h2>
+<input type="button" value="Build summary" onclick="window.open('<%= link_to "summary", :action => 'summary' %>')"/> <input type="button" value="Clear glycan list" onclick="window.open('')"/>
 <script type="text/javascript">
 //<![CDATA[
 

@@ -5,6 +5,8 @@ class GlycodbsController < StructureSummaryController
   caches_page :coverage_for_taxonomy, :coverage_for_tag
   self.page_cache_extension = '.xhtml'
   
+  def home
+  end
   
   # GET /glycodbs
   # GET /glycodbs.xml
