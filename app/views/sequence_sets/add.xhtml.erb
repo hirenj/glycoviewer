@@ -14,12 +14,12 @@
 <h1>Create a list of sequences to build a  for</h1>
 <h2>Sugar Builder</h2>
 <input type="button" onclick="window.open('<%= %>')" value="Help"/>
-<form method="POST">
+<form method="POST" action="<%= url_for :action => 'add' %>">
 <input type="text" id="id" name="id" value="<%= params[:id] %>"/>
 <input type="submit" value="Add sequence"/><input type="button" value="New structure" id="reset_struct"/>
 </form>
 <h2>Paste in a list of sequences in IUPAC structures, one per line</h2>
-<form method="POST">
+<form method="POST" action="<%= url_for :action => 'add' %>">
 	<textarea name="seqs"/><br/>
 	<input type="submit" value="Add sequences"/>
 </form>
