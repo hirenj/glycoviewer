@@ -16,7 +16,7 @@
 <input type="button" onclick="window.open('<%= %>')" value="Help"/>
 <form method="POST">
 <input type="text" id="id" name="id" value="<%= params[:id] %>"/>
-<input type="submit" value="Add sequence"/><input type="button" value="New structure" onclick="window.open('<%= %>')"/>
+<input type="submit" value="Add sequence"/><input type="button" value="New structure" onclick="$('id').value = '';"/>
 </form>
 <h2>Paste in a list of sequences in IUPAC structures, one per line</h2>
 <form method="POST">
@@ -24,7 +24,7 @@
 	<input type="submit" value="Add sequences"/>
 </form>
 <h2>List currently contains <%= @sequences.size%> sequences. Click <%= link_to "here", :action => 'list'%> to view the list.</h2>
-<input type="button" value="Build summary" onclick="window.open('<%= url_for :action => 'summary' %>')"/> <input type="button" value="Clear glycan list" onclick="window.open('')"/>
+<input type="button" value="Build summary" onclick="window.location = '<%= url_for :action => 'summary' %>';"/> <input type="button" value="Clear glycan list" onclick="window.location = '';"/>
 <script type="text/javascript">
 //<![CDATA[
 
