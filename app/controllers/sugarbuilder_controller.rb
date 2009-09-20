@@ -59,9 +59,11 @@ class SugarbuilderController < ApplicationController
   def generate_prototypes
     @prototypes = NamespacedMonosaccharide.Supported_Residues.collect { |res|
       new_res = Monosaccharide.Factory(NamespacedMonosaccharide,res)
-      (! params[:ns]) || new_res.alternate_name?(params[:ns]) ? SugarHelper.CreateRenderableSugar(new_res.name(:ic),:ic) : nil
-    }.reject { |res| 
-      res && res.name(:ic) == 'Nil'
+      if (! params[:ns]) || new_res.alternate_name?(params[:ns])
+        new_res.name(:ic) == 'Nil' ? nil : SugarHelper.CreateRenderableSugar(new_res.name(:ic),:ic)
+      else
+        nil
+      end
     }.compact
   end
 
