@@ -41,7 +41,7 @@ function onloader()
 	a_div.style.border = 'solid black 1px';
 	connect('reset_struct','onclick',function() {
 	  $('id').value = '';
-	  signal(a_div.builder,'sequencechange');
+	  a_div.builder.set_sequence('');
 	});
 	$('id').style.display = 'none';
 }
