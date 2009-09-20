@@ -16,7 +16,7 @@
 <input type="button" onclick="window.open('<%= %>')" value="Help"/>
 <form method="POST">
 <input type="text" id="id" name="id" value="<%= params[:id] %>"/>
-<input type="submit" value="Add sequence"/><input type="button" value="New structure" onclick="$('id').value = '';"/>
+<input type="submit" value="Add sequence"/><input type="button" value="New structure" id="reset_struct"/>
 </form>
 <h2>Paste in a list of sequences in IUPAC structures, one per line</h2>
 <form method="POST">
@@ -39,6 +39,10 @@ function onloader()
 	a_div.style.position = 'relative';
 	a_div.style.minHeight = '300px';
 	a_div.style.border = 'solid black 1px';
+	connect('reset_struct','onclick',function() {
+	  $('id').value = '';
+	  signal(a_div.builder,'sequencechange');
+	});
 	$('id').style.display = 'none';
 }
 

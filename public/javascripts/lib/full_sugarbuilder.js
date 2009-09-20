@@ -50,6 +50,8 @@ ECDB.SugarBuilderWidget = function(target_element) {
 	
 	connect(slider,'onchange',sb,partial(ECDB.SugarBuilderWidget._updateScale,slider));
 
+    widget.builder = sb;
+
 	return widget;
 };
 
