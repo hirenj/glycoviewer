@@ -102,6 +102,10 @@ ActionController::Routing::Routes.draw do |map|
 
   else
 
+    map.connect 'help', :controller => 'glycodbs', :action => 'help'
+    map.connect 'help_output', :controller => 'glycodbs', :action => 'help_output'
+    map.connect 'help_contact', :controller => 'glycodbs', :action => 'help_contact'
+
     ['config','sugarbuilder','sequence_sets'].each { |action|
 
       map.connect "#{action}/:action.:format", :controller => action
