@@ -94,8 +94,11 @@ class SequenceSetsController < StructureSummaryController
   
   def clear
     current_sequence_set.clear
-    @sequences = []
-    render :action => 'add'
+    @sequences = current_sequence_set
+    respond_to do |format|
+      format.txt { render :text => @sequences.join("\n") }
+      format.xhtml { render :action => 'add' }
+    end
   end
   
   def delete
