@@ -24,7 +24,7 @@
 	<input type="submit" value="Add sequences"/>
 </form>
 <h2>List currently contains <%= @sequences.size%> sequences. Click <%= link_to "here", :action => 'list'%> to view the list.</h2>
-<input type="button" value="Build summary" onclick="window.location = '<%= url_for :action => 'summary' %>';"/> <input type="button" value="Clear glycan list" onclick="window.location = '';"/>
+<input type="button" value="Build summary" onclick="window.location = '<%= url_for :action => 'summary' %>';"/> <input type="button" value="Clear glycan list" onclick="window.location = '<%= url_for :action => 'clear' %>';"/>
 <script type="text/javascript">
 //<![CDATA[
 
