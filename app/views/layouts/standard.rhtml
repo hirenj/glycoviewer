@@ -96,7 +96,7 @@
 <body class="yui-skin-sam">
 <div class="navigation">
 	<ul>
-	  <li><%= link_to "Home", :controller => "glycodbs", :action => "home" %></li>
+	  <li><%= link_to "Home", :controller => "glycodbs", :action => "home" , :format => 'html'%></li>
 		<li><%= link_to "Sample uses", :controller => "glycodbs", :action => "tags", :format => 'html' %></li>
 		<li><%= link_to "Use the tool", :controller => "sequence_sets", :action => "add" %></li>
 		<li><%= link_to "Interpreting output", :controller => "glycodbs", :action => "help_output", :format => 'html' %></li>
