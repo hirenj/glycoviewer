@@ -12,7 +12,7 @@
 <p>Once the set of structures has been entered, press the ‘Build Summary’ button.</p>
 
 <h2>Sugar Builder</h2>
-<input type="button" onclick="window.location = '<%= url_for :controller => 'glycodbs', :action => 'help' %>'" value="Help"/>
+<input type="button" onclick="window.location = '<%= url_for :controller => 'glycodbs', :action => 'help', :format => 'html' %>'" value="Help"/>
 <form method="POST" action="<%= url_for :action => 'add' %>">
 <input type="text" id="id" name="id" value="<%= params[:id] %>"/>
 <input type="submit" value="Add sequence"/><input type="button" value="New structure" id="reset_struct"/>
