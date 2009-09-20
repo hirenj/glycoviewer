@@ -8,6 +8,15 @@ class GlycodbsController < StructureSummaryController
   def home
   end
   
+  def help
+  end
+  
+  def help_output
+  end
+  
+  def help_contact
+  end
+  
   # GET /glycodbs
   # GET /glycodbs.xml
   def index
