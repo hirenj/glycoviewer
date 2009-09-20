@@ -61,6 +61,10 @@ ActionController::Routing::Routes.draw do |map|
 
   end
 
+  map.connect 'help', :controller => 'glycodbs', :action => 'help', :format => 'html'
+  map.connect 'help_output', :controller => 'glycodbs', :action => 'help_output', :format => 'html'
+  map.connect 'help_contact', :controller => 'glycodbs', :action => 'help_contact', :format => 'html'
+
   map.connect 'sugarviewer', :controller => 'sviewer', :action => 'show', :format => 'html'
 
   map.connect 'sviewer_thumbs/:width/:height/:schema/:ns/:seq.png', :format => 'png', :controller => 'sviewer', :action => 'index'
@@ -102,9 +106,6 @@ ActionController::Routing::Routes.draw do |map|
 
   else
 
-    map.connect '/help', :controller => 'glycodbs', :action => 'help', :format => 'html'
-    map.connect '/help_output', :controller => 'glycodbs', :action => 'help_output', :format => 'html'
-    map.connect '/help_contact', :controller => 'glycodbs', :action => 'help_contact', :format => 'html'
 
     ['config','sugarbuilder','sequence_sets'].each { |action|
 
