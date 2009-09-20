@@ -99,7 +99,8 @@
 	  <li><%= link_to "Home", :controller => "glycodbs", :action => "home" %></li>
 		<li><%= link_to "Sample uses", :controller => "glycodbs", :action => "tags", :format => 'html' %></li>
 		<li><%= link_to "Use the tool", :controller => "sequence_sets", :action => "add" %></li>
-		
+		<li><%= link_to "Interpreting output", :controller => "glycodbs", :action => "help_output" %></li>
+		<li><%= link_to "Contact us", :controller => "glycodbs", :action => "help_contact" %></li>
 <% if ENV['RAILS_ENV'] == 'development' %>
     <li><%= link_to "Sugarbuilder", :controller => "sugarbuilder", :action => "index" %></li>
 		<li><%= link_to "Disaccharide matrix", :controller => "disaccharides", :action => "matrix", :threshold => 6 %></li>
@@ -109,11 +110,9 @@
 		<li><%= link_to "Pathways", :controller => "reactions",:action => 'pathway', :id => nil %></li>
 		<li><%= link_to "Genes", :controller => "geneinfos", :action => "list" %></li>
 		<li><%= link_to "Tissues", :controller => "enzymeinfos", :action => "list_tissues"%></li>
-<% end %>
 		<li><%= link_to "Oxford rendering", :controller => "config", :action => "rendering", :schema => 'oxford' %></li>
 		<li><%= link_to "Boston rendering", :controller => "config", :action => "rendering", :schema => 'boston' %></li>
 		<li><%= link_to "Iupac rendering", :controller => "config", :action => "rendering", :schema => 'text:ic' %></li>
-<% if ENV['RAILS_ENV'] == 'development' %>
 		<li><form action="<%= url_for :controller => "geneinfos", :action => "fulltext"%>"><input type="text" name="id"/><input type="submit" value="Search genes"/></form></li>
 <% end %>
 	</ul>

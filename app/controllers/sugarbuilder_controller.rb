@@ -60,6 +60,8 @@ class SugarbuilderController < ApplicationController
     @prototypes = NamespacedMonosaccharide.Supported_Residues.collect { |res|
       new_res = Monosaccharide.Factory(NamespacedMonosaccharide,res)
       (! params[:ns]) || new_res.alternate_name?(params[:ns]) ? SugarHelper.CreateRenderableSugar(new_res.name(:ic),:ic) : nil
+    }.reject { |res| 
+      res && res.name(:ic) == 'Nil'
     }.compact
   end
 
