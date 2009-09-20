@@ -99,8 +99,8 @@
 	  <li><%= link_to "Home", :controller => "glycodbs", :action => "home" %></li>
 		<li><%= link_to "Sample uses", :controller => "glycodbs", :action => "tags", :format => 'html' %></li>
 		<li><%= link_to "Use the tool", :controller => "sequence_sets", :action => "add" %></li>
-		<li><%= link_to "Interpreting output", :controller => "glycodbs", :action => "help_output" %></li>
-		<li><%= link_to "Contact us", :controller => "glycodbs", :action => "help_contact" %></li>
+		<li><%= link_to "Interpreting output", :controller => "glycodbs", :action => "help_output", :format => 'html' %></li>
+		<li><%= link_to "Contact us", :controller => "glycodbs", :action => "help_contact", :format => 'html' %></li>
 <% if ENV['RAILS_ENV'] == 'development' %>
     <li><%= link_to "Sugarbuilder", :controller => "sugarbuilder", :action => "index" %></li>
 		<li><%= link_to "Disaccharide matrix", :controller => "disaccharides", :action => "matrix", :threshold => 6 %></li>
