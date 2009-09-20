@@ -102,9 +102,9 @@ ActionController::Routing::Routes.draw do |map|
 
   else
 
-    map.connect 'help', :controller => 'glycodbs', :action => 'help', :format => 'html'
-    map.connect 'help_output', :controller => 'glycodbs', :action => 'help_output', :format => 'html'
-    map.connect 'help_contact', :controller => 'glycodbs', :action => 'help_contact', :format => 'html'
+    map.connect '/help', :controller => 'glycodbs', :action => 'help', :format => 'html'
+    map.connect '/help_output', :controller => 'glycodbs', :action => 'help_output', :format => 'html'
+    map.connect '/help_contact', :controller => 'glycodbs', :action => 'help_contact', :format => 'html'
 
     ['config','sugarbuilder','sequence_sets'].each { |action|
 
