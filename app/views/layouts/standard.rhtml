@@ -1,5 +1,6 @@
 <%= render :partial => "layouts/doctype" %>
 <head>
+  <meta http-equiv="X-UA-Compatible" content="chrome=1"/>
   <title>Taxonomy <%= params[:taxonomy_id] || session[:taxonomy_id] || '9606' %> Enzymes: <%= controller.action_name %></title>
   	<%= stylesheet_link_tag 'scaffold' %>
 	<%= stylesheet_link_tag 'http://yui.yahooapis.com/2.7.0/build/datatable/assets/skins/sam/datatable.css' %>
@@ -117,6 +118,17 @@
 <% end %>
 	</ul>
 </div>
+<script type="text/javascript" 
+src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"> </script>
+ 
+<div id="placeholder"></div>
+
+<script>
+ CFInstall.check({
+    node: "placeholder",
+    destination: "http://www.waikiki.com"
+  });
+</script>
 <p style="color: green"><%= flash[:notice] %></p>
 <div class="main_body">
 <%= yield %>
