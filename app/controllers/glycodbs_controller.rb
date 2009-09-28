@@ -166,6 +166,10 @@ class GlycodbsController < StructureSummaryController
       @sugars = @sugars.select{ |sug| ['GlcNAc','GalNAc','Gal','Glc'].include?(sug.root.name(:ic)) && sug.size > 0 }
     end
 
+    @sugars = @sugars.sort_by { |sug|
+      sug.root.name(:ic)
+    }.reverse
+
     @sugars.each { |sugar| 
       coverage_finder = EnzymeCoverageController.new()
       coverage_finder.sugar = sugar
