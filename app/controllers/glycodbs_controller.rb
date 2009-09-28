@@ -163,7 +163,7 @@ class GlycodbsController < StructureSummaryController
     @sugars = execute_coverage_for_sequence_set(tagged_sugars,params[:dont_prune] ? false : true)
 
     if ENV['RAILS_ENV'] == 'production'
-      @sugars = @sugars.select{ |sug| ['GlcNAc','GalNAc','Gal','Glc'].include?(sug.root.name(:ic)) }
+      @sugars = @sugars.select{ |sug| ['GlcNAc','GalNAc','Gal','Glc'].include?(sug.root.name(:ic)) && sug.size > 0 }
     end
 
     @sugars.each { |sugar| 
