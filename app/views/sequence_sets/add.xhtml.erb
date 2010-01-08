@@ -19,9 +19,15 @@
 <input type="text" id="id" name="id" value="<%= params[:id] %>"/>
 <input type="submit" value="Add sequence"/><input type="button" value="New structure" id="reset_struct"/>
 </form>
-<h2>Paste in a list of sequences in IUPAC structures, one per line (example sequences pre-filled)</h2>
+<h2>Paste in a list of sequences in IUPAC structures, one per line</h2>
 <form method="POST" action="<%= url_for :action => 'add' %>">
-	<textarea name="seqs" style="width: 100%; height: 10em;">Man(a1-2)Man(a1-3)[Man(a1-2)Man(a1-6)]Man(a1-6)[Man(a1-3)]Man(b1-4)GlcNAc(b1-4)GlcNAc
+	<textarea name="seqs" style="width: 100%; height: 10em;"></textarea><br/>
+	<input type="submit" value="Add sequences"/>
+</form>
+<h2>List currently contains <%= @sequences.size%> sequences. Click <%= link_to "here", :action => 'list'%> to view the list.</h2>
+<input type="button" value="Build summary" onclick="window.location = '<%= url_for :action => 'summary' %>';"/> <input type="button" value="Clear glycan list" onclick="window.location = '<%= url_for :action => 'clear' %>';"/>
+<h2>Sample sequences</h2>
+<pre>Man(a1-2)Man(a1-3)[Man(a1-2)Man(a1-6)]Man(a1-6)[Man(a1-3)]Man(b1-4)GlcNAc(b1-4)GlcNAc
 Man(a1-2)Man(a1-6)[Man(a1-3)]Man(a1-6)[Man(a1-2)Man(a1-2)Man(a1-3)]Man(b1-4)GlcNAc(b1-4)GlcNAc
 Man(a1-2)Man(a1-3)[Man(a1-6)]Man(a1-6)[Man(a1-2)Man(a1-2)Man(a1-3)]Man(b1-4)GlcNAc(b1-4)GlcNAc
 Man(a1-2)Man(a1-3)[Man(a1-2)Man(a1-6)]Man(a1-6)[Man(a1-2)Man(a1-3)]Man(b1-4)GlcNAc(b1-4)GlcNAc
@@ -36,11 +42,7 @@ Man(a1-3)[Man(a1-6)]Man(b1-4)GlcNAc(b1-4)[Fuc(a1-6)]GlcNAc
 Man(a1-3)[Man(a1-6)]Man(b1-4)GlcNAc(b1-4)[Fuc(a1-6)]GlcNAc
 Man(a1-3)[Man(a1-6)]Man(a1-6)[Man(a1-3)]Man(b1-4)GlcNAc(b1-4)GlcNAc
 Man(a1-2)Man(a1-3)[Man(a1-2)Man(a1-6)]Man(a1-6)[Man(a1-2)Man(a1-2)Man(a1-3)]Man(b1-4)GlcNAc(b1-4)GlcNAc
-Fuc(a1-3)[GalNAc(b1-4)]GlcNAc(b1-2)Man(a1-3)[Man(a1-6)]Man(b1-4)GlcNAc(b1-4)[Fuc(a1-3)]GlcNAc</textarea><br/>
-	<input type="submit" value="Add sequences"/>
-</form>
-<h2>List currently contains <%= @sequences.size%> sequences. Click <%= link_to "here", :action => 'list'%> to view the list.</h2>
-<input type="button" value="Build summary" onclick="window.location = '<%= url_for :action => 'summary' %>';"/> <input type="button" value="Clear glycan list" onclick="window.location = '<%= url_for :action => 'clear' %>';"/>
+Fuc(a1-3)[GalNAc(b1-4)]GlcNAc(b1-2)Man(a1-3)[Man(a1-6)]Man(b1-4)GlcNAc(b1-4)[Fuc(a1-3)]GlcNAc</pre>
 <script type="text/javascript">
 //<![CDATA[
 
