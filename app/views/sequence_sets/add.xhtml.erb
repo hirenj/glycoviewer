@@ -19,9 +19,9 @@
 <input type="text" id="id" name="id" value="<%= params[:id] %>"/>
 <input type="submit" value="Add sequence"/><input type="button" value="New structure" id="reset_struct"/>
 </form>
-<h2>Paste in a list of sequences in IUPAC structures, one per line</h2>
+<h2>Paste in a list of sequences in IUPAC structures, one per line (example sequences pre-filled)</h2>
 <form method="POST" action="<%= url_for :action => 'add' %>">
-	<textarea name="seqs">Man(a1-2)Man(a1-3)[Man(a1-2)Man(a1-6)]Man(a1-6)[Man(a1-3)]Man(b1-4)GlcNAc(b1-4)GlcNAc
+	<textarea name="seqs" style="width: 100%; height: 10em;">Man(a1-2)Man(a1-3)[Man(a1-2)Man(a1-6)]Man(a1-6)[Man(a1-3)]Man(b1-4)GlcNAc(b1-4)GlcNAc
 Man(a1-2)Man(a1-6)[Man(a1-3)]Man(a1-6)[Man(a1-2)Man(a1-2)Man(a1-3)]Man(b1-4)GlcNAc(b1-4)GlcNAc
 Man(a1-2)Man(a1-3)[Man(a1-6)]Man(a1-6)[Man(a1-2)Man(a1-2)Man(a1-3)]Man(b1-4)GlcNAc(b1-4)GlcNAc
 Man(a1-2)Man(a1-3)[Man(a1-2)Man(a1-6)]Man(a1-6)[Man(a1-2)Man(a1-3)]Man(b1-4)GlcNAc(b1-4)GlcNAc
