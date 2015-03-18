@@ -41,4 +41,4 @@ RUN     (/usr/bin/mysqld_safe &) && sleep 5 && cd /glycoviewer; rake enzymedb:lo
 
 EXPOSE  3000
 
-CMD		["/usr/bin/mysqld_safe & cd /glycoviewer; ruby script/server"]
+CMD		["(/usr/bin/mysqld_safe &) && cd /glycoviewer; ruby script/server"]
