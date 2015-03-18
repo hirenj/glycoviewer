@@ -1,0 +1,3 @@
+[submodule "SugarCoreRuby"]
+	path = SugarCoreRuby
+	url = git@github.com:hirenj/sugarcore-ruby.git
