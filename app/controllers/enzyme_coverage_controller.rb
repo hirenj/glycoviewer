@@ -125,20 +125,20 @@ class EnzymeCoverageController < ApplicationController
   def markup_linkages(linkages)
     sug = self.sugar
 
-    shadow_filter = Element.new('svg:filter')
-    shadow_filter.add_attributes({'id' => 'drop-shadow'})
-    el = Element.new('svg:feGaussianBlur')
-    el.add_attributes({ 'in' => 'SourceAlpha', 'result' => 'blur-out', 'stdDeviation' => '10' })
-    shadow_filter.add_element(el)
-    el = Element.new('svg:feOffset')
-    el.add_attributes({ 'in' => 'blur-out', 'result' => 'the-shadow', 'dx' => '8', 'dy' => '8' })
-    shadow_filter.add_element(el)
-    el = Element.new('svg:feBlend')
-    el.add_attributes({ 'in' => 'SourceGraphic', 'in2' => 'the-shadow', 'mode' => 'normal' })
-    shadow_filter.add_element(el)
-    new_defs = Element.new('svg:defs')
-    new_defs.add_element(shadow_filter)
-    sugar.overlays << new_defs
+    # shadow_filter = Element.new('svg:filter')
+    # shadow_filter.add_attributes({'id' => 'drop-shadow'})
+    # el = Element.new('svg:feGaussianBlur')
+    # el.add_attributes({ 'in' => 'SourceAlpha', 'result' => 'blur-out', 'stdDeviation' => '10' })
+    # shadow_filter.add_element(el)
+    # el = Element.new('svg:feOffset')
+    # el.add_attributes({ 'in' => 'blur-out', 'result' => 'the-shadow', 'dx' => '8', 'dy' => '8' })
+    # shadow_filter.add_element(el)
+    # el = Element.new('svg:feBlend')
+    # el.add_attributes({ 'in' => 'SourceGraphic', 'in2' => 'the-shadow', 'mode' => 'normal' })
+    # shadow_filter.add_element(el)
+    # new_defs = Element.new('svg:defs')
+    # new_defs.add_element(shadow_filter)
+    # sugar.overlays << new_defs
     
     gene_overlay = Element.new('svg:g')
     gene_overlay.add_attributes({'class' => 'gene_overlay'})
@@ -148,7 +148,7 @@ class EnzymeCoverageController < ApplicationController
       link.callbacks.push( lambda { |link_element|
 
         bad_linkage = Element.new('svg:g')
-        bad_linkage.add_attributes({'id' => "link-#{link_element.object_id}" })
+        bad_linkage.add_attributes({'id' => "link-#{link_element.object_id}", 'class' => 'badlink' })
         
         x1 = -1*(link.center[:x] - 20)
         y1 = -1*(link.center[:y] - 20)
@@ -178,7 +178,13 @@ class EnzymeCoverageController < ApplicationController
 
         back_circle_shape = Element.new('svg:circle')
         back_circle_shape.add_attributes({'cx' => '45', 'cy' => '45', 'r' => '40', 'stroke' => '#ff0000', 'stroke-width' => '5px', 'fill' => '#ffffff', 'fill-opacity' => '1', 'stroke-opacity' => '0.5' })
+
         back_circle.add_element(back_circle_shape)
+
+        clicker_shape = Element.new('svg:circle')
+        clicker_shape.add_attributes({'cx' => (-1*link.center[:x]).to_s, 'cy' => (-1*link.center[:y]).to_s, 'r' => '40', 'stroke' => '#ff0000', 'stroke-width' => '5px', 'fill' => '#ffffff', 'fill-opacity' => '1', 'stroke-opacity' => '0.5' })
+
+
         text = Element.new('svg:text')
         text.add_attributes({ 'x' => x1.to_s, 'y' => "#{y1+10}", 'width' => '210', 'font-size' => '30', 'height' => "#{max_height}" })
         genes.each { |gene|
@@ -187,19 +193,26 @@ class EnzymeCoverageController < ApplicationController
           li.text = gene.genename
           text.add_element(li)
         }
+
+        back_el.add_attributes('class' => 'detail')
+        text.add_attributes('class' => 'detail')
+        back_circle.add_attributes('class' => 'detail')
+        clicker_shape.add_attributes('class' => 'clicker')
+
         bad_linkage.add_element(back_el) if genes.size > 0
-        bad_linkage.add_element(back_circle)        
+        bad_linkage.add_element(back_circle)
+        bad_linkage.add_element(clicker_shape)
         bad_linkage.add_element(text) if genes.size > 0
         bad_linkage.add_element(cross)
         bad_linkage.add_element(cross_inv)
         gene_overlay.add_element(bad_linkage)
         
-        drop_shadow = Element.new('svg:g')
-        drop_shadow.add_attribute('filter','url(#drop-shadow)')
-        shadow = Element.new('svg:use')
-        shadow.add_attribute('xlink:href' , "#link-#{link_element.object_id}")
-        drop_shadow.add_element(shadow)
-        gene_overlay.add_element(drop_shadow)
+        # drop_shadow = Element.new('svg:g')
+        # drop_shadow.add_attribute('filter','url(#drop-shadow)')
+        # shadow = Element.new('svg:use')
+        # shadow.add_attribute('xlink:href' , "#link-#{link_element.object_id}")
+        # drop_shadow.add_element(shadow)
+        # gene_overlay.add_element(drop_shadow)
       })
     }
   end
@@ -364,6 +377,8 @@ class EnzymeCoverageController < ApplicationController
     max_pathway_reacs = max_pathway_reacs.collect { |max_pathway_reac|
       logger.debug "Best pathway #{min_delta}"
       logger.debug { max_pathway_reac.endstructure_as_sugar.sequence }
+      puts "Best pathway is "
+      puts SugarHelper.ConvertToIupac(max_pathway_reac.endstructure_as_sugar.sequence)
       deltas = sugar.subtract(max_pathway_reac.endstructure_as_sugar)
       deltas.each { |delta|
         delta.linkage_at_position.extend(PathwayLinkage)

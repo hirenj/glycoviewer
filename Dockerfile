@@ -14,7 +14,7 @@ RUN     DEBIAN_FRONTEND=noninteractive apt-get install ruby-switch
 RUN     ruby-switch --set ruby1.8
 RUN     gem install rubygems-update -v='1.4.2'; update_rubygems
 RUN     gem install rake -v 0.8.3
-RUN     gem install rails -v 2.2.2
+RUN     gem install --no-rdoc --no-ri rails -v 2.2.2; true
 RUN     gem install rdoc; gem install rdoc-data; rdoc-data --install
 RUN     gem install --no-rdoc --no-ri facets -v 2.8.1; true
 RUN     gem install --no-rdoc --no-ri  color -v 1.4.0; true
@@ -41,4 +41,4 @@ RUN     (/usr/bin/mysqld_safe &) && sleep 5 && cd /glycoviewer; rake enzymedb:lo
 
 EXPOSE  3000
 
-CMD		["/bin/bash", "-c", "(/usr/bin/mysqld_safe &) && cd /glycoviewer; ruby script/server"]
+CMD		["/bin/bash", "-c", "(/usr/bin/mysqld_safe >/dev/null &) && cd /glycoviewer; ruby script/server"]
