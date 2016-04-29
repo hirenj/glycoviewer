@@ -509,7 +509,11 @@ class EnzymeCoverageController < ApplicationController
 
   def sugar=(sug)
     if ! sug.is_a?(Sugar)
-      @sugar = SugarHelper.CreateRenderableSugar(sug, params[:ns] ? params[:ns].to_sym : nil)
+      begin
+        @sugar = SugarHelper.CreateRenderableSugar(sug, params[:ns] ? params[:ns].to_sym : nil)
+      rescue SugarException
+        @sugar = SugarHelper.MakeRenderable(SugarHelper.CreateMultiSugar(sug,params[:ns]? params[:ns].to_sym : nil))
+      end
     else
       @sugar = sug
     end    

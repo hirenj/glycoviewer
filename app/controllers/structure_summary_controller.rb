@@ -269,7 +269,7 @@ class StructureSummaryController < ApplicationController
         next
       end
 
-      sugar = sugar.extend(SummaryStats)
+      sugar = sugar.extend(SummaryStats).extend(CachingSugar)
 
       ([sugar]+sugar_set).each { |sug|
         if sug != sugar
@@ -286,9 +286,14 @@ class StructureSummaryController < ApplicationController
 
       }
 
+
       coverage_finder = EnzymeCoverageController.new()
       coverage_finder.sugar = sugar
       sugar.root.anomer = 'u'
+
+      sugar.extend(Sugar::IO::CondensedIupac::Writer)
+      sugar.target_namespace = :ic
+      puts sugar.sequence
 
       SugarHelper.MakeRenderable(sugar)
       sugar.extend(CachingSugar)
